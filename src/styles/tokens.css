@@ -1,0 +1,168 @@
+/*
+  Stave design tokens
+  -------------------
+  Visual language: engraved score on warm paper. Ink, paper, and a
+  teacher's red pencil. Colour is used sparingly and always means something:
+    --accent   (vermilion)  = the thing to do next / current position
+    --star     (brass)      = earned rewards
+    --success  (pine)       = correct / complete
+    --danger   (madder)     = incorrect / destructive
+  World colours are muted pigments used only to identify the six worlds.
+*/
+
+:root {
+  /* Type */
+  --font-display: 'Source Serif 4 Variable', 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --text-xs: 0.75rem;   /* 12 */
+  --text-sm: 0.875rem;  /* 14 */
+  --text-md: 1rem;      /* 16 */
+  --text-lg: 1.125rem;  /* 18 */
+  --text-xl: 1.375rem;  /* 22 */
+  --text-2xl: 1.75rem;  /* 28 */
+  --text-3xl: 2.25rem;  /* 36 */
+  --text-4xl: 3rem;     /* 48 */
+
+  --leading-tight: 1.15;
+  --leading-snug: 1.3;
+  --leading-body: 1.55;
+
+  /* Spacing — 4px base */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Shape — deliberately restrained radii */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 420ms;
+
+  /* Layout */
+  --sidebar-w: 244px;
+  --rail-w: 76px;
+  --content-max: 1120px;
+  --topbar-h: 56px;
+  --tabbar-h: 64px;
+
+  /* Light palette (paper) */
+  --paper: #f4efe4;
+  --paper-raised: #fbf8f1;
+  --paper-sunk: #ebe4d5;
+  --ink: #1d1b17;
+  --ink-2: #4a463e;
+  --ink-3: #6f695e;   /* 4.9:1 on --paper */
+  --rule: #d9d0bd;
+  --rule-strong: #bfb39b;
+
+  --accent: #b8401f;       /* vermilion, 5.2:1 on paper */
+  --accent-hover: #9c3418;
+  --accent-ink: #fff8f0;
+  --accent-wash: #f3dccf;
+
+  --star: #a8781c;
+  --star-fill: #d9a531;
+  --star-wash: #f2e3bf;
+
+  --success: #2c6e4f;
+  --success-wash: #d8e9dd;
+  --danger: #a3322f;
+  --danger-wash: #f3d7d3;
+
+  --focus: #1f4f8a;
+
+  /* World pigments */
+  --world-1: #2f6a7d;  /* slate teal */
+  --world-2: #4f7a3a;  /* sap green */
+  --world-3: #8a5a24;  /* raw sienna */
+  --world-4: #6b4a8a;  /* dioxazine */
+  --world-5: #9a3b3b;  /* madder */
+  --world-6: #1d1b17;  /* ink black */
+
+  --shadow-1: 0 1px 0 rgba(29, 27, 23, 0.04), 0 1px 2px rgba(29, 27, 23, 0.06);
+  --shadow-2: 0 2px 4px rgba(29, 27, 23, 0.06), 0 8px 24px rgba(29, 27, 23, 0.08);
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --paper: #14130f;
+    --paper-raised: #1d1b17;
+    --paper-sunk: #0e0d0a;
+    --ink: #efe9dc;
+    --ink-2: #c6bfb0;
+    --ink-3: #9a9384;
+    --rule: #34302a;
+    --rule-strong: #4a453c;
+    --accent: #e8724e;
+    --accent-hover: #f08a69;
+    --accent-ink: #1a0d07;
+    --accent-wash: #3a2218;
+    --star: #e2b44a;
+    --star-fill: #e2b44a;
+    --star-wash: #3a2f17;
+    --success: #6cbf94;
+    --success-wash: #183026;
+    --danger: #ec8a84;
+    --danger-wash: #3a1c1a;
+    --focus: #8fb8ee;
+    --world-1: #6fb0c4;
+    --world-2: #93c27a;
+    --world-3: #d39b5b;
+    --world-4: #b39ad6;
+    --world-5: #e18585;
+    --world-6: #efe9dc;
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-2: 0 4px 24px rgba(0, 0, 0, 0.45);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --paper: #14130f;
+  --paper-raised: #1d1b17;
+  --paper-sunk: #0e0d0a;
+  --ink: #efe9dc;
+  --ink-2: #c6bfb0;
+  --ink-3: #9a9384;
+  --rule: #34302a;
+  --rule-strong: #4a453c;
+  --accent: #e8724e;
+  --accent-hover: #f08a69;
+  --accent-ink: #1a0d07;
+  --accent-wash: #3a2218;
+  --star: #e2b44a;
+  --star-fill: #e2b44a;
+  --star-wash: #3a2f17;
+  --success: #6cbf94;
+  --success-wash: #183026;
+  --danger: #ec8a84;
+  --danger-wash: #3a1c1a;
+  --focus: #8fb8ee;
+  --world-1: #6fb0c4;
+  --world-2: #93c27a;
+  --world-3: #d39b5b;
+  --world-4: #b39ad6;
+  --world-5: #e18585;
+  --world-6: #efe9dc;
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 4px 24px rgba(0, 0, 0, 0.45);
+  color-scheme: dark;
+}
