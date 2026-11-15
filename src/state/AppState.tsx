@@ -39,6 +39,13 @@ interface AppStateValue {
   dismissCelebration: () => void;
   toasts: Toast[];
   dismissToast: (id: number) => void;
+  /** Library */
+  openScore: (id: string) => void;
+  toggleFavorite: (id: string) => void;
+  createCollection: (name: string) => { ok: true; id: string } | { ok: false; error: string };
+  renameCollection: (id: string, name: string) => { ok: boolean; error?: string };
+  deleteCollection: (id: string) => void;
+  setInCollection: (collectionId: string, scoreId: string, included: boolean) => void;
   /** Developer tool: start the journey over (keeps nickname and settings). */
   resetJourney: () => void;
   resetDevice: () => void;
@@ -128,6 +135,54 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     return o;
   }, [apply, pushToasts]);
 
+  const openScore = useCallback((id: string) => {
+    const o = apply({ kind: 'openScore', scoreId: id });
+    pushToasts(o.unlocked.map((u) => ({ kind: 'badge' as const, title: `Badge earned: ${getAchievement(u)?.title ?? u}`, body: getAchievement(u)?.criteria, link: '/achievements' })));
+  }, [apply, pushToasts]);
+
+  const update = useCallback((fn: (p: StudentProgress) => StudentProgress) => {
+    const next = fn(progressRef.current);
+    progressRef.current = next;
+    setProgress(next);
+  }, []);
+
+  const toggleFavorite = useCallback((id: string) => update((p) => ({
+    ...p, favorites: p.favorites.includes(id) ? p.favorites.filter((f) => f !== id) : [id, ...p.favorites],
+  })), [update]);
+
+  const checkName = (name: string, exceptId?: string): string | null => {
+    const n = name.trim();
+    if (!n) return 'Give the collection a name.';
+    if (n.length > 40) return 'Use 40 characters or fewer.';
+    if (progressRef.current.collections.some((c) => c.id !== exceptId && c.name.toLowerCase() === n.toLowerCase())) return 'You already have a collection with that name.';
+    return null;
+  };
+
+  const createCollection = useCallback((name: string) => {
+    const error = checkName(name);
+    if (error) return { ok: false as const, error };
+    if (progressRef.current.collections.length >= 50) return { ok: false as const, error: 'You can have up to 50 collections.' };
+    const id = `c${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+    update((p) => ({ ...p, collections: [...p.collections, { id, name: name.trim(), scoreIds: [], createdAt: new Date().toISOString() }] }));
+    return { ok: true as const, id };
+  }, [update]);
+
+  const renameCollection = useCallback((id: string, name: string) => {
+    const error = checkName(name, id);
+    if (error) return { ok: false, error };
+    update((p) => ({ ...p, collections: p.collections.map((c) => (c.id === id ? { ...c, name: name.trim() } : c)) }));
+    return { ok: true };
+  }, [update]);
+
+  const deleteCollection = useCallback((id: string) => update((p) => ({ ...p, collections: p.collections.filter((c) => c.id !== id) })), [update]);
+
+  const setInCollection = useCallback((cid: string, sid: string, included: boolean) => update((p) => ({
+    ...p,
+    collections: p.collections.map((c) => c.id !== cid ? c : {
+      ...c, scoreIds: included ? (c.scoreIds.includes(sid) ? c.scoreIds : [...c.scoreIds, sid]) : c.scoreIds.filter((x) => x !== sid),
+    }),
+  })), [update]);
+
   const dismissCelebration = useCallback(() => setCelebration(null), []);
 
   const resetJourney = useCallback(() => {
@@ -161,8 +216,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   }, [progress]);
 
   const value = useMemo<AppStateValue>(
-    () => ({ prefs, setPrefs, progress, setDisplayName, recordNoteAnswer, completeLevel, recordPracticeSet, completeDaily, celebration, dismissCelebration, toasts, dismissToast, resetJourney, resetDevice, derived }),
-    [prefs, setPrefs, progress, setDisplayName, recordNoteAnswer, completeLevel, recordPracticeSet, completeDaily, celebration, dismissCelebration, toasts, dismissToast, resetJourney, resetDevice, derived],
+    () => ({ prefs, setPrefs, progress, setDisplayName, recordNoteAnswer, completeLevel, recordPracticeSet, completeDaily, celebration, dismissCelebration, toasts, dismissToast, openScore, toggleFavorite, createCollection, renameCollection, deleteCollection, setInCollection, resetJourney, resetDevice, derived }),
+    [prefs, setPrefs, progress, setDisplayName, recordNoteAnswer, completeLevel, recordPracticeSet, completeDaily, celebration, dismissCelebration, toasts, dismissToast, openScore, toggleFavorite, createCollection, renameCollection, deleteCollection, setInCollection, resetJourney, resetDevice, derived],
   );
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;

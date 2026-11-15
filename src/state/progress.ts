@@ -5,6 +5,8 @@
 export interface XpEvent { key: string; amount: number; reason: string; at: string }
 export interface HistoryEntry { level: number; at: string; stars: number; score: number; replay: boolean }
 
+export interface Collection { id: string; name: string; scoreIds: string[]; createdAt: string }
+
 export interface StudentProgress {
   version: 2;
   displayName: string;
@@ -24,6 +26,11 @@ export interface StudentProgress {
   counters: { practiceSets: number; dailyChallenges: number; scoresOpened: number };
   /** Most recent daily challenge result. */
   lastDaily: { day: string; correct: number; total: number } | null;
+  /** Library: favourite score ids, user collections, recently opened (newest first), every score ever opened. */
+  favorites: string[];
+  collections: Collection[];
+  recentScores: string[];
+  openedScores: string[];
 }
 
 export const DEFAULT_PROGRESS: StudentProgress = {
@@ -40,7 +47,13 @@ export const DEFAULT_PROGRESS: StudentProgress = {
   history: [],
   counters: { practiceSets: 0, dailyChallenges: 0, scoresOpened: 0 },
   lastDaily: null,
+  favorites: [],
+  collections: [],
+  recentScores: [],
+  openedScores: [],
 };
+
+export const RECENT_LIMIT = 8;
 
 export const XP_LOG_LIMIT = 100;
 export const HISTORY_LIMIT = 200;

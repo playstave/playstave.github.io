@@ -1,0 +1,2 @@
+.thumb { height: 96px; background: #fbf8f1; color: #1d1b17; border-bottom: 1px solid var(--rule); overflow: hidden; display: flex; align-items: center; }
+.thumb :global(svg) { width: 100%; height: auto; display: block; }

@@ -8,6 +8,7 @@ import { WorldDetail } from './pages/WorldDetail';
 import { Roadmap } from './pages/Roadmap';
 import { LevelPage } from './pages/LevelPage';
 import { Library } from './pages/Library';
+import { ScorePage } from './pages/ScorePage';
 import { Practice } from './pages/Practice';
 import { DailyChallenge } from './pages/DailyChallenge';
 import { Progress } from './pages/Progress';
@@ -27,6 +28,7 @@ const router = createBrowserRouter([
       { path: '/roadmap', element: <Roadmap /> },
       { path: '/level/:levelId', element: <LevelPage /> },
       { path: '/library', element: <Library /> },
+      { path: '/library/:scoreId', element: <ScorePage /> },
       { path: '/practice', element: <Practice /> },
       { path: '/practice/daily', element: <DailyChallenge /> },
       { path: '/progress', element: <Progress /> },

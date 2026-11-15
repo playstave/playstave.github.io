@@ -6,7 +6,7 @@
 export type IconName =
   | 'home' | 'learn' | 'roadmap' | 'library' | 'practice' | 'progress'
   | 'achievements' | 'profile' | 'settings' | 'more' | 'close' | 'arrow-right'
-  | 'lock' | 'check' | 'star' | 'flame' | 'search' | 'chevron-left' | 'info';
+  | 'lock' | 'check' | 'star' | 'flame' | 'search' | 'chevron-left' | 'info' | 'expand' | 'heart' | 'folder' | 'clock';
 
 const paths: Record<IconName, JSX.Element> = {
   home: <><path d="M4 10.5 12 4l8 6.5" /><path d="M6 9v10h12V9" /><path d="M10 19v-5h4v5" /></>,
@@ -27,6 +27,10 @@ const paths: Record<IconName, JSX.Element> = {
   star: <path d="m12 3.8 2.5 5.2 5.6.7-4.1 3.9 1 5.6L12 16.5l-5 2.7 1-5.6-4.1-3.9 5.6-.7z" />,
   flame: <path d="M12 21c3.6 0 6-2.4 6-5.8 0-3.2-2.3-5-3.3-7.7-.5 2-1.6 3-2.7 3.5.3-3-1-5.6-3.5-7.5.2 3-1.9 5-3 7-.7 1.3-1.5 2.8-1.5 4.7C4 18.6 6.4 21 12 21z" />,
   search: <><circle cx="10.5" cy="10.5" r="6" /><path d="m15 15 5 5" /></>,
+  expand: <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />,
+  heart: <path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" />,
+  folder: <path d="M3.5 6.5h6l2 2h9v10h-17z" />,
+  clock: <><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></>,
   info: <><circle cx="12" cy="12" r="8.5" /><path d="M12 11v5.5M12 7.8v.2" /></>,
 };
 

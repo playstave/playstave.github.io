@@ -7,6 +7,9 @@ import { dayKey } from '../lib/dates';
 import { XP } from '../lib/xp';
 import { ACHIEVEMENTS } from '../data/achievements';
 import { Badge } from '../components/Badge';
+import { ScoreCard } from '../components/library/ScoreCard';
+import { SCORES } from '../data/scores';
+import type { Difficulty } from '../music/score';
 import { greeting } from '../lib/dates';
 import { STARS_PER_LEVEL, TOTAL_LEVELS, unitForLevel, worldForLevel } from '../data/curriculum';
 import styles from './Home.module.css';
@@ -25,6 +28,12 @@ export function Home() {
   const today = new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
   const isNew = derived.levelsCompleted === 0;
   const dailyDone = !!progress.awarded[`daily:${dayKey()}`];
+  // Recommend scores at the student's level, unopened ones first.
+  const levelsFor: Record<number, Difficulty[]> = { 1: ['Beginner', 'Easy'], 2: ['Easy', 'Intermediate'], 3: ['Intermediate'], 4: ['Intermediate', 'Advanced'], 5: ['Advanced', 'Expert'], 6: ['Expert', 'Advanced'] };
+  const wanted = levelsFor[world.id];
+  const recommended = SCORES.filter((sc) => wanted.includes(sc.difficulty))
+    .sort((a, b) => Number(progress.openedScores.includes(a.id)) - Number(progress.openedScores.includes(b.id)) || wanted.indexOf(a.difficulty) - wanted.indexOf(b.difficulty) || a.title.localeCompare(b.title))
+    .slice(0, 3);
   const recent = ACHIEVEMENTS.filter((a) => progress.achievements[a.id])
     .map((a) => ({ a, at: progress.achievements[a.id] }))
     .sort((x, y) => y.at.localeCompare(x.at))
@@ -130,13 +139,9 @@ export function Home() {
       {/* Library */}
       <section aria-labelledby="from-library" className={styles.library}>
         <SectionTitle id="from-library" action={<Link className={styles.textLink} to="/library">Open the library</Link>}>From the library</SectionTitle>
-        <Panel tone="sunk" className={styles.libraryPanel}>
-          <div>
-            <p className={styles.libraryLead}>Recommendations will match your level.</p>
-            <p className="muted">The sheet music library is being catalogued with public-domain and openly licensed scores only. Recommendations appear here once it opens.</p>
-          </div>
-          <ButtonLink to="/library" variant="secondary" iconAfter="arrow-right">Visit the library</ButtonLink>
-        </Panel>
+        <div className={styles.recoGrid}>
+          {recommended.map((sc) => <ScoreCard key={sc.id} score={sc} />)}
+        </div>
       </section>
     </div>
   );

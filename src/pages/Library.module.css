@@ -1,9 +1,33 @@
-.layout { display: grid; gap: var(--space-8); align-items: start; }
-.count { font-size: var(--text-sm); color: var(--ink-3); }
-.tax { display: grid; gap: var(--space-4); margin: 0; }
-.tax dd { margin: var(--space-1) 0 0; color: var(--ink-2); line-height: 1.7; }
-.licensing { margin-top: var(--space-12); display: grid; gap: var(--space-5); }
-.licences { list-style: none; display: grid; gap: var(--space-5); }
-.licName { font-weight: 600; }
-@media (min-width: 720px) { .licences { grid-template-columns: repeat(3, 1fr); } }
-@media (min-width: 1000px) { .layout { grid-template-columns: minmax(0, 1.6fr) minmax(260px, 1fr); } }
+.tabs { display: flex; gap: var(--space-1); overflow-x: auto; margin-bottom: var(--space-6); border-bottom: 1px solid var(--rule); scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 var(--space-3); border: 0; border-bottom: 2px solid transparent; background: none; color: var(--ink-2); font-weight: 500; margin-bottom: -1px; }
+.tab:hover { color: var(--ink); }
+.tabOn { color: var(--ink); border-bottom-color: var(--accent); font-weight: 600; }
+.tabOn svg { color: var(--accent); }
+.count { font-family: var(--font-mono); font-size: var(--text-xs); padding: 0 6px; border-radius: var(--radius-pill); background: var(--paper-sunk); color: var(--ink-2); font-weight: 500; }
+
+.controls { display: grid; gap: var(--space-3); margin-bottom: var(--space-4); }
+.searchBox { display: flex; align-items: center; gap: var(--space-2); padding: 0 var(--space-3); min-height: 48px; border: 1px solid var(--rule-strong); border-radius: var(--radius-md); background: var(--paper-raised); color: var(--ink-3); }
+.searchBox:focus-within { outline: 2px solid var(--focus); outline-offset: 1px; }
+.searchBox input { flex: 1; min-width: 0; border: 0; background: transparent; font-size: var(--text-md); color: var(--ink); outline: none; }
+.filters { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-2); }
+.facet { display: grid; gap: 2px; font-size: var(--text-xs); color: var(--ink-3); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; }
+.facet select { min-height: 40px; padding: 0 var(--space-2); border: 1px solid var(--rule-strong); border-radius: var(--radius-md); background: var(--paper-raised); font-family: var(--font-body); font-size: var(--text-sm); text-transform: none; letter-spacing: 0; color: var(--ink); }
+@media (min-width: 760px) { .filters { grid-template-columns: repeat(4, 1fr); } }
+
+.resultBar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-2); margin-bottom: var(--space-4); font-size: var(--text-sm); color: var(--ink-2); }
+.clear { border: 0; background: none; color: var(--accent); font-size: var(--text-sm); font-weight: 500; text-decoration: underline; text-underline-offset: 3px; padding: var(--space-1) 0; }
+.grid { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+
+.collections { display: grid; gap: var(--space-8); }
+.newCollection { display: grid; gap: var(--space-2); max-width: 460px; }
+.formLabel { font-weight: 600; }
+.row { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+.row input { flex: 1; min-width: 160px; min-height: 40px; padding: 0 var(--space-3); border: 1px solid var(--rule-strong); border-radius: var(--radius-md); background: var(--paper); }
+.row input[aria-invalid='true'] { border-color: var(--danger); }
+.err { color: var(--danger); font-size: var(--text-sm); }
+.small { font-size: var(--text-sm); color: var(--ink-3); margin-bottom: var(--space-3); }
+.collection { border-top: 1px solid var(--rule); padding-top: var(--space-4); }
+.colHead { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3); }
+.colTitle { font-size: var(--text-xl); display: flex; align-items: center; gap: var(--space-2); }
+.licensing { margin-top: var(--space-12); display: grid; gap: var(--space-4); }

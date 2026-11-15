@@ -4,7 +4,7 @@
  * same thing), pays streak bonuses, and unlocks achievements — in that order.
  */
 import type { StudentProgress } from '../state/progress';
-import { HISTORY_LIMIT } from '../state/progress';
+import { HISTORY_LIMIT, RECENT_LIMIT } from '../state/progress';
 import { completeLevel, type CompletionResult } from './progression';
 import { dailyAward, lessonAwards, payAwards, practiceSetAward, streakAwards, type Award } from './xp';
 import { unlockAchievements } from './achievements';
@@ -14,7 +14,8 @@ import { dayKey } from './dates';
 export type Activity =
   | { kind: 'lesson'; level: number; stars: number; score: number }
   | { kind: 'practiceSet' }
-  | { kind: 'daily'; correct: number; total: number };
+  | { kind: 'daily'; correct: number; total: number }
+  | { kind: 'openScore'; scoreId: string };
 
 export interface Outcome {
   state: StudentProgress;
@@ -44,9 +45,21 @@ export function recordActivity(input: StudentProgress, a: Activity, now: Date = 
   } else if (a.kind === 'practiceSet') {
     s = { ...s, counters: { ...s.counters, practiceSets: s.counters.practiceSets + 1 } };
     candidates.push(practiceSetAward(today));
-  } else {
+  } else if (a.kind === 'daily') {
     s = { ...s, counters: { ...s.counters, dailyChallenges: s.counters.dailyChallenges + 1 }, lastDaily: { day: today, correct: a.correct, total: a.total } };
     candidates.push(dailyAward(today));
+  } else {
+    // Opening a score: library bookkeeping and badges only — no XP, not a practice day.
+    const opened = s.openedScores.includes(a.scoreId) ? s.openedScores : [...s.openedScores, a.scoreId];
+    s = {
+      ...s,
+      openedScores: opened,
+      recentScores: [a.scoreId, ...s.recentScores.filter((id) => id !== a.scoreId)].slice(0, RECENT_LIMIT),
+      counters: { ...s.counters, scoresOpened: opened.length },
+    };
+    const ach = unlockAchievements(s, at, now);
+    const info0 = streakInfo(s.practiceDays, now);
+    return { state: ach.state, awards: [], xpGained: 0, unlocked: ach.unlocked, streak: { before, after: info0.current, best: info0.best } };
   }
 
   if (!s.practiceDays.includes(today)) s = { ...s, practiceDays: [...s.practiceDays, today] };
@@ -80,6 +93,10 @@ export function migrate(raw: Partial<StudentProgress> & Record<string, unknown>,
     ...defaults,
     ...raw,
     counters: { ...defaults.counters, ...(raw.counters ?? {}) },
+    favorites: raw.favorites ?? [],
+    collections: raw.collections ?? [],
+    recentScores: raw.recentScores ?? [],
+    openedScores: raw.openedScores ?? [],
     noteDrill: { ...defaults.noteDrill, ...(raw.noteDrill ?? {}) },
     awarded: raw.awarded ?? {},
     xpLog: raw.xpLog ?? [],

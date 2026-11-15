@@ -1,0 +1,19 @@
+.back { display: inline-flex; align-items: center; gap: 4px; margin-bottom: var(--space-4); color: var(--ink-2); font-size: var(--text-sm); font-weight: 500; text-decoration: none; }
+.back:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.colPanel { margin: calc(var(--space-4) * -1) 0 var(--space-6); padding: var(--space-4); border: 1px solid var(--rule); border-radius: var(--radius-md); background: var(--paper-raised); max-width: 460px; display: grid; gap: var(--space-3); }
+.colTitle { font-weight: 600; }
+.colList { list-style: none; display: grid; gap: var(--space-2); }
+.colList label { display: flex; align-items: center; gap: var(--space-2); min-height: 32px; cursor: pointer; }
+.colList input { width: 18px; height: 18px; accent-color: var(--accent); }
+.colForm { display: flex; gap: var(--space-2); }
+.colForm input { flex: 1; min-width: 0; min-height: 36px; padding: 0 var(--space-3); border: 1px solid var(--rule-strong); border-radius: var(--radius-md); background: var(--paper); }
+.err { color: var(--danger); font-size: var(--text-sm); }
+.partRow { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin-bottom: var(--space-4); }
+.partLabel { font-weight: 600; }
+.partRow select { flex: 1; min-width: 0; max-width: 560px; min-height: 40px; padding: 0 var(--space-2); border: 1px solid var(--rule-strong); border-radius: var(--radius-md); background: var(--paper-raised); }
+.small { font-size: var(--text-sm); color: var(--ink-3); }
+.about { display: grid; gap: var(--space-6); margin-top: var(--space-10); }
+.about p + p { margin-top: var(--space-2); }
+.h2 { font-size: var(--text-xl); margin-bottom: var(--space-2); }
+.licence { padding: var(--space-4) var(--space-5); background: var(--paper-sunk); border-radius: var(--radius-md); font-size: var(--text-sm); color: var(--ink-2); }
+@media (min-width: 900px) { .about { grid-template-columns: 3fr 2fr; } }

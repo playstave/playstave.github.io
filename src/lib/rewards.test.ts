@@ -125,6 +125,26 @@ describe('achievements from real progress', () => {
   });
 });
 
+describe('library activity', () => {
+  it('opening scores tracks recent and distinct opens, pays no XP and is not a practice day', () => {
+    let s = fresh();
+    for (const id of ['a', 'b', 'a', 'c']) s = recordActivity(s, { kind: 'openScore', scoreId: id }, day(14)).state;
+    expect(s.recentScores).toEqual(['c', 'a', 'b']);
+    expect(s.openedScores).toEqual(['a', 'b', 'c']);
+    expect(s.counters.scoresOpened).toBe(3);
+    expect(s.xp).toBe(0);
+    expect(s.practiceDays).toEqual([]);
+  });
+  it('recent list is capped, Sheet Music Explorer unlocks at 25 distinct scores', () => {
+    let s = fresh();
+    let last;
+    for (let i = 0; i < 25; i++) { last = recordActivity(s, { kind: 'openScore', scoreId: `s${i}` }, day(14)); s = last.state; }
+    expect(s.recentScores).toHaveLength(8);
+    expect(last!.unlocked).toEqual(['sheet-explorer']);
+    expect(recordActivity(s, { kind: 'openScore', scoreId: 's0' }, day(14)).unlocked).toEqual([]);
+  });
+});
+
 describe('migration', () => {
   it('credits version-1 progress retroactively, exactly once', () => {
     const v1 = { displayName: 'A', currentLevel: 3, xp: 0, completedLevels: { 1: { stars: 3, bestScore: 100 }, 2: { stars: 1, bestScore: 67 } }, practiceDays: [], noteDrill: { answered: 0, correct: 0 } };

@@ -35,7 +35,7 @@ export function measure(id: string, s: StudentProgress, today = new Date()): Mea
     case 'week-streak': return { current: Math.min(streakInfo(s.practiceDays, today).best, 7), target: 7 };
     case 'month-streak': return { current: Math.min(streakInfo(s.practiceDays, today).best, 30), target: 30 };
     case 'ten-sets': return { current: Math.min(s.counters.practiceSets, 10), target: 10 };
-    case 'sheet-explorer': return { current: Math.min(s.counters.scoresOpened, 25), target: 25 };
+    case 'sheet-explorer': return { current: Math.min(s.openedScores.length, 25), target: 25 };
     default: return { current: 0, target: 1 };
   }
 }

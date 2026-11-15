@@ -1,0 +1,29 @@
+.viewer { display: grid; gap: var(--space-3); }
+.fs { background: var(--paper); padding: var(--space-4); overflow: auto; height: 100vh; align-content: start; }
+.toolbar { position: sticky; top: var(--topbar-h); z-index: 5; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-2); padding: var(--space-2); background: color-mix(in srgb, var(--paper-raised) 96%, transparent); border: 1px solid var(--rule); border-radius: var(--radius-md); }
+@media (min-width: 768px) { .toolbar { top: var(--space-2); } }
+.fs .toolbar { top: 0; }
+.group { display: flex; align-items: center; gap: var(--space-1); }
+.tool { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 38px; height: 38px; padding: 0 var(--space-2); border: 1px solid var(--rule); border-radius: var(--radius-md); background: var(--paper); color: var(--ink); font-size: var(--text-lg); line-height: 1; }
+.tool:hover:not(:disabled) { background: var(--paper-sunk); }
+.tool:disabled { opacity: 0.4; cursor: not-allowed; }
+.toolText { font-size: var(--text-sm); }
+.flip svg { transform: scaleX(-1); }
+.pageInfo, .zoom { min-width: 88px; text-align: center; font-family: var(--font-mono); font-size: var(--text-sm); color: var(--ink-2); }
+.zoom { min-width: 52px; }
+.frame { position: relative; min-height: 200px; }
+/* The page is always ink on paper, like a printed score, in both themes. */
+.page { background: #fbf8f1; color: #1d1b17; border-radius: var(--radius-sm); box-shadow: var(--shadow-2); overflow: hidden; }
+.page :global(svg) { display: block; width: 100%; height: auto; }
+.loading, .error { position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink-3); font-size: var(--text-sm); }
+.error { color: var(--danger); }
+.small { font-size: var(--text-sm); color: var(--ink-3); }
+.printArea { display: none; }
+.printPage { break-after: page; color: #000; }
+.printPage :global(svg) { width: 100%; height: auto; }
+@media (max-width: 520px) { .toolText { display: none; } .pageInfo { min-width: 70px; } }
+@media print {
+  :global(html.printing-score) body * { visibility: hidden; }
+  :global(html.printing-score) .printArea, :global(html.printing-score) .printArea * { visibility: visible; }
+  :global(html.printing-score) .printArea { display: block; position: absolute; left: 0; top: 0; width: 100%; }
+}
