@@ -42,3 +42,4 @@
   .hero { grid-template-columns: 1.1fr 1fr; align-items: center; padding: var(--space-10) 0; }
   .split { grid-template-columns: 1fr 1fr; }
 }
+.nowrap { white-space: nowrap; }

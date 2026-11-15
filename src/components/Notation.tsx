@@ -21,13 +21,15 @@ interface NotationProps {
   /** Required: a text description of what the notation shows. */
   label: string;
   className?: string;
+  /** Extra display magnification on top of the user's notation-size preference. */
+  scale?: number;
 }
 
 /**
  * Engraved notation rendered with VexFlow (loaded on demand so pages without
  * notation never pay for it). Colours follow the current theme via currentColor.
  */
-export function Notation({ clef = 'treble', notes = [], timeSignature, keySignature, width = 320, height = 130, label, className }: NotationProps) {
+export function Notation({ clef = 'treble', notes = [], timeSignature, keySignature, width = 320, height = 130, label, className, scale = 1 }: NotationProps) {
   const host = useRef<HTMLDivElement>(null);
   const [error, setError] = useState(false);
 
@@ -88,7 +90,7 @@ export function Notation({ clef = 'treble', notes = [], timeSignature, keySignat
   }, [clef, notesKey, timeSignature, keySignature, width, height]);
 
   return (
-    <figure className={`${styles.figure} ${className ?? ''}`} style={{ ['--w' as string]: `${width}px` }}>
+    <figure className={`${styles.figure} ${className ?? ''}`} style={{ ['--w' as string]: `${width * scale}px` }}>
       <div ref={host} className={styles.host} role="img" aria-label={label} />
       {error && <figcaption className={styles.error}>Notation could not be displayed. {label}</figcaption>}
     </figure>

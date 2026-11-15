@@ -98,7 +98,7 @@ export function NoteDrill() {
       </div>
 
       <div className={styles.stage}>
-        <Notation clef="treble" notes={notes} width={220} height={140} label={`A whole note on the treble staff. ${pending ? `It is ${note.letter}.` : 'Which note is it?'}`} />
+        <Notation clef="treble" notes={notes} width={180} height={130} scale={1.8} label={`A whole note on the treble staff. ${pending ? `It is ${note.letter}.` : 'Which note is it?'}`} />
       </div>
 
       <p className={styles.prompt} id="drill-prompt">Which note is this?</p>

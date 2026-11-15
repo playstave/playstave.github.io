@@ -55,7 +55,7 @@ export function Home() {
             height={120}
             label="A treble staff with whole notes on each of the five lines: E, G, B, D, F."
           />
-          <p className={styles.heroCaption}>The five lines of the treble staff, bottom to top: E G B D F.</p>
+          <p className={styles.heroCaption}>The five lines of the treble staff, bottom to top: <span className={styles.nowrap}>E G B D F</span>.</p>
         </div>
       </section>
 
