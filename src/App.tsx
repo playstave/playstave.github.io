@@ -18,6 +18,7 @@ import { Profile } from './pages/Profile';
 import { Settings } from './pages/Settings';
 import { NotFound } from './pages/NotFound';
 import { Tuner } from './pages/Tuner';
+import { PlayAlong, PlayAlongExercise } from './pages/PlayAlong';
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,8 @@ const router = createBrowserRouter([
       { path: '/practice', element: <Practice /> },
       { path: '/practice/daily', element: <DailyChallenge /> },
       { path: '/tuner', element: <Tuner /> },
+      { path: '/play', element: <PlayAlong /> },
+      { path: '/play/:exerciseId', element: <PlayAlongExercise /> },
       { path: '/progress', element: <Progress /> },
       { path: '/achievements', element: <Achievements /> },
       { path: '/profile', element: <Profile /> },

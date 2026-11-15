@@ -40,9 +40,25 @@ export function micSupported(): boolean {
     typeof (window.AudioContext ?? (window as unknown as { webkitAudioContext?: unknown }).webkitAudioContext) === 'function';
 }
 
-function newContext(): AudioContext {
+export function newContext(): AudioContext {
   const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
   return new Ctor({ latencyHint: 'interactive' });
+}
+
+/** Open the microphone with pitch-damaging browser processing switched off. */
+export async function openMic(ctx: AudioContext): Promise<{ stream: MediaStream; source: MediaStreamAudioSourceNode }> {
+  const stream = await navigator.mediaDevices.getUserMedia({
+    audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 },
+  });
+  return { stream, source: ctx.createMediaStreamSource(stream) };
+}
+
+/** Map a getUserMedia / start-up error to a listening state. */
+export function stateForError(e: unknown): ListenState {
+  const name = (e as DOMException)?.name;
+  if (name === 'NotAllowedError' || name === 'SecurityError') return 'denied';
+  if (name === 'NotFoundError' || name === 'OverconstrainedError') return 'no-device';
+  return 'error';
 }
 
 /** Analyse frames this often (ms). ~30 readings per second. */
@@ -86,10 +102,9 @@ export class Listener {
       if (import.meta.env.DEV && this.o.devSource) {
         this.source = this.o.devSource(this.ctx);
       } else {
-        this.stream = await navigator.mediaDevices.getUserMedia({
-          audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 },
-        });
-        this.source = this.ctx.createMediaStreamSource(this.stream);
+        const mic = await openMic(this.ctx);
+        this.stream = mic.stream;
+        this.source = mic.source;
       }
       this.analyser = this.ctx.createAnalyser();
       this.setupAnalyser();

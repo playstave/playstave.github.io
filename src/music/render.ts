@@ -20,6 +20,21 @@ export interface DrawOptions {
   header?: { title: string; composer: string; tempo?: string; part?: string };
   /** Height of the drawing; defaults to exactly what the systems need. */
   height?: number;
+  /** If given, every drawn note/rest is appended here in score order (for colouring and a play cursor). */
+  collect?: RenderedNote[];
+}
+
+export interface RenderedNote {
+  measure: number;
+  pos: number;
+  /** The note's SVG group (colour it with style.color, since it draws in currentColor). */
+  el: SVGElement | undefined;
+  /** Horizontal centre of the notehead, in drawing units. */
+  x: number;
+  /** y of the stave it sits on (staff lines start ~40 units below), in drawing units. */
+  top: number;
+  /** Which drawn system row (0-based) it is in. */
+  row: number;
 }
 
 const REST_KEY: Record<Clef, string> = { treble: 'b/4', bass: 'd/3', alto: 'c/4', percussion: 'b/4' };
@@ -91,6 +106,13 @@ export function drawScore(V: VF, host: HTMLElement, o: DrawOptions): SVGSVGEleme
       new Formatter().joinVoices([voice]).format([voice], Math.max(room, 20));
       voice.draw(ctx, stave);
       beams.forEach((b) => b.setContext(ctx).draw());
+      if (o.collect) {
+        notes.forEach((sn, k) => {
+          const el = sn.getSVGElement();
+          el?.setAttribute('data-note-index', String(o.collect!.length));
+          o.collect!.push({ measure: mi, pos: k, el, x: sn.getAbsoluteX() + sn.getGlyphWidth() / 2, top: y, row });
+        });
+      }
       x += w;
     }
   });

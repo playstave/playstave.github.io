@@ -67,3 +67,51 @@ export function updateDevTone(patch: Partial<DevToneSettings>) {
   out.gain.setValueAtTime(devToneSettings.on ? 0.3 : 0, t);
   if (patch.timbre) applyTimbre(ctx, osc, devToneSettings.timbre);
 }
+
+/* ---------- DEV ONLY: synthetic performer for play-along testing ---------- */
+import type { Timeline } from '../play/exercise';
+import { midiToHz } from './notes';
+
+export type DevPerformance = 'perfect' | 'mistakes' | 'silent';
+export const devPerformerSettings: { mode: DevPerformance; bleed: boolean } = { mode: 'perfect', bleed: false };
+
+/**
+ * Which notes the "mistakes" performance gets wrong, by position among the
+ * playable notes: 2nd = wrong note (+1 semitone), 4th = 35 cents flat,
+ * 6th = 0.35 s late, 8th = skipped.
+ */
+export function devMistakePlan(tl: Timeline) {
+  const playable = tl.notes.filter((n) => !n.rest).map((n) => n.index);
+  const at = (k: number) => playable[k];
+  return { wrong: at(1), flat: at(3), late: at(5), skip: at(7) };
+}
+
+export function createDevPerformer(ctx: AudioContext, tl: Timeline, t0: number): AudioNode {
+  const out = ctx.createGain();
+  if (devPerformerSettings.mode === 'silent') return out;
+  const osc = ctx.createOscillator();
+  const imag = new Float32Array([0, ...STRING_HARMONICS]);
+  osc.setPeriodicWave(ctx.createPeriodicWave(new Float32Array(imag.length), imag));
+  const g = ctx.createGain();
+  g.gain.value = 0;
+  osc.connect(g).connect(out);
+  const plan = devPerformerSettings.mode === 'mistakes' ? devMistakePlan(tl) : null;
+  const starts = tl.notes.map((n) => t0 + n.start + (plan && n.index === plan.late ? 0.35 : 0));
+  for (const n of tl.notes) {
+    if (n.rest || n.midi == null || (plan && n.index === plan.skip)) continue;
+    let m = n.midi;
+    if (plan && n.index === plan.wrong) m += 1;
+    let hz = midiToHz(m);
+    if (plan && n.index === plan.flat) hz *= 2 ** (-35 / 1200);
+    const s = starts[n.index];
+    const e = Math.min(t0 + n.end, n.index + 1 < starts.length ? starts[n.index + 1] : Infinity) - 0.03;
+    osc.frequency.setValueAtTime(hz, s);
+    g.gain.setValueAtTime(0, s);
+    g.gain.linearRampToValueAtTime(0.3, s + 0.02);
+    g.gain.setValueAtTime(0.3, Math.max(s + 0.02, e - 0.02));
+    g.gain.linearRampToValueAtTime(0, e);
+  }
+  osc.start();
+  osc.stop(t0 + tl.duration + 1);
+  return out;
+}

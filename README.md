@@ -89,7 +89,7 @@ src/
 | 5 | Sheet music library + viewer | **Complete** |
 | 6 | Accounts & persistent progress | **Complete** — tested on a real Supabase project (setup steps in PROGRESS.md) |
 | R1 | **Remodel step 1:** listening engine + tuner | **Complete** (tested with synthetic sound; real-instrument check by the owner) |
-| R2 | Remodel: play-along assessment — score marks notes green/red as you play; count-in, metronome, backing tracks | Not started |
+| R2 | Remodel: play-along assessment — score marks notes green/red as you play; count-in, metronome, backing tracks | **Complete** (tested with synthetic playing; real-instrument check by the owner) |
 | R3 | Remodel: instruments (violin, viola, cello, bass), fingering, tutorial → play test lesson flow | Not started |
 | R4 | Remodel: 500-level map (30–40 theory levels at random positions; the rest play-along) + first levels per instrument | Not started |
 | R5 | Remodel: remaining levels, in batches | Not started |
@@ -120,6 +120,7 @@ src/
 
 ## Known limitations
 
+- **Play-along** needs headphones for the cleanest results when a backing track is on (the app also keeps the backing from doubling the student's note). Device audio latency varies; timing is judged generously and a calibration step may be added.
 - **Listening** judges one note at a time (pitch and, later, timing). It cannot judge bowing, posture, tone quality, or two notes at once (double stops/chords). It needs a microphone, a secure (https or localhost) page and a fairly quiet room. Accuracy was measured on synthetic bowed-string/voice sounds (worst error: violin 0.4, viola 0.2, cello 0.4, double bass 1.1 cents); it has not yet been checked by us with a real instrument.
 
 - **Library size:** 27 scores (no Religious or Jazz pieces yet — those filters show 0). Melodies only (single staff); no piano grand-staff or ensemble scores yet. No PDF file download — use Print → Save as PDF; SVG download is available.
@@ -137,6 +138,8 @@ src/
 - VexFlow adds a ~314 kB (gzipped) chunk, loaded only on pages that show notation.
 
 ## Testing
+
+Play-along (`src/play/`): 40 tests that synthesise whole performances (with deliberate wrong, flat, sharp, early, late and skipped notes, vibrato, noise, and backing-track bleed) and run them through the real pitch detector and assessment. DEV-only synthetic performer for browser tests.
 
 Listening (`src/audio/`): 36 unit tests with synthesised bowed-string, weak-fundamental and voice-like sounds — every open string of all four instruments, every chromatic note across the violin and double-bass ranges, sharp/flat offsets, vibrato, noise, silence and pure noise (no false notes), speed (bass window well under 8 ms per analysis). In the browser, a DEV-only synthetic source (`localStorage.setItem('stave:dev-test-tone','1')`, never in production builds) drives the real tuner UI.
 

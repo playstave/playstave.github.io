@@ -1,0 +1,10 @@
+.wrap { width: 100%; }
+.paper { position: relative; background: #fbf8f1; color: #1d1b17; border: 1px solid var(--rule); border-radius: var(--radius-md); overflow: hidden; }
+.host :global(svg) { display: block; width: 100%; height: auto; }
+.cursor { position: absolute; left: 0; top: 0; width: 3px; margin-left: -1px; height: 64px; margin-top: 22px; border-radius: 2px; background: var(--accent); opacity: 0; pointer-events: none; will-change: transform; box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
+.good { color: #1f7a4d; }
+.bad { color: #c2302b; }
+.focus { outline: none; }
+.focus :global(path), .focus :global(rect) { stroke-width: 1.4px; }
+.focus { filter: drop-shadow(0 0 3px #c2302b); }
+.error { padding: var(--space-4); color: var(--danger); }
