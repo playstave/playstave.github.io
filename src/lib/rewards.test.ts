@@ -150,7 +150,9 @@ describe('migration', () => {
     const v1 = { displayName: 'A', currentLevel: 3, xp: 0, completedLevels: { 1: { stars: 3, bestScore: 100 }, 2: { stars: 1, bestScore: 67 } }, practiceDays: [], noteDrill: { answered: 0, correct: 0 } };
     const m = migrate(v1 as never, DEFAULT_PROGRESS, day(14));
     expect(m.xp).toBe(20 + 15 + 20 + 5);
-    expect(m.achievements['first-lesson'] && m.achievements['first-perfect']).toBeTruthy();
+    // Old Levels 1–2 (reading lessons) now sit at the first theory positions; their XP is kept.
+    expect(m.achievements['first-perfect']).toBeTruthy();
+    expect(m.completedLevels[9]).toBeTruthy();
     expect(migrate(m as never, DEFAULT_PROGRESS, day(15)).xp).toBe(m.xp);
   });
 });

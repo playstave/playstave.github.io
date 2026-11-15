@@ -6,7 +6,8 @@
 import type { StudentProgress } from '../state/progress';
 import { HISTORY_LIMIT, RECENT_LIMIT } from '../state/progress';
 import { completeLevel, type CompletionResult } from './progression';
-import { dailyAward, lessonAwards, payAwards, practiceSetAward, streakAwards, type Award } from './xp';
+import { dailyAward, lessonAwards, payAwards, practiceSetAward, streakAwards, xpFromKeys, type Award } from './xp';
+import { theoryLevel } from '../course/map';
 import { unlockAchievements } from './achievements';
 import { streakInfo } from './streak';
 import { dayKey } from './dates';
@@ -84,6 +85,36 @@ export function recordActivity(input: StudentProgress, a: Activity, now: Date = 
 }
 
 /**
+ * Course layout 1 → 2. In layout 1, Levels 1–10 were the ten reading lessons;
+ * in layout 2 those lessons sit at the first ten theory positions. Results,
+ * history and XP award keys move with each lesson, so nothing earned is lost
+ * and nothing is paid twice. The student continues from the first level they
+ * haven't completed in the new layout.
+ */
+export function moveToCourse2(s: StudentProgress): StudentProgress {
+  const to = (n: number) => (n >= 1 && n <= 10 ? theoryLevel(n) : n);
+  const completedLevels: StudentProgress['completedLevels'] = {};
+  for (const [n, r] of Object.entries(s.completedLevels)) if (Number(n) <= 10) completedLevels[to(Number(n))] = r;
+  const awarded: Record<string, true> = {};
+  for (const key of Object.keys(s.awarded)) {
+    const m = /^level:(\d+):(.*)$/.exec(key);
+    awarded[m ? `level:${to(Number(m[1]))}:${m[2]}` : key] = true;
+  }
+  const rename = (text: string) => text.replace(/Level (\d+)/g, (_, d) => `Level ${to(Number(d))}`);
+  const xpLog = s.xpLog.map((e) => {
+    const m = /^level:(\d+):(.*)$/.exec(e.key);
+    return m ? { ...e, key: `level:${to(Number(m[1]))}:${m[2]}`, reason: rename(e.reason) } : e;
+  });
+  let currentLevel = 1;
+  while (completedLevels[currentLevel]) currentLevel++;
+  return {
+    ...s, course: 2, completedLevels, awarded, xpLog, currentLevel,
+    history: s.history.filter((h) => h.level <= 10).map((h) => ({ ...h, level: to(h.level) })),
+    xp: xpFromKeys(awarded),
+  };
+}
+
+/**
  * Bring stored progress up to the current shape. Version-1 progress (before XP
  * existed) is credited retroactively under the same rules, so early students
  * aren't penalised; the award keys keep this from ever paying twice.
@@ -98,6 +129,7 @@ export function migrate(raw: Partial<StudentProgress> & Record<string, unknown>,
     recentScores: raw.recentScores ?? [],
     openedScores: raw.openedScores ?? [],
     student: raw.student ?? null,
+    course: (raw.course as number | undefined) ?? 1,
     noteDrill: { ...defaults.noteDrill, ...(raw.noteDrill ?? {}) },
     awarded: raw.awarded ?? {},
     xpLog: raw.xpLog ?? [],
@@ -105,6 +137,7 @@ export function migrate(raw: Partial<StudentProgress> & Record<string, unknown>,
     history: raw.history ?? [],
     version: 2,
   } as StudentProgress;
+  if ((raw.course ?? 1) < 2) s = moveToCourse2(s);
   if (raw.version !== 2) {
     const at = now.toISOString();
     const candidates = Object.entries(s.completedLevels).flatMap(([n, r]) => lessonAwards(Number(n), r.stars));

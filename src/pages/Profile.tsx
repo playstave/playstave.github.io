@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, EmptyState, PageHeader, Panel, SectionTitle, Stars, Stat } from '../components/ui';
-import { getLesson } from '../lessons';
+import { levelInfo } from '../course';
 import { AccountPanel } from '../components/AccountPanel';
 import { useAppState } from '../state/AppState';
 import { instrumentInfo } from '../data/students';
@@ -83,7 +83,7 @@ export function Profile() {
             <ul className={styles.history}>
               {progress.history.slice(0, 12).map((h, i) => (
                 <li key={`${h.at}-${i}`}>
-                  <Link to={`/level/${h.level}`}>Level {h.level}{getLesson(h.level) ? `: ${getLesson(h.level)!.title}` : ''}</Link>
+                  <Link to={`/level/${h.level}`}>Level {h.level}{levelInfo(h.level, progress.student?.instrument ?? 'violin').title ? `: ${levelInfo(h.level, progress.student?.instrument ?? 'violin').title}` : ''}</Link>
                   <span className="muted">{new Date(h.at).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}{h.replay ? ' · replay' : ''}</span>
                   <span className={styles.hStars}><Stars earned={h.stars} size={13} /> {h.score}%</span>
                 </li>

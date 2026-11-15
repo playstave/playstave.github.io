@@ -39,6 +39,12 @@ export interface StudentProgress {
   openedScores: string[];
   /** Instrument and experience from the welcome questions (null until answered). */
   student: StudentSetup | null;
+  /**
+   * Course layout version. 1 (or missing) = the original layout where Levels
+   * 1–10 were the reading lessons; 2 = playing levels with theory at fixed
+   * random positions. migrate() moves old results to their new level numbers.
+   */
+  course: number;
 }
 
 export const DEFAULT_PROGRESS: StudentProgress = {
@@ -60,6 +66,7 @@ export const DEFAULT_PROGRESS: StudentProgress = {
   recentScores: [],
   openedScores: [],
   student: null,
+  course: 2,
 };
 
 export const RECENT_LIMIT = 8;

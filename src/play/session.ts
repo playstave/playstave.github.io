@@ -144,7 +144,7 @@ export class PlaySession {
     const notes = this.timeline.notes;
     while (this.next < notes.length && judgeableAt(notes[this.next], this.timeline.beat, this.o.assess) <= t) {
       const n = notes[this.next];
-      const res = assessNote(n, this.frames, this.timeline.beat, this.o.assess, notes[this.next - 1]);
+      const res = assessNote(n, this.frames, this.timeline.beat, this.o.assess, notes[this.next - 1], notes[this.next + 1]);
       this.results.set(n.index, res);
       if (!n.rest) this.cb.onResult(res);
       this.next++;

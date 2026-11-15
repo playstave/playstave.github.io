@@ -64,7 +64,7 @@ function trimmedMean(xs: number[]): number {
  * Assess one note. `frames` may contain the whole take; only those near the
  * note are used. `prev` is the note before (to recognise repeated pitches).
  */
-export function assessNote(note: TimedNote, frames: Frame[], beatSec: number, o: AssessOptions = {}, prev?: TimedNote): NoteResult {
+export function assessNote(note: TimedNote, frames: Frame[], beatSec: number, o: AssessOptions = {}, prev?: TimedNote, next?: TimedNote): NoteResult {
   if (note.rest || note.midi == null) return { index: note.index, verdict: 'correct' };
   const tol = o.centsTolerance ?? DEFAULT_IN_TUNE_CENTS;
   const tTol = o.timingTolerance ?? defaultTimingTolerance(beatSec);
@@ -86,7 +86,13 @@ export function assessNote(note: TimedNote, frames: Frame[], beatSec: number, o:
   let matching: number[];
   if (core.length === 0) {
     if (extMatch.length < 2) return { index: note.index, verdict: 'missed' };
-    matching = extMatch; // started very late
+    // Nothing during the note itself, only after it. If the next note is the
+    // same pitch, that sound is the NEXT note — this one was skipped.
+    const first = frames.find((f) => f.t > coreTo && f.t <= extTo && f.hz != null && Math.abs(toCents(f.hz, midi)) <= SAME_NOTE)!;
+    if (next && !next.rest && next.midi === midi && first.t >= next.start - tTol) return { index: note.index, verdict: 'missed' };
+    // Otherwise it really is this note, started very late.
+    const late = Math.round((first.t - note.start) * 1000);
+    return { index: note.index, verdict: 'late', timingMs: late, cents: Math.round(trimmedMean(extMatch) * 10) / 10 };
   } else if (coreMatch.length >= Math.max(1, core.length * 0.4)) {
     matching = [...coreMatch, ...extMatch];
   } else if (coreMatch.length + extMatch.length >= Math.max(2, core.length * 0.4)) {
@@ -104,7 +110,8 @@ export function assessNote(note: TimedNote, frames: Frame[], beatSec: number, o:
 
   // --- Timing: when did this note begin?
   const searchFrom = note.start - Math.max(0.5, tTol * 2);
-  const searchTo = note.start + Math.max(0.5, tTol * 2);
+  // Look for the start up to the end of the written note, so even a very late start is found and marked late.
+  const searchTo = Math.max(note.start + Math.max(0.5, tTol * 2), note.end);
   const near = frames.filter((f) => f.t >= searchFrom - 0.15 && f.t <= searchTo);
   const isMatch = (f: Frame) => f.hz != null && Math.abs(toCents(f.hz, midi)) <= SAME_NOTE;
   const repeated = !!prev && !prev.rest && prev.midi === midi && Math.abs(prev.end - note.start) < 1e-6;
@@ -190,7 +197,7 @@ export function summarise(results: NoteResult[], timeline: Timeline): Summary {
 
 /** Assess every note of a finished take. */
 export function assessTake(timeline: Timeline, frames: Frame[], o: AssessOptions = {}): NoteResult[] {
-  return timeline.notes.map((n, i) => assessNote(n, frames, timeline.beat, o, timeline.notes[i - 1]));
+  return timeline.notes.map((n, i) => assessNote(n, frames, timeline.beat, o, timeline.notes[i - 1], timeline.notes[i + 1]));
 }
 
 /** Short, kind explanation for a red note. */

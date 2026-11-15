@@ -14,6 +14,10 @@ import { greeting } from '../lib/dates';
 import { STARS_PER_LEVEL, TOTAL_LEVELS, unitForLevel, worldForLevel } from '../data/curriculum';
 import { EXPERIENCE_OPTIONS, instrumentInfo, startPlan } from '../data/students';
 import { InstallHint } from '../components/install/InstallHint';
+import { levelInfo } from '../course';
+import { getPlayLevel } from '../course/playLevels';
+import { levelKind } from '../course/map';
+import { getLesson } from '../lessons';
 import styles from './Home.module.css';
 
 /** The five line notes of the student's own clef. */
@@ -32,6 +36,9 @@ export function Home() {
   const plan = startPlan(student.instrument, student.experience);
   const expLabel = EXPERIENCE_OPTIONS.find((o) => o.id === student.experience)?.label;
   const level = Math.min(progress.currentLevel, TOTAL_LEVELS);
+  const next = levelInfo(level, progress.student!.instrument);
+  const nk = levelKind(level);
+  const nextObjective = nk.kind === 'play' ? getPlayLevel(progress.student!.instrument, nk.index)?.objective : getLesson(level)?.objective;
   const world = worldForLevel(level);
   const unit = unitForLevel(level);
   const name = progress.displayName || 'musician';
@@ -84,9 +91,9 @@ export function Home() {
           </p>
           <h2 id="up-next" className={styles.heroTitle}>
             <span className={styles.heroLevel}>Level <span className="num">{level}</span></span>
-            {unit.title}
+            {next.title ?? unit.title}
           </h2>
-          <p className={styles.heroOutcome}>{unit.outcome}</p>
+          <p className={styles.heroOutcome}>{nextObjective ?? unit.outcome}</p>
           <div className={styles.heroActions}>
             <ButtonLink to={`/level/${level}`} size="lg" iconAfter="arrow-right">
               {isNew ? 'Start learning' : 'Continue learning'}

@@ -77,6 +77,16 @@ describe('assessment of simulated performances', () => {
     expect(results[9].verdict).toBe('missed');
     expect(results[10].verdict).toBe('correct');
   });
+  it('a skipped note followed by the same pitch is "missed" (not credited to the next note)', () => {
+    const rep = { ...violin, id: 'rep', music: 'd/4:q e/4:q f#/4:q g/4:q | g/4:q f#/4:q e/4:q d/4:q | d/4:q f#/4:q e/4:q g/4:q | f#/4:q e/4:q d/4:h' };
+    const { results } = take(rep, { mistakes: [{ index: 7, skip: true }] });
+    expect(results[7].verdict).toBe('missed');
+    expect(results[8].verdict).toBe('correct');
+  });
+  it('a very late note is marked late, not green', () => {
+    const { results } = take(violin, { mistakes: [{ index: 3, shift: 0.55 }] });
+    expect(results[3].verdict).toBe('late');
+  });
   it('catches an early entry', () => {
     const { results } = take(violin, { mistakes: [{ index: 6, shift: -0.3 }] });
     expect(results[6].verdict).toBe('early');

@@ -71,6 +71,7 @@ export function mergeProgress(local: StudentProgress, remote: StudentProgress): 
     collections: [...cols.values()].sort((a, b) => a.createdAt.localeCompare(b.createdAt)),
     recentScores: unionOrdered(local.recentScores, remote.recentScores).slice(0, RECENT_LIMIT),
     openedScores: unionOrdered(local.openedScores, remote.openedScores),
+    course: Math.max(local.course ?? 2, remote.course ?? 2),
     student: !local.student ? remote.student ?? null : !remote.student ? local.student
       : local.student.setAt >= remote.student.setAt ? local.student : remote.student,
   };

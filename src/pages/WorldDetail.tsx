@@ -2,7 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import { Icon } from '../components/Icon';
 import { ButtonLink, Notice, PageHeader } from '../components/ui';
 import { getWorld, WORLDS } from '../data/curriculum';
-import { getLesson } from '../lessons';
+import { levelInfo } from '../course';
 import { useAppState } from '../state/AppState';
 import { NotFound } from './NotFound';
 import styles from './WorldDetail.module.css';
@@ -14,7 +14,7 @@ export function WorldDetail() {
   if (!world) return <NotFound />;
 
   const current = progress.currentLevel;
-  const currentLesson = getLesson(current);
+  const currentLesson = levelInfo(current, progress.student?.instrument ?? 'violin');
   const startedUnit = (first: number) => current > first;
   const prev = WORLDS.find((w) => w.id === world.id - 1);
   const next = WORLDS.find((w) => w.id === world.id + 1);
@@ -30,7 +30,7 @@ export function WorldDetail() {
 
       <div className={styles.notice}>
         <Notice title="Lessons are being written level by level">
-          <p>This is the full syllabus for the world. Interactive lessons unlock one at a time, starting with Levels 1–10. Use the button on your current unit to open your next lesson.</p>
+          <p>This is the full syllabus for the world. Lessons unlock one at a time — playing lessons for your instrument, with a theory lesson now and then. Use the button on your current unit to open your next lesson.</p>
         </Notice>
       </div>
 
@@ -55,7 +55,7 @@ export function WorldDetail() {
               </ul>
               {status === 'current' && (
                 <div className={styles.actions}>
-                  {currentLesson ? (
+                  {currentLesson.available ? (
                     <ButtonLink to={`/level/${current}`} iconAfter="arrow-right">
                       {startedUnit(u.firstLevel) ? 'Continue' : 'Start'} Level {current}: {currentLesson.title}
                     </ButtonLink>

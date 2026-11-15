@@ -62,7 +62,9 @@ describe('merge', () => {
   it('accepts an old-format account copy via migrate', () => {
     const v1 = { currentLevel: 3, completedLevels: { 1: { stars: 2, bestScore: 80 }, 2: { stars: 1, bestScore: 60 } }, practiceDays: [], noteDrill: { answered: 0, correct: 0 }, displayName: '', xp: 0 };
     const m = merge(fresh(), migrate(v1 as never, DEFAULT_PROGRESS, day(14)));
-    expect(m.currentLevel).toBe(3);
+    // Old Levels 1–2 moved to the first theory positions; the new playing Level 1 is next.
+    expect(m.currentLevel).toBe(1);
+    expect(Object.keys(m.completedLevels).map(Number).sort((a, b) => a - b)).toEqual([9, 12]);
     expect(m.xp).toBe(20 + 10 + 20 + 5);
   });
 });

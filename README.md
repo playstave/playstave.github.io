@@ -92,7 +92,7 @@ src/
 | — | Welcome questions (instrument, experience) + personalised app: only the chosen instrument's pieces, tuner and (soon) lessons | **Complete** |
 | — | Install on Home Screen (PWA): manifest, branded icons, safe service worker, device-aware illustrated guide at /install | **Complete** (real-device installs to be checked by the owner) |
 | R2 | Remodel: play-along assessment — score marks notes green/red as you play; count-in, metronome, backing tracks | **Complete** (tested with synthetic playing; real-instrument check by the owner) |
-| R3 | Remodel: instruments (violin, viola, cello, bass), fingering, tutorial → play test lesson flow | Not started |
+| R3 | Remodel: instruments (violin, viola, cello, bass), fingering, tutorial → try it → play test lesson flow; first 10 playing levels per instrument; theory at fixed random positions | **Complete** (synthetic testing; real-instrument check by the owner) |
 | R4 | Remodel: 500-level map (30–40 theory levels at random positions; the rest play-along) + first levels per instrument | Not started |
 | R5 | Remodel: remaining levels, in batches | Not started |
 | 7 | Advertising integration | Not started (after the remodel) |

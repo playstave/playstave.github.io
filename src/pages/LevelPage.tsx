@@ -4,6 +4,9 @@ import { ButtonLink, Notice, PageHeader, Stars } from '../components/ui';
 import { getLevel } from '../data/levels';
 import { getLesson } from '../lessons';
 import { LessonPlayer } from '../components/lesson/LessonPlayer';
+import { PlayLessonPlayer } from '../components/lesson/PlayLessonPlayer';
+import { levelKind } from '../course/map';
+import { getPlayLevel } from '../course/playLevels';
 import { canOpen, levelStatus, nextLevel } from '../lib/progression';
 import { useAppState } from '../state/AppState';
 import styles from './LevelPage.module.css';
@@ -34,8 +37,16 @@ export function LevelPage() {
     );
   }
 
-  const lesson = getLesson(n);
-  if (lesson) return <LessonPlayer key={n} lesson={lesson} level={level} />;
+  // Playing levels are written for the student's own instrument; theory levels are shared.
+  const inst = progress.student?.instrument ?? 'violin';
+  const kind = levelKind(n);
+  if (kind.kind === 'play') {
+    const play = getPlayLevel(inst, kind.index);
+    if (play) return <PlayLessonPlayer key={`${n}-${inst}`} lesson={play} level={level} />;
+  } else {
+    const lesson = getLesson(n);
+    if (lesson) return <LessonPlayer key={n} lesson={lesson} level={level} />;
+  }
 
   const status = levelStatus(n, progress);
   const record = progress.completedLevels[n];
@@ -55,11 +66,13 @@ export function LevelPage() {
         {level.isCheckpoint && <div><dt className="eyebrow">Type</dt><dd>{level.isMajor ? 'Major milestone' : level.isMilestone ? 'Milestone' : 'Checkpoint review'}</dd></div>}
       </dl>
       <Notice title="This level’s lesson is not available yet">
-        <p>Interactive lessons are being added in order, starting with Levels 1–10. When this lesson is ready it will open here with an introduction, the lesson, guided practice and a short challenge.</p>
+        <p>Lessons are being written in order. {kind.kind === 'play'
+          ? 'When this playing lesson is ready it will open here: a short tutorial on what’s new, a chance to try the new notes, then a play-along test.'
+          : 'When this theory lesson is ready it will open here with a short lesson, guided practice and a challenge.'}</p>
       </Notice>
       <div className={styles.actions}>
         <ButtonLink to={`/roadmap#level-${n}`} variant="secondary">Back to roadmap</ButtonLink>
-        <ButtonLink to="/practice" variant="ghost">Practise note reading meanwhile</ButtonLink>
+        <ButtonLink to="/play" variant="ghost">Play along meanwhile</ButtonLink>
       </div>
     </div>
   );

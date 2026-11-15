@@ -4,7 +4,7 @@
  * Questions are chosen deterministically from the date, so the challenge is the
  * same all day (and after a refresh) and changes tomorrow.
  */
-import { LESSONS } from '../lessons';
+import { getLesson } from '../lessons';
 import type { Question } from '../lessons/types';
 
 export const DAILY_SIZE = 5;
@@ -24,12 +24,13 @@ export interface DailyQuestion { level: number; question: Question }
 
 /** Levels with lesson content that the student has completed. Weaker levels (fewer stars) are favoured. */
 export function dailyQuestions(day: string, completed: Record<number, { stars: number }>): DailyQuestion[] {
-  const levels = Object.keys(completed).map(Number).filter((n) => LESSONS[n]);
+  const levels = Object.keys(completed).map(Number).filter((n) => getLesson(n));
   if (!levels.length) return [];
   const pool: DailyQuestion[] = [];
   for (const n of levels) {
     const weight = 4 - (completed[n]?.stars ?? 0); // 1★ levels appear three times as often as 3★ levels
-    for (const q of [...LESSONS[n].practice, ...LESSONS[n].challenge]) for (let w = 0; w < weight; w++) pool.push({ level: n, question: q });
+    const lesson = getLesson(n)!;
+    for (const q of [...lesson.practice, ...lesson.challenge]) for (let w = 0; w < weight; w++) pool.push({ level: n, question: q });
   }
   const rand = rng(hash(day));
   const picked: DailyQuestion[] = [];

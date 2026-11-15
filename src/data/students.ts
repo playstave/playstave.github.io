@@ -43,7 +43,7 @@ export function startPlan(inst: StudentInstrument, exp: Experience): PlanStep[] 
   const tune: PlanStep = { title: `Tune your ${n}`, desc: 'In tune strings make every exercise easier — the tuner listens and shows you which way to turn.', to: '/tuner', cta: 'Open the tuner' };
   if (exp === 'new') return [
     tune,
-    { title: 'Learn to read the staff', desc: 'Level 1 starts from the very beginning: the five lines and four spaces.', to: '/level/1', cta: 'Start Level 1' },
+    { title: `Meet your ${n}`, desc: 'Level 1 shows you how to hold it and the bow, then you play your first open string while Stave listens.', to: '/level/1', cta: 'Start Level 1' },
     { title: 'Play your first open strings', desc: `Play along with “Open strings: D and A” at the slower speed — Stave marks each note green when it’s right.`, to: `/play/${inst}-open-d-a`, cta: 'Play along' },
   ];
   if (exp === 'some') return [

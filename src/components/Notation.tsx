@@ -44,7 +44,7 @@ export function Notation({ clef = 'treble', notes = [], timeSignature, keySignat
       .then((VF) => {
         if (cancelled || !el) return;
         el.innerHTML = '';
-        const { Renderer, Stave, StaveNote, Formatter, Accidental } = VF;
+        const { Renderer, Stave, StaveNote, Formatter, Accidental, Dot, Voice } = VF;
         const renderer = new Renderer(el, Renderer.Backends.SVG);
         renderer.resize(width, height);
         const ctx = renderer.getContext();
@@ -60,13 +60,22 @@ export function Notation({ clef = 'treble', notes = [], timeSignature, keySignat
 
         if (notes.length) {
           const vfNotes = notes.map((n) => {
-            const isRest = n.duration?.endsWith('r');
-            const sn = new StaveNote({ clef: clef === 'none' ? 'treble' : clef, keys: [n.key], duration: n.duration ?? 'q' });
+            const raw = n.duration ?? 'q';
+            const isRest = raw.endsWith('r');
+            // "hd" = dotted half: draw the dot (VexFlow needs it attached explicitly).
+            const dotted = !isRest && raw.length > 1 && raw.endsWith('d');
+            const sn = new StaveNote({ clef: clef === 'none' ? 'treble' : clef, keys: [n.key], duration: dotted ? raw.slice(0, -1) : raw });
+            if (dotted) Dot.buildAndAttach([sn], { all: true });
             const acc = n.key.split('/')[0].slice(1);
-            if (!isRest && acc && /^(#|##|b|bb|n)$/.test(acc)) sn.addModifier(new Accidental(acc), 0);
+            // With a key signature, VexFlow decides which accidentals to show (an F♯ in D major gets none).
+            if (!keySignature && !isRest && acc && /^(#|##|b|bb|n)$/.test(acc)) sn.addModifier(new Accidental(acc), 0);
             if (n.highlight) sn.setStyle({ fillStyle: 'var(--accent)', strokeStyle: 'var(--accent)' });
             return sn;
           });
+          if (keySignature) {
+            const voice = new Voice({ num_beats: 4, beat_value: 4 }).setMode(Voice.Mode.SOFT).addTickables(vfNotes);
+            Accidental.applyAccidentals([voice], keySignature);
+          }
           Formatter.FormatAndDraw(ctx, stave, vfNotes);
         }
 

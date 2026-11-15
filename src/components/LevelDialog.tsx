@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { getLevel } from '../data/levels';
+import { levelInfo } from '../course';
+import { useAppState } from '../state/AppState';
 import { levelStatus, type ProgressionState } from '../lib/progression';
 import { Icon } from './Icon';
 import { Button, ButtonLink, Stars } from './ui';
@@ -11,6 +13,8 @@ interface Props { level: number | null; progress: ProgressionState; onClose: () 
 export function LevelDialog({ level, progress, onClose, onGoTo }: Props) {
   const ref = useRef<HTMLDialogElement>(null);
   const l = level ? getLevel(level) : undefined;
+  const { progress: full } = useAppState();
+  const info = l ? levelInfo(l.n, full.student?.instrument ?? 'violin') : null;
 
   useEffect(() => {
     const d = ref.current;
@@ -33,14 +37,14 @@ export function LevelDialog({ level, progress, onClose, onGoTo }: Props) {
             <button type="button" className={styles.close} onClick={onClose} aria-label="Close"><Icon name="close" /></button>
           </div>
           <h2 id="level-dialog-title" className={styles.title}>Level {l.n}</h2>
-          <p className={styles.unit}>{l.unit.title}</p>
+          <p className={styles.unit} data-level-kind={info?.kind}>{info?.kind === 'theory' ? 'Theory lesson' : 'Playing lesson'}{info?.title ? `: ${info.title}` : ' · coming soon'}</p>
           <ul className={styles.tags}>
             <li>{l.difficulty}</li>
             {l.isCheckpoint && !l.isMilestone && <li>Checkpoint</li>}
             {l.isMilestone && !l.isMajor && <li className={styles.gold}>Milestone</li>}
             {l.isMajor && <li className={styles.gold}>Major milestone</li>}
           </ul>
-          <p className={styles.outcome}>Unit goal: {l.unit.outcome}</p>
+          <p className={styles.outcome}>Unit {l.unit.id}: {l.unit.title}. {l.unit.outcome}</p>
 
           <div className={styles.status}>
             {status === 'completed' && <><Stars earned={record?.stars ?? 0} size={20} /><span>Completed · best score {record?.bestScore ?? 0}%</span></>}
