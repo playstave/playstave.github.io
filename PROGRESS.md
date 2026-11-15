@@ -131,7 +131,7 @@ Bugs found and fixed during Stage 5 testing:
 
 Not verifiable in this environment: the native print dialog (print content verified) and actual full screen (the in-app test browser refuses the permission).
 
-## Stage 6 — Accounts & persistent progress: BUILT, AWAITING CLOUD TEST (2026-11-14)
+## Stage 6 — Accounts & persistent progress: COMPLETE (2026-11-15)
 Decisions: Supabase cloud project (user creates it); username + password sign-up, no email collected.
 - [x] `supabase/schema.sql` profiles + progress tables, RLS (own rows only, anon nothing), signup trigger, username_available(), delete_own_account()
 - [x] `supabase/rls_check.sql` self-check (run in SQL editor → "ALL CHECKS PASSED")
@@ -145,7 +145,7 @@ Decisions: Supabase cloud project (user creates it); username + password sign-up
 - Bug found by rls_check on real Supabase and fixed: students could change their own username. Supabase grants table-wide UPDATE to `authenticated` by default, so the column-level revoke did nothing → now `revoke update` on the table, `grant update (display_name)` only. Also Supabase grants EXECUTE on new functions to `anon` → revoked on `delete_own_account`.
 - [x] Auth → "Confirm email" turned OFF (user approved, 2026-11-15; verified after reload)
 - [x] Real sign-up / sign-in / sign-out tested by the user (2026-11-15). Database shows 1 account with a synthetic `@students.stave.invalid` email (so Supabase accepts those addresses — open risk closed), its profile row, and a progress row (version 2)
-- [ ] Progress sync with earned XP not yet confirmed: the saved cloud progress row has xp 0, so no completed lesson reached the cloud in that test. Next: sign in, finish a lesson, sign out, sign in again (ideally another browser) and confirm XP returns
+- [x] Progress sync confirmed: after the user finished Level 1 while signed in, the cloud row shows xp 25, currentLevel 2 (matches the app)
 
 User setup steps (to finish Stage 6):
 1. Create a free Supabase project. Auth → Providers → Email: turn OFF "Confirm email" (required: sign-up uses non-deliverable addresses).

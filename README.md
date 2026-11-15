@@ -3,7 +3,7 @@
 A free music-reading education platform: a 500-level journey from the first staff line to
 master-level sight-reading, plus a legal sheet music library. Funded by advertising, free for students.
 
-> **Status:** Stages 1–5 of 8 complete (foundation; 500-level roadmap; lesson engine + Levels 1–10; gamification; sheet music library).
+> **Status:** Stages 1–6 of 8 complete (foundation; 500-level roadmap; lesson engine + Levels 1–10; gamification; sheet music library; accounts with cloud sync on Supabase).
 > See [PROGRESS.md](PROGRESS.md) for the live checklist and resume notes.
 
 ## Technology stack
@@ -16,7 +16,7 @@ master-level sight-reading, plus a legal sheet music library. Funded by advertis
 | Notation | VexFlow 4.2.5 (lazy-loaded chunk, SVG output, theme-aware) |
 | Styling | CSS Modules + design tokens in `src/styles/tokens.css` |
 | Fonts | Self-hosted via Fontsource: Source Serif 4 (display), IBM Plex Sans (UI), IBM Plex Mono (numbers/labels) |
-| Persistence (Stage 1) | `localStorage` on the device only. A server database arrives in Stage 6 |
+| Persistence | `localStorage` on the device; signed-in students sync to Supabase (Postgres, row-level security) |
 | Unit tests | Vitest 2 (`npm test`) |
 
 ## Install and run
@@ -87,7 +87,7 @@ src/
 | 3 | Lesson engine + Levels 1–10 | **Complete** |
 | 4 | Gamification (XP, stars, achievements, streaks, daily challenges) | **Complete** |
 | 5 | Sheet music library + viewer | **Complete** |
-| 6 | Accounts & persistent progress | **Built; awaiting test on a real Supabase project** (setup steps in PROGRESS.md) |
+| 6 | Accounts & persistent progress | **Complete** — tested on a real Supabase project (setup steps in PROGRESS.md) |
 | 7 | Advertising integration | Not started |
 | 8 | Full application testing | Not started |
 
