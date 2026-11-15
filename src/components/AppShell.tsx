@@ -38,7 +38,7 @@ function MoreSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
       ref={ref}
       className={styles.sheet}
       aria-label="More pages"
-      onClose={onClose}
+      onClose={() => { if (!ref.current?.open) onClose(); /* ignore a late close event after reopening */ }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div className={styles.sheetInner}>

@@ -83,10 +83,33 @@ Bugs found and fixed during Stage 3 testing:
 - [x] 59/59 unit tests; browser tests of every rule, replay, streak scenario, milestone, reduced motion, reload, migration; Stage 1–3 regression
 
 Bugs found and fixed during Stage 4 testing:
+- Celebration overlay could be closed by a stale native `close` event from a previous overlay (see investigation below)
 - XP count-up stayed at "+0" when the tab was in the background (rAF paused) → timer guarantees the final value
 - Walkthrough script couldn't restart a lesson already on screen → navigates away first (test tooling only)
 
-Observed, not reproduced: twice the celebration overlay was found closed after a screenshot of the hidden browser pane. With close/cancel/key/click logging attached it never recurred and nothing in the app called close(). Noted in case it shows up in real use.
+### Celebration popup investigation (2026-11-14, after Stage 4) — ROOT CAUSE FOUND AND FIXED
+Symptom: twice during Stage 4 testing the celebration overlay was found closed without the student dismissing it.
+
+How it was investigated:
+- Listed every close path: app state cleared (✕, the two links, backdrop click, resetJourney/resetDevice, AppShell clearing it on pathname change) or the browser closing the native `<dialog>` (Escape / close request → `close` event → `onClose`).
+- Added dev-only tracing (`window.__celebrationLog`, stripped from production builds) recording opens, cancel/close events, visibility changes and who called dismiss.
+- Tried each suspect: page-visibility flips caused by screenshots of the hidden pane, viewport changes (phone/tablet/desktop emulation), window resize events, navigation, React re-renders/HMR. None of these closed the overlay on their own.
+
+Root cause (reproduced on the unfixed code): a **stale native `close` event**. `dialog.close()` dispatches its `close` event later, as a queued task; in a throttled/hidden tab that was ~1 s later. When a celebration was cleared (e.g. by navigating) and a new one opened before that event arrived, the late event ran `onClose → dismissCelebration()` and closed the *new* celebration ~300 ms after it appeared. Both original sightings followed exactly this pattern (an earlier overlay had just been closed before the new one opened).
+
+Fix: the native `close` handler now dismisses only if the dialog is actually closed at that moment (`if (ref.current?.open) ignore`). Applied to CelebrationOverlay, LevelDialog and the mobile More sheet, which share the pattern. No XP, achievement or streak code changed.
+
+Verification after the fix:
+- Race tests ×6 each: ✕ + new celebration in the same tick; navigate away + immediate new completion → 12/12 overlays stayed open (6 stale events logged as ignored).
+- Every legitimate dismissal still works: ✕, backdrop click, Escape (real key), Continue to Level N (navigates), Back to roadmap, sidebar navigation.
+- Overlay left open ~20 s through screenshots, visibility flips, tablet↔desktop viewport changes and resize events → open throughout.
+- 20 real lesson completions (Levels 1–10 twice, fresh student) → overlay appeared every time and was only closed by the next navigation; total XP 370 matched the hand-computed value.
+- Milestones: Level 50 and Level 100 reached twice (via bursts of rapid completions, 49 back-to-back single completions, and dismiss-then-race) → milestone overlay open at 1.5 s and 4 s every time.
+- LevelDialog and More sheet: close/reopen in the same tick works; Escape/✕/links still close them.
+- 59/59 unit tests, production build passes.
+
+Note for future testing: the in-app browser's screenshot sometimes does not capture the browser top layer (open `<dialog>`s) even when the dialog is open — check `dialog.open` rather than trusting a single screenshot.
+Note: a page reload intentionally does not re-show a celebration (it is transient UI); the result itself is already saved.
 
 ## Next: Stage 5 — Sheet music library (NOT STARTED, awaiting user go-ahead)
 Plan:

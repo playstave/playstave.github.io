@@ -24,7 +24,7 @@ export function LevelDialog({ level, progress, onClose, onGoTo }: Props) {
   const current = Math.min(progress.currentLevel, 500);
 
   return (
-    <dialog ref={ref} className={styles.dialog} aria-labelledby="level-dialog-title" onClose={onClose}
+    <dialog ref={ref} className={styles.dialog} aria-labelledby="level-dialog-title" onClose={() => { if (!ref.current?.open) onClose(); /* ignore a late close event after reopening */ }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       {l && (
         <div className={styles.inner} style={{ ['--wc' as string]: l.world.colorVar }}>

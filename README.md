@@ -107,6 +107,8 @@ document each variable here. Secrets will never be placed in frontend code.
 
 ## Known limitations
 
+- (Fixed) A stale dialog `close` event could dismiss a newly opened celebration; see PROGRESS.md for the investigation.
+
 - **Only Levels 1–10 have lessons.** Level 11 onward opens a page saying its lesson isn't available yet; the remaining 490 are planned in batches after Stage 8. Levels beyond 10 can only be completed with the dev-build tools on the Roadmap.
 - The Sheet Music Explorer badge can't be earned until the library opens (Stage 5); its counter is already in the progress model.
 - The XP history keeps the latest 100 events and learning history the latest 200 attempts (XP totals and badges are unaffected).

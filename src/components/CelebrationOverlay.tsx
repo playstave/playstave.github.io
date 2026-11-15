@@ -30,6 +30,12 @@ function useCountUp(to: number, reduce: boolean) {
   return v;
 }
 
+function trace(kind: string, detail: string) {
+  if (!import.meta.env.DEV) return;
+  const w = window as unknown as { __celebrationLog?: string[] };
+  (w.__celebrationLog ??= []).push(`${Math.round(performance.now())} ${kind}: ${detail} [${document.visibilityState}]`);
+}
+
 const WORLD_END: Record<number, string> = { 100: 'World 1 complete', 200: 'World 2 complete', 300: 'World 3 complete', 400: 'World 4 complete', 450: 'World 5 complete', 500: 'Course complete' };
 
 /**
@@ -46,9 +52,31 @@ export function CelebrationOverlay() {
   useEffect(() => {
     const d = ref.current;
     if (!d) return;
-    if (c && !d.open) d.showModal();
-    if (!c && d.open) d.close();
+    if (c && !d.open) { d.showModal(); trace('open', `level ${c.level}`); }
+    if (!c && d.open) { trace('state-close', 'celebration cleared'); d.close(); }
   }, [c]);
+
+  // Dev-only diagnostics: record every way the dialog can close.
+  useEffect(() => {
+    const d = ref.current;
+    if (!d || !import.meta.env.DEV) return;
+    const onCancel = (e: Event) => trace('cancel-event', `cancelable=${e.cancelable}`);
+    const onCloseEv = () => trace('close-event', `returnValue=${d.returnValue}`);
+    const onVis = () => trace('visibility', document.visibilityState);
+    d.addEventListener('cancel', onCancel);
+    d.addEventListener('close', onCloseEv);
+    document.addEventListener('visibilitychange', onVis);
+    return () => { d.removeEventListener('cancel', onCancel); d.removeEventListener('close', onCloseEv); document.removeEventListener('visibilitychange', onVis); };
+  }, []);
+
+  // The native `close` event is dispatched as a queued task after close(). If a
+  // new celebration reopened the dialog in the meantime, that late event belongs
+  // to the previous one and must not dismiss the new one. Only dismiss when the
+  // dialog is genuinely closed now (Escape, or a real close request).
+  const onNativeClose = () => {
+    if (ref.current?.open) { trace('stale-close-ignored', 'dialog already reopened'); return; }
+    dismissCelebration();
+  };
 
   const o = c?.outcome;
   const milestone = o?.milestone;
@@ -58,7 +86,7 @@ export function CelebrationOverlay() {
   const level = c ? getLevel(c.level) : undefined;
 
   return (
-    <dialog ref={ref} className={`${styles.dialog} ${milestone ? styles.milestone : ''}`} aria-labelledby="celebrate-title" onClose={dismissCelebration}
+    <dialog ref={ref} className={`${styles.dialog} ${milestone ? styles.milestone : ''}`} aria-labelledby="celebrate-title" onClose={onNativeClose}
       onClick={(e) => { if (e.target === e.currentTarget) dismissCelebration(); }} data-celebration={milestone ? 'milestone' : 'lesson'}>
       {c && o && (
         <div className={styles.inner} style={{ ['--wc' as string]: level?.world.colorVar }}>
