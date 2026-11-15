@@ -144,7 +144,8 @@ Decisions: Supabase cloud project (user creates it); username + password sign-up
 - [x] App on :5180 uses the real backend (called `username_available` on the project)
 - Bug found by rls_check on real Supabase and fixed: students could change their own username. Supabase grants table-wide UPDATE to `authenticated` by default, so the column-level revoke did nothing → now `revoke update` on the table, `grant update (display_name)` only. Also Supabase grants EXECUTE on new functions to `anon` → revoked on `delete_own_account`.
 - [x] Auth → "Confirm email" turned OFF (user approved, 2026-11-15; verified after reload)
-- [ ] Real sign-up / sign-in / cross-device sync test — done by the user (Claude does not create accounts on external services)
+- [x] Real sign-up / sign-in / sign-out tested by the user (2026-11-15). Database shows 1 account with a synthetic `@students.stave.invalid` email (so Supabase accepts those addresses — open risk closed), its profile row, and a progress row (version 2)
+- [ ] Progress sync with earned XP not yet confirmed: the saved cloud progress row has xp 0, so no completed lesson reached the cloud in that test. Next: sign in, finish a lesson, sign out, sign in again (ideally another browser) and confirm XP returns
 
 User setup steps (to finish Stage 6):
 1. Create a free Supabase project. Auth → Providers → Email: turn OFF "Confirm email" (required: sign-up uses non-deliverable addresses).
