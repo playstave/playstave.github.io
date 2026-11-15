@@ -43,3 +43,9 @@
   .split { grid-template-columns: 1fr 1fr; }
 }
 .nowrap { white-space: nowrap; }
+.streakLine { margin-top: var(--space-3); font-size: var(--text-sm); color: var(--ink-2); }
+.recent { list-style: none; display: grid; gap: var(--space-3); }
+.recent li { display: flex; align-items: center; gap: var(--space-3); }
+.recent li svg { width: 52px; height: 52px; }
+.recentTitle { font-weight: 600; }
+.recent .muted { font-size: var(--text-sm); }

@@ -3,6 +3,10 @@ import { ButtonLink, EmptyState, Panel, ProgressBar, SectionTitle, Stat } from '
 import { Notation } from '../components/Notation';
 import { WeekStrip } from '../components/WeekStrip';
 import { useAppState } from '../state/AppState';
+import { dayKey } from '../lib/dates';
+import { XP } from '../lib/xp';
+import { ACHIEVEMENTS } from '../data/achievements';
+import { Badge } from '../components/Badge';
 import { greeting } from '../lib/dates';
 import { STARS_PER_LEVEL, TOTAL_LEVELS, unitForLevel, worldForLevel } from '../data/curriculum';
 import styles from './Home.module.css';
@@ -20,6 +24,11 @@ export function Home() {
   const name = progress.displayName || 'musician';
   const today = new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
   const isNew = derived.levelsCompleted === 0;
+  const dailyDone = !!progress.awarded[`daily:${dayKey()}`];
+  const recent = ACHIEVEMENTS.filter((a) => progress.achievements[a.id])
+    .map((a) => ({ a, at: progress.achievements[a.id] }))
+    .sort((x, y) => y.at.localeCompare(x.at))
+    .slice(0, 3);
 
   return (
     <div className={styles.page}>
@@ -77,27 +86,44 @@ export function Home() {
           <SectionTitle id="daily" action={<Link className={styles.textLink} to="/practice">All practice</Link>}>Today’s practice</SectionTitle>
           <div className={styles.daily}>
             <div>
-              <p className={styles.dailyTask}>Name five notes on the treble staff</p>
-              <p className="muted">About two minutes. Finishing a set counts toward your streak.</p>
+              <p className={styles.dailyTask}>{derived.levelsCompleted ? 'Daily challenge: 5 review questions' : `Complete Level ${level}`}</p>
+              <p className="muted">
+                {derived.levelsCompleted
+                  ? `Drawn from levels you have finished · +${XP.dailyChallenge} XP once a day.`
+                  : 'Your daily review unlocks after your first lesson. Any finished lesson counts toward your streak.'}
+              </p>
             </div>
-            <span className={derived.practicedToday ? styles.badgeDone : styles.badgeTodo}>
-              {derived.practicedToday ? 'Done today' : 'Not started'}
-            </span>
+            <span className={dailyDone ? styles.badgeDone : styles.badgeTodo}>{dailyDone ? 'Done today' : 'Not started'}</span>
           </div>
           <WeekStrip days={progress.practiceDays} />
+          <p className={styles.streakLine}>
+            {derived.practicedToday ? `Today counts — ${derived.streak}-day streak.`
+              : derived.restDayUsed ? 'Yesterday was a rest day. Practise today to keep your streak.'
+              : derived.streak > 0 ? `${derived.streak}-day streak. Practise today to add to it.`
+              : derived.bestStreak > 0 ? `Start a new streak today — your best is ${derived.bestStreak} days.`
+              : 'Practise on any day to start a streak. One rest day in between never breaks it.'}
+          </p>
           <div className={styles.panelAction}>
-            <ButtonLink to="/practice" variant={derived.practicedToday ? 'secondary' : 'primary'}>
-              {derived.practicedToday ? 'Practise again' : 'Start practice'}
-            </ButtonLink>
+            {derived.levelsCompleted
+              ? <ButtonLink to="/practice/daily" variant={dailyDone ? 'secondary' : 'primary'}>{dailyDone ? 'Practise again' : 'Start daily challenge'}</ButtonLink>
+              : <ButtonLink to={`/level/${level}`}>Start Level {level}</ButtonLink>}
           </div>
         </Panel>
 
         {/* Achievements */}
         <Panel aria-labelledby="recent-badges">
           <SectionTitle id="recent-badges" action={<Link className={styles.textLink} to="/achievements">All badges</Link>}>Recent achievements</SectionTitle>
-          <EmptyState title="No badges yet">
-            Your first badge, <em>First Lesson</em>, is awarded when you complete Level 1.
-          </EmptyState>
+          {recent.length ? (
+            <ul className={styles.recent}>
+              {recent.map(({ a, at }) => (
+                <li key={a.id}><Badge a={a} unlocked /><div><p className={styles.recentTitle}>{a.title}</p><p className="muted">{new Date(at).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })} · {a.criteria}</p></div></li>
+              ))}
+            </ul>
+          ) : (
+            <EmptyState title="No badges yet">
+              Your first badge, <em>First Lesson</em>, is awarded when you complete Level 1.
+            </EmptyState>
+          )}
         </Panel>
       </div>
 

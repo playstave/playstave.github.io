@@ -7,3 +7,9 @@
 .state { display: inline-flex; align-items: center; gap: 4px; margin-top: var(--space-1); font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); }
 @media (min-width: 640px) { .grid { grid-template-columns: 1fr 1fr; } }
 @media (min-width: 1100px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+.body { flex: 1; min-width: 0; }
+.earned .title { color: var(--ink); }
+.stateOn { color: var(--success); }
+.measure { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-2); font-size: var(--text-xs); color: var(--ink-3); }
+.measure > :first-child { flex: 1; max-width: 160px; }
+.note { font-size: var(--text-xs); color: var(--ink-3); margin-top: 2px; }

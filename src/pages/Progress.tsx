@@ -17,7 +17,7 @@ export function Progress() {
         <Stat label="Levels completed" value={derived.levelsCompleted} sub={`of ${TOTAL_LEVELS}`} />
         <Stat label="Total stars" value={derived.totalStars} sub={`of ${TOTAL_LEVELS * STARS_PER_LEVEL}`} />
         <Stat label="Total XP" value={progress.xp} />
-        <Stat label="Streak" value={derived.streak} sub={`${progress.practiceDays.length} practice day${progress.practiceDays.length === 1 ? '' : 's'} in total`} />
+        <Stat label="Streak" value={derived.streak} sub={`Best ${derived.bestStreak} · ${progress.practiceDays.length} practice day${progress.practiceDays.length === 1 ? '' : 's'}`} />
         <Stat label="Notes read" value={answered} sub={answered ? `${Math.round((correct / answered) * 100)}% correct` : 'In practice drills'} />
       </dl>
 
@@ -36,6 +36,18 @@ export function Progress() {
             );
           })}
         </ul>
+      </section>
+
+      <section aria-labelledby="xp-h" className={styles.section}>
+        <SectionTitle id="xp-h">Recent XP</SectionTitle>
+        {progress.xpLog.length ? (
+          <ul className={styles.xpLog}>
+            {progress.xpLog.slice(0, 10).map((e) => (
+              <li key={e.key}><span>{e.reason}</span><span className="muted">{new Date(e.at).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}</span><span className="num">+{e.amount}</span></li>
+            ))}
+          </ul>
+        ) : <p className="muted">XP you earn from lessons, stars, daily challenges, practice and streaks will be listed here.</p>}
+        <p className={styles.rules}>How XP works: completing a level +20 (checkpoints +40); each star you earn +5; Level 50 milestones +50 and World completions +100; daily challenge +15 once a day; first practice set each day +5; streaks of 3, 7, 14 and 30 days +10, +25, +50, +100. Each reward is paid once — replays only earn XP for stars you didn’t have before.</p>
       </section>
 
       <div className={styles.split}>

@@ -13,3 +13,7 @@
 .upTitle { font-weight: 600; }
 @media (min-width: 720px) { .upcoming { grid-template-columns: 1fr 1fr; gap: 0 var(--space-8); } }
 @media (min-width: 1000px) { .layout { grid-template-columns: minmax(0, 1.5fr) minmax(300px, 1fr); } }
+.daily { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-4); margin-bottom: var(--space-6); border-left: 4px solid var(--accent); }
+.dailyTitle { font-size: var(--text-xl); margin: 2px 0 var(--space-1); }
+.drillNote { font-size: var(--text-sm); color: var(--ink-3); margin: calc(var(--space-2) * -1) 0 var(--space-4); }
+.streakRule { font-size: var(--text-sm); color: var(--ink-2); margin-bottom: var(--space-4); }

@@ -8,3 +8,7 @@
 @media (min-width: 720px) { .stats { grid-template-columns: repeat(5, 1fr); } }
 @media (min-width: 900px) { .split { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 520px) { .worlds li { grid-template-columns: 1fr auto; } .worlds li > :nth-child(2) { grid-column: 1 / -1; grid-row: 2; } }
+.xpLog { list-style: none; display: grid; }
+.xpLog li { display: grid; grid-template-columns: 1fr auto 60px; gap: var(--space-4); padding: var(--space-2) 0; border-bottom: 1px solid var(--rule); font-size: var(--text-sm); }
+.xpLog li .num { text-align: right; color: var(--accent); font-weight: 600; }
+.rules { margin-top: var(--space-4); font-size: var(--text-sm); color: var(--ink-3); max-width: 70ch; }

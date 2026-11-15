@@ -22,6 +22,8 @@ export interface StudentProgress {
   achievements: Record<string, string>;
   history: HistoryEntry[];
   counters: { practiceSets: number; dailyChallenges: number; scoresOpened: number };
+  /** Most recent daily challenge result. */
+  lastDaily: { day: string; correct: number; total: number } | null;
 }
 
 export const DEFAULT_PROGRESS: StudentProgress = {
@@ -37,6 +39,7 @@ export const DEFAULT_PROGRESS: StudentProgress = {
   achievements: {},
   history: [],
   counters: { practiceSets: 0, dailyChallenges: 0, scoresOpened: 0 },
+  lastDaily: null,
 };
 
 export const XP_LOG_LIMIT = 100;

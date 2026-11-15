@@ -4,6 +4,8 @@ import { Icon } from './Icon';
 import { Logo } from './Logo';
 import { MOBILE_TABS, NAV } from './nav';
 import { useAppState } from '../state/AppState';
+import { CelebrationOverlay } from './CelebrationOverlay';
+import { Toasts } from './Toasts';
 import styles from './AppShell.module.css';
 
 const isActivePath = (to: string, pathname: string) => (to === '/' ? pathname === '/' : pathname === to || pathname.startsWith(to + '/'));
@@ -61,6 +63,9 @@ function MoreSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
 export function AppShell() {
   const { pathname, hash } = useLocation();
   const [moreOpen, setMoreOpen] = useState(false);
+  const { dismissCelebration } = useAppState();
+  // A celebration belongs to the page it happened on.
+  useEffect(() => { dismissCelebration(); }, [pathname, dismissCelebration]);
   const firstRender = useRef(true);
 
   // On navigation: scroll to top and move focus to the new page's heading so
@@ -149,6 +154,8 @@ export function AppShell() {
         </ul>
       </nav>
       <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
+      <CelebrationOverlay />
+      <Toasts />
     </div>
   );
 }

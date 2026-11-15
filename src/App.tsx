@@ -9,6 +9,7 @@ import { Roadmap } from './pages/Roadmap';
 import { LevelPage } from './pages/LevelPage';
 import { Library } from './pages/Library';
 import { Practice } from './pages/Practice';
+import { DailyChallenge } from './pages/DailyChallenge';
 import { Progress } from './pages/Progress';
 import { Achievements } from './pages/Achievements';
 import { Profile } from './pages/Profile';
@@ -27,6 +28,7 @@ const router = createBrowserRouter([
       { path: '/level/:levelId', element: <LevelPage /> },
       { path: '/library', element: <Library /> },
       { path: '/practice', element: <Practice /> },
+      { path: '/practice/daily', element: <DailyChallenge /> },
       { path: '/progress', element: <Progress /> },
       { path: '/achievements', element: <Achievements /> },
       { path: '/profile', element: <Profile /> },

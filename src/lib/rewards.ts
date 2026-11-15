@@ -45,7 +45,7 @@ export function recordActivity(input: StudentProgress, a: Activity, now: Date = 
     s = { ...s, counters: { ...s.counters, practiceSets: s.counters.practiceSets + 1 } };
     candidates.push(practiceSetAward(today));
   } else {
-    s = { ...s, counters: { ...s.counters, dailyChallenges: s.counters.dailyChallenges + 1 } };
+    s = { ...s, counters: { ...s.counters, dailyChallenges: s.counters.dailyChallenges + 1 }, lastDaily: { day: today, correct: a.correct, total: a.total } };
     candidates.push(dailyAward(today));
   }
 

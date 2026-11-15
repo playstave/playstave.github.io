@@ -14,3 +14,7 @@
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); margin: 0; }
 .notice { margin-top: var(--space-8); }
 @media (min-width: 900px) { .grid { grid-template-columns: 1fr 1fr; } }
+.history { list-style: none; display: grid; }
+.history li { display: grid; grid-template-columns: 1fr auto; gap: 2px var(--space-3); padding: var(--space-2) 0; border-bottom: 1px solid var(--rule); font-size: var(--text-sm); }
+.history a { font-weight: 500; }
+.hStars { grid-column: 1 / -1; display: flex; align-items: center; gap: var(--space-2); color: var(--ink-3); }

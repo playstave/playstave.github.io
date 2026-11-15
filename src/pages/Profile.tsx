@@ -1,5 +1,7 @@
 import { useState, type FormEvent } from 'react';
-import { Button, EmptyState, Notice, PageHeader, Panel, SectionTitle, Stat } from '../components/ui';
+import { Link } from 'react-router-dom';
+import { Button, EmptyState, Notice, PageHeader, Panel, SectionTitle, Stars, Stat } from '../components/ui';
+import { getLesson } from '../lessons';
 import { useAppState } from '../state/AppState';
 import styles from './Profile.module.css';
 
@@ -74,7 +76,17 @@ export function Profile() {
 
         <Panel aria-labelledby="history-h">
           <SectionTitle id="history-h">Learning history</SectionTitle>
-          <EmptyState title="No lessons yet">Each level you complete will appear here with its date, score and stars.</EmptyState>
+          {progress.history.length ? (
+            <ul className={styles.history}>
+              {progress.history.slice(0, 12).map((h, i) => (
+                <li key={`${h.at}-${i}`}>
+                  <Link to={`/level/${h.level}`}>Level {h.level}{getLesson(h.level) ? `: ${getLesson(h.level)!.title}` : ''}</Link>
+                  <span className="muted">{new Date(h.at).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}{h.replay ? ' · replay' : ''}</span>
+                  <span className={styles.hStars}><Stars earned={h.stars} size={13} /> {h.score}%</span>
+                </li>
+              ))}
+            </ul>
+          ) : <EmptyState title="No lessons yet">Each level you complete will appear here with its date, score and stars.</EmptyState>}
         </Panel>
       </div>
 
