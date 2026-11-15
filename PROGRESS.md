@@ -143,7 +143,7 @@ Decisions: Supabase cloud project (user creates it); username + password sign-up
 - [x] Verified with curl using the anon key: reading `progress` / `profiles` → 401 permission denied; `delete_own_account` → 401 permission denied; `username_available` → works
 - [x] App on :5180 uses the real backend (called `username_available` on the project)
 - Bug found by rls_check on real Supabase and fixed: students could change their own username. Supabase grants table-wide UPDATE to `authenticated` by default, so the column-level revoke did nothing → now `revoke update` on the table, `grant update (display_name)` only. Also Supabase grants EXECUTE on new functions to `anon` → revoked on `delete_own_account`.
-- [ ] Auth → "Confirm email" is still ON (Supabase default) — must be turned OFF, with the user's OK, before sign-up works
+- [x] Auth → "Confirm email" turned OFF (user approved, 2026-11-15; verified after reload)
 - [ ] Real sign-up / sign-in / cross-device sync test — done by the user (Claude does not create accounts on external services)
 
 User setup steps (to finish Stage 6):
