@@ -1,0 +1,17 @@
+.art { width: 100%; max-width: 200px; height: auto; display: block; }
+.body { fill: var(--ink); opacity: 0.9; }
+.screen { fill: var(--paper-raised); }
+.bar { fill: var(--paper-sunk); stroke: var(--rule-strong); stroke-width: 1; }
+.muted { fill: var(--rule-strong); opacity: 0.7; }
+.sheet { fill: var(--paper); stroke: var(--rule-strong); stroke-width: 1; }
+.row { fill: var(--paper-sunk); }
+.rowHi { fill: color-mix(in srgb, var(--accent) 16%, var(--paper)); stroke: var(--accent); stroke-width: 2; }
+.ring { fill: none; stroke: var(--accent); stroke-width: 3; }
+.ringRect { fill: none; stroke: var(--accent); stroke-width: 3; }
+.icon { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.fill { fill: var(--ink); }
+.tiny { font-family: var(--font-body); font-size: 8px; fill: var(--ink-2); }
+.small { font-family: var(--font-body); font-size: 9px; fill: var(--ink-2); }
+.smallStrong { font-family: var(--font-body); font-size: 10px; font-weight: 700; fill: var(--ink); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .body { fill: #4a463d; } }
+:root[data-theme='dark'] .body { fill: #4a463d; }

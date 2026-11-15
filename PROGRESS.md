@@ -188,6 +188,15 @@ Build order (revised): R1 listening + tuner → R2 play-along assessment engine 
 - [x] Browser-tested on a clean origin (production preview :4173): redirect with return path, step validation, plan per experience, saved answers, other-instrument notice, Play-along/Tuner/Home/Profile personalised, switching to double bass in Settings updates everything, phone 375 layout (fixed the double-bass drawing overflowing its card)
 - Note: the existing reading lessons (Levels 1–10) are still treble-clef for everyone until R3 adds instrument-specific lessons
 
+### Install Stave on your Home Screen (PWA): COMPLETE (2026-11-15, owner request)
+- [x] `public/manifest.webmanifest` (name, short name, standalone, theme/background colours, start URL, icons incl. maskable); iOS tags (apple-touch-icon, apple-mobile-web-app-*) in `index.html`
+- [x] Branded PNG icons drawn from the logo by `scripts/make-icons.py` (no image libraries): 192, 512, maskable 512, apple-touch 180
+- [x] `public/sw.js`, production only: same-origin GETs only (Supabase sync never touched); pages network-first (new releases are used straight away; cached page only offline); hashed `/assets/*` cache-first with a size cap; old caches removed on update
+- [x] `/install` guide: detects iPhone / iPad (incl. iPads reporting as Mac) / Android / computer and the browser (Safari, Chrome, Edge, Firefox, Samsung Internet, in-app browsers); manual device switch + browser chips; 5 illustrated steps per guide (original schematic SVGs, tap point highlighted); browser-specific notes (iOS 16.4+ for non-Safari browsers, Edit Actions, macOS Add to Dock, Firefox desktop can't install); native "Install Stave" button when the browser offers a prompt; "installed" only shown on the browser's appinstalled event or when running standalone; "how to check it worked"; iPhone/iPad storage notice (Home Screen app has separate storage → sign in)
+- [x] Entry points: Settings → "Install Stave" (phone icon); quiet, dismissible tip at the bottom of Home (hidden when installed or dismissed); `/install` reachable before the welcome questions
+- [x] Tests: 13 user-agent cases for detection + 3 standalone cases (16 new); browser on the production preview: manifest served as application/manifest+json, all icons 200 at correct sizes, service worker activated, page + assets + notation chunk cached, page renders fully with the server stopped (offline), a rebuilt version is picked up on the first reload (updates not held back), simulated install prompt → accept → "installing" message, appinstalled → "Stave was installed"; no service worker in development; layouts phone 375 (Android UA detected), tablet dark, desktop; Settings entry; Home tip dismiss persists
+- [ ] Not verifiable here: real installs on an iPhone/iPad, Android phone and desktop Chrome/Edge (the built-in browser can't install apps or show the native prompt) — owner to try on real devices once Stave is on an https address
+
 ## Next: R3 — instruments, fingering, tutorial → play-test lesson flow (not started)
 
 ## Later: Stage 7 — Advertising integration (not started)

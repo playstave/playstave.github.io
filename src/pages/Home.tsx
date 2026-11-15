@@ -13,6 +13,7 @@ import type { Difficulty } from '../music/score';
 import { greeting } from '../lib/dates';
 import { STARS_PER_LEVEL, TOTAL_LEVELS, unitForLevel, worldForLevel } from '../data/curriculum';
 import { EXPERIENCE_OPTIONS, instrumentInfo, startPlan } from '../data/students';
+import { InstallHint } from '../components/install/InstallHint';
 import styles from './Home.module.css';
 
 /** The five line notes of the student's own clef. */
@@ -171,6 +172,8 @@ export function Home() {
           {recommended.map((sc) => <ScoreCard key={sc.id} score={sc} />)}
         </div>
       </section>
+
+      <InstallHint />
     </div>
   );
 }

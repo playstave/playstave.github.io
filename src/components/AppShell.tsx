@@ -72,7 +72,7 @@ function MoreSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
 }
 
 /** Pages a student can reach before answering the welcome questions (to sign in, or change settings). */
-const OPEN_BEFORE_WELCOME = ['/profile', '/settings'];
+const OPEN_BEFORE_WELCOME = ['/profile', '/settings', '/install'];
 
 export function AppShell() {
   const { pathname, hash, search } = useLocation();

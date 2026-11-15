@@ -6,7 +6,7 @@
 export type IconName =
   | 'home' | 'learn' | 'roadmap' | 'library' | 'practice' | 'progress'
   | 'achievements' | 'profile' | 'settings' | 'more' | 'close' | 'arrow-right'
-  | 'lock' | 'check' | 'star' | 'flame' | 'search' | 'chevron-left' | 'info' | 'expand' | 'heart' | 'folder' | 'clock' | 'tuner' | 'mic' | 'speaker';
+  | 'lock' | 'check' | 'star' | 'flame' | 'search' | 'chevron-left' | 'info' | 'expand' | 'heart' | 'folder' | 'clock' | 'tuner' | 'mic' | 'speaker' | 'phone';
 
 const paths: Record<IconName, JSX.Element> = {
   home: <><path d="M4 10.5 12 4l8 6.5" /><path d="M6 9v10h12V9" /><path d="M10 19v-5h4v5" /></>,
@@ -30,6 +30,7 @@ const paths: Record<IconName, JSX.Element> = {
   expand: <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />,
   tuner: <><path d="M9 3v7a3 3 0 0 0 6 0V3" /><path d="M12 13v8" /><path d="M9.5 21h5" /></>,
   mic: <><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" /></>,
+  phone: <><rect x="7" y="3" width="10" height="18" rx="2.5" /><path d="M11 18h2" /><path d="M10 8.5h4M12 6.5v4" /></>,
   speaker: <><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" /></>,
   heart: <path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" />,
   folder: <path d="M3.5 6.5h6l2 2h9v10h-17z" />,

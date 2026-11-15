@@ -1,0 +1,5 @@
+.hint { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-2) var(--space-2) var(--space-3); border: 1px dashed var(--rule-strong); border-radius: var(--radius-md); color: var(--ink-2); font-size: var(--text-sm); }
+.hint p { flex: 1; }
+.icon { display: grid; place-items: center; color: var(--accent); }
+.close { display: grid; place-items: center; width: 36px; height: 36px; border: 0; border-radius: var(--radius-md); background: none; color: var(--ink-3); }
+.close:hover { background: var(--paper-sunk); color: var(--ink); }

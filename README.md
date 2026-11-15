@@ -90,6 +90,7 @@ src/
 | 6 | Accounts & persistent progress | **Complete** — tested on a real Supabase project (setup steps in PROGRESS.md) |
 | R1 | **Remodel step 1:** listening engine + tuner | **Complete** (tested with synthetic sound; real-instrument check by the owner) |
 | — | Welcome questions (instrument, experience) + personalised app: only the chosen instrument's pieces, tuner and (soon) lessons | **Complete** |
+| — | Install on Home Screen (PWA): manifest, branded icons, safe service worker, device-aware illustrated guide at /install | **Complete** (real-device installs to be checked by the owner) |
 | R2 | Remodel: play-along assessment — score marks notes green/red as you play; count-in, metronome, backing tracks | **Complete** (tested with synthetic playing; real-instrument check by the owner) |
 | R3 | Remodel: instruments (violin, viola, cello, bass), fingering, tutorial → play test lesson flow | Not started |
 | R4 | Remodel: 500-level map (30–40 theory levels at random positions; the rest play-along) + first levels per instrument | Not started |
@@ -120,6 +121,8 @@ src/
 - Profile: validated nickname, saved on the device. Settings: theme (system/light/dark), notation size, motion (system/reduce/full), and a confirmed device reset.
 
 ## Known limitations
+
+- **Installing (PWA)** needs Stave to be served over https (localhost works for development). On iPhone/iPad the Home Screen app has its own storage — students should sign in to keep progress. The service worker only runs in production builds; to regenerate icons run `python3 scripts/make-icons.py`.
 
 - **Play-along** needs headphones for the cleanest results when a backing track is on (the app also keeps the backing from doubling the student's note). Device audio latency varies; timing is judged generously and a calibration step may be added.
 - **Listening** judges one note at a time (pitch and, later, timing). It cannot judge bowing, posture, tone quality, or two notes at once (double stops/chords). It needs a microphone, a secure (https or localhost) page and a fairly quiet room. Accuracy was measured on synthetic bowed-string/voice sounds (worst error: violin 0.4, viola 0.2, cello 0.4, double bass 1.1 cents); it has not yet been checked by us with a real instrument.

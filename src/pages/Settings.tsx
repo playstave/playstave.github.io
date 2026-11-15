@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Button, PageHeader, Segmented } from '../components/ui';
+import { Button, ButtonLink, PageHeader, Segmented } from '../components/ui';
+import { Icon } from '../components/Icon';
+import { isStandalone } from '../lib/install';
 import { Notation } from '../components/Notation';
 import { useAppState, type MotionPref, type NotationScale, type ThemePref } from '../state/AppState';
 import { useAccount } from '../state/AccountState';
@@ -13,6 +15,7 @@ const PREVIEW = [{ key: 'c/4', duration: 'q' }, { key: 'e/4', duration: 'q' }, {
 export function Settings() {
   const { prefs, setPrefs, resetDevice, progress, setStudent } = useAppState();
   const student = progress.student;
+  const standalone = isStandalone();
   const account = useAccount();
   const [confirming, setConfirming] = useState(false);
   const [resetDone, setResetDone] = useState(false);
@@ -52,6 +55,18 @@ export function Settings() {
         ) : (
           <p className={styles.rowHelp}>You haven’t chosen an instrument yet. <Link to="/welcome">Answer the welcome questions</Link>.</p>
         )}
+      </section>
+
+      <section className={styles.group} aria-labelledby="install-title" id="install-h">
+        <h2 id="install-title" className={styles.groupTitle} tabIndex={-1}>Install Stave</h2>
+        <div className={styles.row}>
+          <div className={styles.installRow}>
+            <span className={styles.installIcon} aria-hidden="true"><Icon name="phone" size={22} /></span>
+            <div><p className={styles.rowTitle}>{standalone ? 'Stave is installed on this device' : 'Add Stave to your Home Screen'}</p>
+              <p className={styles.rowHelp}>{standalone ? 'You’re using Stave from its app icon.' : 'Open Stave like a regular app on iPhone, iPad, Android or your computer. Free, no app store.'}</p></div>
+          </div>
+          <ButtonLink to="/install" variant="secondary" icon="phone">{standalone ? 'Installation help' : 'How to install'}</ButtonLink>
+        </div>
       </section>
 
       <section className={styles.group} aria-labelledby="appearance">

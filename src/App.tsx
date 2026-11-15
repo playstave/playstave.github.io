@@ -20,6 +20,7 @@ import { NotFound } from './pages/NotFound';
 import { Tuner } from './pages/Tuner';
 import { PlayAlong, PlayAlongExercise } from './pages/PlayAlong';
 import { Welcome } from './pages/Welcome';
+import { Install } from './pages/Install';
 
 const router = createBrowserRouter([
   { path: '/welcome', element: <Welcome />, errorElement: <RouteError /> },
@@ -43,6 +44,7 @@ const router = createBrowserRouter([
       { path: '/achievements', element: <Achievements /> },
       { path: '/profile', element: <Profile /> },
       { path: '/settings', element: <Settings /> },
+      { path: '/install', element: <Install /> },
       { path: '*', element: <NotFound /> },
     ],
   },
