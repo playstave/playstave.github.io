@@ -9,6 +9,7 @@ export const NAV: NavItem[] = [
   { to: '/roadmap', label: 'Roadmap', icon: 'roadmap', group: 'learn' },
   { to: '/library', label: 'Library', icon: 'library', group: 'learn' },
   { to: '/practice', label: 'Practice', icon: 'practice', group: 'learn' },
+  { to: '/tuner', label: 'Tuner', icon: 'tuner', group: 'learn' },
   { to: '/progress', label: 'Progress', icon: 'progress', group: 'you' },
   { to: '/achievements', label: 'Achievements', icon: 'achievements', group: 'you' },
   { to: '/profile', label: 'Profile', icon: 'profile', group: 'you' },

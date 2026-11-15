@@ -17,6 +17,7 @@ import { Achievements } from './pages/Achievements';
 import { Profile } from './pages/Profile';
 import { Settings } from './pages/Settings';
 import { NotFound } from './pages/NotFound';
+import { Tuner } from './pages/Tuner';
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,7 @@ const router = createBrowserRouter([
       { path: '/library/:scoreId', element: <ScorePage /> },
       { path: '/practice', element: <Practice /> },
       { path: '/practice/daily', element: <DailyChallenge /> },
+      { path: '/tuner', element: <Tuner /> },
       { path: '/progress', element: <Progress /> },
       { path: '/achievements', element: <Achievements /> },
       { path: '/profile', element: <Profile /> },

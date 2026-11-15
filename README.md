@@ -88,8 +88,15 @@ src/
 | 4 | Gamification (XP, stars, achievements, streaks, daily challenges) | **Complete** |
 | 5 | Sheet music library + viewer | **Complete** |
 | 6 | Accounts & persistent progress | **Complete** — tested on a real Supabase project (setup steps in PROGRESS.md) |
-| 7 | Advertising integration | Not started |
+| R1 | **Remodel step 1:** listening engine + tuner | **Complete** (tested with synthetic sound; real-instrument check by the owner) |
+| R2 | Remodel: instruments (violin, viola, cello, bass) + fingering diagrams | Not started |
+| R3 | Remodel: Learn → Play test → score lesson flow | Not started |
+| R4 | Remodel: 500-level map (~30 theory levels) + first levels per instrument | Not started |
+| R5 | Remodel: remaining levels, in batches | Not started |
+| 7 | Advertising integration | Not started (after the remodel) |
 | 8 | Full application testing | Not started |
+
+**Direction (2026-11-15):** Stave is being remodelled into a string-orchestra tutor. Each playing level teaches something new, then listens to the student play and scores pitch and rhythm. A note within **±20 cents** counts as in tune by default (`src/audio/tolerance.ts`).
 
 ## What works today
 
@@ -113,6 +120,8 @@ src/
 
 ## Known limitations
 
+- **Listening** judges one note at a time (pitch and, later, timing). It cannot judge bowing, posture, tone quality, or two notes at once (double stops/chords). It needs a microphone, a secure (https or localhost) page and a fairly quiet room. Accuracy was measured on synthetic bowed-string/voice sounds (worst error: violin 0.4, viola 0.2, cello 0.4, double bass 1.1 cents); it has not yet been checked by us with a real instrument.
+
 - **Library size:** 27 scores (no Religious or Jazz pieces yet — those filters show 0). Melodies only (single staff); no piano grand-staff or ensemble scores yet. No PDF file download — use Print → Save as PDF; SVG download is available.
 - **Not testable here:** the browser print dialog itself (print content is verified), and full screen inside the in-app test browser (the host refuses the permission; the viewer now explains this). Both use standard browser APIs.
 
@@ -128,6 +137,8 @@ src/
 - VexFlow adds a ~314 kB (gzipped) chunk, loaded only on pages that show notation.
 
 ## Testing
+
+Listening (`src/audio/`): 36 unit tests with synthesised bowed-string, weak-fundamental and voice-like sounds — every open string of all four instruments, every chromatic note across the violin and double-bass ranges, sharp/flat offsets, vibrato, noise, silence and pure noise (no false notes), speed (bass window well under 8 ms per analysis). In the browser, a DEV-only synthetic source (`localStorage.setItem('stave:dev-test-tone','1')`, never in production builds) drives the real tuner UI.
 
 `npm test` runs 112 unit tests:
 - **progression** (7): no skipping, invalid input, replay keeps best, all 500 in order.
