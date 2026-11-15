@@ -33,6 +33,7 @@ export async function walk(n, plan) {
     return pos;
   };
 
+  if (location.pathname === `/level/${n}`) await go('/roadmap'); // force a fresh lesson
   await go(`/level/${n}`);
   if (!document.querySelector('h1')?.textContent.includes(L.title)) throw new Error(`L${n}: wrong page "${document.querySelector('h1')?.textContent}"`);
   await click(btn('Begin lesson') ? 'Begin lesson' : 'Practice again');

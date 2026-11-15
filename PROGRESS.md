@@ -71,10 +71,27 @@ Bugs found and fixed during Stage 3 testing:
 - Keyboard handlers assumed an element target → guarded (also in the note drill)
 - Inline focus refs would re-focus headings on every re-render → single focus effect per screen
 
-## Next: Stage 4 — Gamification (NOT STARTED, awaiting user go-ahead)
+## Stage 4 — Gamification: COMPLETE (2026-11-14)
+- [x] `lib/xp.ts` XP rules with one-time award keys (no duplicate XP)
+- [x] `lib/streak.ts` encouraging streaks (one rest day allowed, best kept, today never counts against you)
+- [x] `lib/achievements.ts` 16 badges from real progress, with progress measures
+- [x] `lib/daily.ts` daily review challenge (deterministic per day, favours weak levels)
+- [x] `lib/rewards.ts` single entry point (lesson / practice set / daily) + v1→v2 migration
+- [x] AppState rewired; `state/progress.ts` model v2 (awarded keys, XP log, achievements, history, counters)
+- [x] CelebrationOverlay (stars, XP count-up, unlock, badges, milestone variant, confetti), Toasts, reduced-motion hook
+- [x] `/practice/daily` page; Home, Practice, Achievements, Progress, Profile show real XP/streak/badges/history
+- [x] 59/59 unit tests; browser tests of every rule, replay, streak scenario, milestone, reduced motion, reload, migration; Stage 1–3 regression
+
+Bugs found and fixed during Stage 4 testing:
+- XP count-up stayed at "+0" when the tab was in the background (rAF paused) → timer guarantees the final value
+- Walkthrough script couldn't restart a lesson already on screen → navigates away first (test tooling only)
+
+Observed, not reproduced: twice the celebration overlay was found closed after a screenshot of the hidden browser pane. With close/cancel/key/click logging attached it never recurred and nothing in the app called close(). Noted in case it shows up in real use.
+
+## Next: Stage 5 — Sheet music library (NOT STARTED, awaiting user go-ahead)
 Plan:
-- XP rules (lesson completion, stars, first-time vs replay, daily practice, milestones) as pure, tested functions; no duplicate awards on replay
-- Award XP on lesson pass and practice sets; show it on the result screen, Home, sidebar, Progress
-- Achievement unlock engine evaluated against progress (First Lesson, First Perfect Score, Ten Levels, Clef Expert…), saved with unlock dates, toast + Achievements page
-- Completion celebration: dimmed overlay, stars one by one, XP count-up, next-level unlock, subtle confetti/notation motif; honours reduced motion
-- Milestone celebrations every 50 levels; daily challenge rotation; streak rules (gentle — no harsh resets)
+- Score data model (title, composer, instrument, difficulty, genre, description, licence, source, files, page count) designed to scale
+- Seed catalogue with genuinely public-domain / openly licensed material only (likely Stave-original educational pieces rendered with VexFlow, plus a curated set of PD works with verified sources) — no claim of “thousands”
+- Search (title/composer) + filters (instrument, difficulty, genre), favourites, collections, recently opened
+- Viewer: zoom, page navigation, fullscreen, print/download only where licence permits
+- Wire `scoresOpened` counter → Sheet Music Explorer badge

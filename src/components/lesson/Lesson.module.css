@@ -84,3 +84,4 @@
 .leave { width: min(400px, 100%); padding: var(--space-5) var(--space-6); border-radius: var(--radius-lg); background: var(--paper-raised); box-shadow: var(--shadow-2); }
 .leaveTitle { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 600; margin-bottom: var(--space-2); }
 .leaveActions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-4); }
+.xpLine { font-weight: 600; color: var(--accent); }

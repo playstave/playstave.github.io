@@ -4,8 +4,8 @@ import type { Lesson } from '../../lessons/types';
 import type { Level } from '../../data/levels';
 import { TOTAL_LEVELS } from '../../data/curriculum';
 import { currentQuestion, initialState, reducer, score, thresholds, type Phase } from '../../lib/lessonEngine';
-import type { CompletionResult } from '../../lib/progression';
-import { useAppState, type StudentProgress } from '../../state/AppState';
+import type { Outcome } from '../../lib/rewards';
+import { useAppState } from '../../state/AppState';
 import { StaffDiagram } from '../StaffDiagram';
 import { QuestionView } from './QuestionView';
 import { Button, ButtonLink, Stars } from '../ui';
@@ -29,7 +29,8 @@ export function LessonPlayer({ lesson, level }: { lesson: Lesson; level: Level }
   const { progress, completeLevel } = useAppState();
   const navigate = useNavigate();
   const best = progress.completedLevels[level.n];
-  const [completion, setCompletion] = useState<CompletionResult<StudentProgress> | null>(null);
+  const [outcome, setOutcome] = useState<Outcome | null>(null);
+  const completion = outcome?.completion ?? null;
   const recorded = useRef(false);
   const topRef = useRef<HTMLDivElement>(null);
 
@@ -40,10 +41,10 @@ export function LessonPlayer({ lesson, level }: { lesson: Lesson; level: Level }
     if (s.phase !== 'result') { recorded.current = false; return; }
     if (!result?.passed || recorded.current) return;
     recorded.current = true;
-    try { setCompletion(completeLevel(level.n, result.stars, result.percent).completion ?? null); } catch (e) { console.error(e); }
+    try { setOutcome(completeLevel(level.n, result.stars, result.percent)); } catch (e) { console.error(e); }
   }, [s.phase, result, completeLevel, level.n]);
 
-  useEffect(() => { if (s.phase !== 'result') setCompletion(null); }, [s.phase]);
+  useEffect(() => { if (s.phase !== 'result') setOutcome(null); }, [s.phase]);
 
   // Keep the active content in view when moving between screens, and move focus
   // to the new screen's heading (question screens focus their own prompt).
@@ -161,6 +162,7 @@ export function LessonPlayer({ lesson, level }: { lesson: Lesson; level: Level }
           <>
             {completion?.unlockedNext && nextN <= TOTAL_LEVELS && <p className={styles.unlocked}><Icon name="check" size={16} /> Level {nextN} is now unlocked.</p>}
             {completion?.replay && <p className={styles.small}>{completion.improved ? 'New best result saved.' : `Your best (${best?.stars ?? result.stars}★, ${best?.bestScore ?? result.percent}%) is kept.`}</p>}
+            {outcome && <p className={styles.xpLine}>{outcome.xpGained > 0 ? `+${outcome.xpGained} XP` : 'No new XP — this result was already rewarded.'}</p>}
             {!completion && <p className={styles.small}>Saving…</p>}
             <div className={styles.resultActions}>
               {nextN <= TOTAL_LEVELS && <ButtonLink to={`/level/${nextN}`} size="lg" iconAfter="arrow-right">Continue to Level {nextN}</ButtonLink>}

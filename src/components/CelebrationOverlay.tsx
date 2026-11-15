@@ -23,7 +23,9 @@ function useCountUp(to: number, reduce: boolean) {
       if (k < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    // rAF pauses in background tabs; make sure the final number always lands.
+    const done = setTimeout(() => setV(to), 1800);
+    return () => { cancelAnimationFrame(raf); clearTimeout(done); };
   }, [to, reduce]);
   return v;
 }

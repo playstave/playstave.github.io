@@ -3,7 +3,7 @@
 A free music-reading education platform: a 500-level journey from the first staff line to
 master-level sight-reading, plus a legal sheet music library. Funded by advertising, free for students.
 
-> **Status:** Stages 1–3 of 8 complete (foundation; 500-level roadmap; lesson engine + Levels 1–10).
+> **Status:** Stages 1–4 of 8 complete (foundation; 500-level roadmap; lesson engine + Levels 1–10; gamification).
 > See [PROGRESS.md](PROGRESS.md) for the live checklist and resume notes.
 
 ## Technology stack
@@ -31,7 +31,7 @@ npm install
 npm run dev        # http://localhost:5180
 npm run build      # typecheck + production build to dist/
 npm run preview    # serve the production build
-npm test           # unit tests (progression, level model, lesson engine, lesson content)
+npm test           # unit tests (progression, levels, lesson engine, content, XP/streak/achievements/daily)
 ```
 
 ## Project structure
@@ -45,8 +45,11 @@ src/
     base.css            reset, focus styles, reduced-motion handling
   lessons/              lesson content: types.ts (schema), staff.ts (positions), helpers.ts (question builders),
                         level01–level10.ts, index.ts (registry), lessons.test.ts (content validation)
+  state/progress.ts     the stored progress model (version 2)
   state/AppState.tsx    preferences + device-local student progress (React context)
-  lib/                  storage, date/streak helpers, progression.ts (unlock rules), lessonEngine.ts (lesson state machine + scoring)
+  lib/                  progression.ts (unlocks), lessonEngine.ts (lesson flow + scoring), xp.ts (XP rules),
+                        streak.ts (streak rules), achievements.ts (badge conditions), daily.ts (daily challenge),
+                        rewards.ts (single entry point for activities + migration), storage, dates
   data/
     curriculum.ts       6 worlds × 50 units × 500 levels (structure, not lesson content)
     achievements.ts     badge definitions + criteria
@@ -59,6 +62,8 @@ src/
     LevelPath           one world's winding path of level nodes (SVG road + buttons)
     LevelDialog         level details; locked levels explain how to unlock, no start action
     StaffDiagram        precise SVG staff for Unit 1 (highlights, numbered notes, step/skip arcs, tap-to-locate)
+    CelebrationOverlay  lesson/milestone celebration (stars, XP count-up, unlock, badges, confetti)
+    Toasts              notifications for XP, streak bonuses and badges outside lessons
     lesson/             LessonPlayer (intro → lesson → practice → challenge → result) and QuestionView
     ui.tsx              Button, ButtonLink, PageHeader, Panel, Stat, ProgressBar, Stars, Notice, EmptyState, Segmented
     Badge, Icon, Logo, WeekStrip, MonthCalendar
@@ -77,7 +82,7 @@ document each variable here. Secrets will never be placed in frontend code.
 | 1 | Design system & application foundation | **Complete** |
 | 2 | 500-level roadmap | **Complete** |
 | 3 | Lesson engine + Levels 1–10 | **Complete** |
-| 4 | Gamification (XP, stars, achievements, streaks, daily challenges) | Not started (streak counting from the practice drill already works) |
+| 4 | Gamification (XP, stars, achievements, streaks, daily challenges) | **Complete** |
 | 5 | Sheet music library + viewer | Not started |
 | 6 | Accounts & persistent progress | Not started |
 | 7 | Advertising integration | Not started |
@@ -89,6 +94,11 @@ document each variable here. Secrets will never be placed in frontend code.
 - Roadmap: all 500 levels on a winding path across six worlds. Each node shows number, status (current / completed / locked), stars earned and a 6-step difficulty indicator. Checkpoints every 10 (square nodes), milestones every 50 (ringed), major milestones at 100–500 (double ring), unit labels. Opens scrolled to the current level; "Jump to Level N" and world shortcuts; `#level-N` deep links.
 - **Lessons for Levels 1–10** (Unit 1, The Staff): Meet the Staff · Counting the Lines · Counting the Spaces · Line Notes and Space Notes · Naming a Note’s Position · Higher and Lower · Steps · Skips · Reading Melodic Shape · Checkpoint. Each has an objective, an introduction, 2–3 illustrated lesson pages, 3–4 guided practice questions and a 5–8 question challenge.
 - **Lesson engine:** guided practice gives unlimited tries; every wrong answer gets feedback specific to the mistake, and you can't continue until you answer correctly. The challenge allows one try per question, explaining each answer. Star rules are shown before the challenge: pass (60%, or 70% for checkpoints) = ★, 80% = ★★, 100% = ★★★. Passing saves the result, unlocks the next level and offers Continue / Back to roadmap / Practice again. Failing lists the missed questions with explanations and lets you retry immediately. Replays keep the best result. Leaving mid-lesson asks for confirmation. Two question types: multiple choice (number keys 1–9 + Enter) and tap-a-line-or-space on the staff (arrow keys + Enter).
+- **XP** (each reward is paid once, enforced by a unique key per award): level +20 (checkpoint +40); +5 per star you earn; Level 50s +50 and World completions +100; daily challenge +15 once a day; first practice set each day +5; streaks of 3/7/14/30 days +10/+25/+50/+100. Replays only earn XP for stars you didn't have before. Failed attempts earn nothing. Progress saved before XP existed is credited retroactively, once.
+- **Achievements:** 16 badges evaluated against real progress after every activity (First Lesson, Ten Levels, First Perfect Score, Staff Star, Daily Start, Seven-Day Rhythm, Steady Reader, …), saved with the date earned. The Achievements page shows earned dates and "7 of 10"-style progress for the rest.
+- **Streaks:** any finished lesson, daily challenge or practice set counts. One rest day between practice days never breaks a streak; today never counts against you; your best streak is kept forever. Messages are encouraging ("Start a new streak today — your best is 12 days").
+- **Daily challenge** (`/practice/daily`): 5 review questions from levels you've completed, favouring the ones with fewer stars, fixed for the day. Any finish counts; missed questions link back to their lessons.
+- **Celebrations:** passing a level opens an overlay over a dimmed page: stars appear one by one, XP counts up with a breakdown, the next level unlocks, badges and streak changes are announced, with subtle notation-shaped confetti. Every 50th level gets a gold milestone variant. With reduced motion (OS setting or Settings → Motion → Reduce) there is no confetti and no animation, and numbers appear immediately.
 - Sequential unlocking: only the current level and completed levels can be opened, from the roadmap or by URL (`/level/N` for a locked level explains why it is locked). Replays keep the best stars and score and never unlock anything.
 - Home: greeting, current level/unit, Continue/Start learning (opens the current level's lesson), journey stats, today's practice with a 7-day strip, honest empty states for badges and the library.
 - Learn: six worlds with level ranges and progress; each world page lists its 10 (or 5) units with outcomes and topics.
@@ -98,7 +108,8 @@ document each variable here. Secrets will never be placed in frontend code.
 ## Known limitations
 
 - **Only Levels 1–10 have lessons.** Level 11 onward opens a page saying its lesson isn't available yet; the remaining 490 are planned in batches after Stage 8. Levels beyond 10 can only be completed with the dev-build tools on the Roadmap.
-- **XP is not awarded yet** (always 0). Stars are earned and saved; XP, achievement unlocks and the fuller completion celebration come in Stage 4.
+- The Sheet Music Explorer badge can't be earned until the library opens (Stage 5); its counter is already in the progress model.
+- The XP history keeps the latest 100 events and learning history the latest 200 attempts (XP totals and badges are unaffected).
 - Unit 1 draws its own staff (no clef yet, by design — clefs are taught in Unit 3). VexFlow is used for clef-based notation elsewhere.
 - **Milestone celebrations** are marked on the roadmap; the celebration animations and major achievement awards come with gamification (Stage 4).
 - **Library is empty (0 scores)** by design until Stage 5 adds licence-checked scores.
@@ -109,10 +120,13 @@ document each variable here. Secrets will never be placed in frontend code.
 
 ## Testing
 
-`npm test` runs 30 unit tests:
+`npm test` runs 59 unit tests:
 - **progression** (7): no skipping, invalid input, replay keeps best, all 500 in order.
 - **level model** (6): 500 levels, world boundaries, checkpoint/milestone placement, difficulty never decreases.
 - **lesson engine** (6): phase flow, practice retry rules, challenge one-try rule, star scoring, and that the thresholds shown to students agree with the scoring for every challenge length and pass mark.
+- **XP and rewards** (15): first pass, checkpoint, replay with same/fewer/more stars, history, locked levels, milestones once, practice/daily once per day, streak bonuses once (including across a rest day), broken streaks never remove XP, badges unlock once from real progress, migration credits old progress exactly once.
+- **streaks** (9): today never breaks a streak, one rest day forgiven, two missed days end the run, best kept, month boundaries, future dates ignored.
+- **daily challenge** (5): empty before Level 1, 5 distinct questions only from completed levels, stable for the day, changes daily, favours weaker levels.
 - **lesson content** (11): Levels 1–10 present and in Unit 1; unique titles, objectives and question ids; all four parts in every lesson; every answer key valid; every wrong option has specific feedback; every step/skip arc label matches the drawn notes; question builders produce correct answers.
 
 **Lesson walkthrough (browser, dev only):** with `npm run dev` open, run this in the browser console:
@@ -125,6 +139,8 @@ await walk(1, [[false,false,false,false,false], [true,true,true,true,true]]);
 It opens the level, pages through the lesson, answers every practice question wrong first (checking the mistake-specific feedback and that you can't continue), then right (checking the explanation), then runs each challenge attempt in the plan and reports the result, stars, unlock and saved record. It reads answers from the lesson files and drives the real UI. `scripts/` is not part of the production bundle.
 
 **Developer tools (dev builds only):** at the bottom of the Roadmap in `npm run dev` there are buttons to complete the current level with 1–3 stars, complete the next 10, attempt a skip (it must be refused), and reset the journey. They are excluded from production builds (verified: not present in `dist/`).
+
+Stage 4 checks (browser): fresh Level 1 pass at 2★ → +30 XP, Level 2 unlocked, First Lesson, 1-day streak, all shown in the overlay; replay at 2★ and 1★ → "No new XP"; replay at 3★ → +5 and First Perfect Score; again → nothing; daily challenge +15 and Daily Start, second run that day no XP; practice set +5, second set no XP; injected histories for streak continuing (+10 at 3 days), rest day, broken (best kept) and 7 days across a rest day (+10 and +25 once); Level 50 milestone overlay (+105 XP, Fifty Levels, gold variant); reduced vs full motion (no confetti and ~0 s animations vs confetti and 0.36–0.52 s); reload keeps XP, level, badges and streak identical; old-format progress upgraded once (+90 XP for 3 levels, stable on a second reload); all ten lessons walked again with total XP equal to the computed value (345); overlay fits at 375 px.
 
 Stage 3 checks: all ten lessons walked in order twice from a fresh start (every practice question wrong then right; challenge outcomes covering fail, ★, ★★, ★★★ and the checkpoint's 70% pass mark); replay improving (★ → ★★★, "New best result saved") and replay worse (best kept); leaving mid-lesson via the sidebar or the ✕ button asks first, "Keep going" stays, "Leave" saves nothing; keyboard answering; tap rows ≥ 27 px at 375 px; progress survives reload; Home, roadmap and Progress show the saved stars (23 = sum of results).
 
