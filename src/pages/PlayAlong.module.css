@@ -1,4 +1,4 @@
-.tabs { margin-bottom: var(--space-4); overflow-x: auto; }
+.instrumentLine { margin-bottom: var(--space-4); color: var(--ink-2); font-size: var(--text-sm); }
 .list { list-style: none; display: grid; gap: var(--space-2); margin-bottom: var(--space-8); }
 .card { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px var(--space-3); padding: var(--space-4); border: 1px solid var(--rule); border-radius: var(--radius-md); background: var(--paper-raised); color: var(--ink); text-decoration: none; }
 .card:hover { background: var(--paper-sunk); }

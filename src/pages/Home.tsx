@@ -12,15 +12,24 @@ import { SCORES } from '../data/scores';
 import type { Difficulty } from '../music/score';
 import { greeting } from '../lib/dates';
 import { STARS_PER_LEVEL, TOTAL_LEVELS, unitForLevel, worldForLevel } from '../data/curriculum';
+import { EXPERIENCE_OPTIONS, instrumentInfo, startPlan } from '../data/students';
 import styles from './Home.module.css';
 
-const STAFF_DEMO = [
-  { key: 'e/4', duration: 'w' }, { key: 'g/4', duration: 'w' }, { key: 'b/4', duration: 'w' },
-  { key: 'd/5', duration: 'w' }, { key: 'f/5', duration: 'w' },
-];
+/** The five line notes of the student's own clef. */
+const STAFF_DEMO = {
+  treble: { notes: ['e/4', 'g/4', 'b/4', 'd/5', 'f/5'], names: 'E G B D F', label: 'treble' },
+  alto: { notes: ['f/3', 'a/3', 'c/4', 'e/4', 'g/4'], names: 'F A C E G', label: 'alto' },
+  bass: { notes: ['g/2', 'b/2', 'd/3', 'f/3', 'a/3'], names: 'G B D F A', label: 'bass' },
+} as const;
 
 export function Home() {
   const { progress, derived } = useAppState();
+  const student = progress.student!; // the shell only shows Home after the welcome questions
+  const inst = instrumentInfo(student.instrument);
+  const clef = student.instrument === 'violin' ? 'treble' : student.instrument === 'viola' ? 'alto' : 'bass';
+  const demo = STAFF_DEMO[clef];
+  const plan = startPlan(student.instrument, student.experience);
+  const expLabel = EXPERIENCE_OPTIONS.find((o) => o.id === student.experience)?.label;
   const level = Math.min(progress.currentLevel, TOTAL_LEVELS);
   const world = worldForLevel(level);
   const unit = unitForLevel(level);
@@ -44,7 +53,26 @@ export function Home() {
       <header className={styles.greeting}>
         <p className="eyebrow">{today}</p>
         <h1 tabIndex={-1} data-page-title>{greeting()}, {name}.</h1>
+        <p className={styles.instrumentLine} data-home-instrument={student.instrument}>
+          Learning the <strong>{inst.noun}</strong> · {expLabel} · <Link to="/settings#instrument-h">Change</Link>
+        </p>
       </header>
+
+      {/* Personal first steps, until the first few levels are done */}
+      {derived.levelsCompleted < 3 && (
+        <section aria-labelledby="first-steps" className={styles.plan}>
+          <SectionTitle id="first-steps">Your first steps on the {inst.noun}</SectionTitle>
+          <ol className={styles.planList}>
+            {plan.map((p, i) => (
+              <li key={p.title} className={styles.planItem}>
+                <span className={styles.planNo}>{i + 1}</span>
+                <div className={styles.planText}><p className={styles.planTitle}>{p.title}</p><p className="muted">{p.desc}</p></div>
+                <ButtonLink to={p.to} variant={i === 0 ? 'primary' : 'secondary'} size="sm">{p.cta}</ButtonLink>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
 
       {/* Up next */}
       <section className={styles.hero} aria-labelledby="up-next">
@@ -67,13 +95,13 @@ export function Home() {
         </div>
         <div className={styles.heroArt}>
           <Notation
-            clef="treble"
-            notes={STAFF_DEMO}
+            clef={clef}
+            notes={demo.notes.map((key) => ({ key, duration: 'w' }))}
             width={340}
             height={120}
-            label="A treble staff with whole notes on each of the five lines: E, G, B, D, F."
+            label={`A ${demo.label} staff with whole notes on each of the five lines: ${demo.names.split(' ').join(', ')}.`}
           />
-          <p className={styles.heroCaption}>The five lines of the treble staff, bottom to top: <span className={styles.nowrap}>E G B D F</span>.</p>
+          <p className={styles.heroCaption}>The {inst.noun} reads {demo.label} clef. Its five lines, bottom to top: <span className={styles.nowrap}>{demo.names}</span>.</p>
         </div>
       </section>
 

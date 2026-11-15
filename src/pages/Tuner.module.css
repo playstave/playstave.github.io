@@ -1,4 +1,4 @@
-.instruments { margin-bottom: var(--space-4); overflow-x: auto; }
+.instrumentLine { margin-bottom: var(--space-4); color: var(--ink-2); font-size: var(--text-sm); }
 
 .meterPanel { padding: var(--space-6) var(--space-4); margin-bottom: var(--space-8); min-height: 320px; display: grid; }
 @media (min-width: 768px) { .meterPanel { padding: var(--space-8); } }

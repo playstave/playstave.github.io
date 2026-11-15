@@ -7,6 +7,7 @@ import { explain, type NoteResult, type Summary } from '../../play/assess';
 import type { ListenState } from '../../audio/input';
 import { getInstrument } from '../../audio/notes';
 import { readJSON, writeJSON } from '../../lib/storage';
+import { useAppState } from '../../state/AppState';
 import { createDevPerformer, devPerformerSettings, devToneEnabled, type DevPerformance } from '../../audio/devTone';
 import { PlayScore } from './PlayScore';
 import styles from './PlayAlongPlayer.module.css';
@@ -25,7 +26,11 @@ interface Props {
 }
 
 export function PlayAlongPlayer({ exercise, onFinish }: Props) {
-  const [prefs, setPrefs] = useState<PlayPrefs>(() => ({ ...DEFAULTS, ...readJSON<Partial<PlayPrefs>>('playalong', {}) }));
+  const { progress } = useAppState();
+  // Brand-new students start at the slower speed until they choose otherwise.
+  const [prefs, setPrefs] = useState<PlayPrefs>(() => ({
+    ...DEFAULTS, speed: progress.student?.experience === 'new' ? 'slow' : 'full', ...readJSON<Partial<PlayPrefs>>('playalong', {}),
+  }));
   useEffect(() => { writeJSON('playalong', prefs); }, [prefs]);
 
   // Practising slower is allowed: the whole take (and its timing) slows down.

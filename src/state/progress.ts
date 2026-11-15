@@ -5,6 +5,12 @@
 export interface XpEvent { key: string; amount: number; reason: string; at: string }
 export interface HistoryEntry { level: number; at: string; stars: number; score: number; replay: boolean }
 
+/** How much the student has played before (asked once, changeable in Settings). */
+export type Experience = 'new' | 'some' | 'experienced';
+export type StudentInstrument = 'violin' | 'viola' | 'cello' | 'bass';
+/** Answers from the welcome questions; drive the personalised experience. */
+export interface StudentSetup { instrument: StudentInstrument; experience: Experience; setAt: string }
+
 export interface Collection { id: string; name: string; scoreIds: string[]; createdAt: string }
 
 export interface StudentProgress {
@@ -31,6 +37,8 @@ export interface StudentProgress {
   collections: Collection[];
   recentScores: string[];
   openedScores: string[];
+  /** Instrument and experience from the welcome questions (null until answered). */
+  student: StudentSetup | null;
 }
 
 export const DEFAULT_PROGRESS: StudentProgress = {
@@ -51,6 +59,7 @@ export const DEFAULT_PROGRESS: StudentProgress = {
   collections: [],
   recentScores: [],
   openedScores: [],
+  student: null,
 };
 
 export const RECENT_LIMIT = 8;

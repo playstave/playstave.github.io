@@ -19,8 +19,10 @@ import { Settings } from './pages/Settings';
 import { NotFound } from './pages/NotFound';
 import { Tuner } from './pages/Tuner';
 import { PlayAlong, PlayAlongExercise } from './pages/PlayAlong';
+import { Welcome } from './pages/Welcome';
 
 const router = createBrowserRouter([
+  { path: '/welcome', element: <Welcome />, errorElement: <RouteError /> },
   {
     element: <AppShell />,
     errorElement: <RouteError />,

@@ -1,15 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Button, PageHeader, Segmented } from '../components/ui';
 import { Notation } from '../components/Notation';
 import { useAppState, type MotionPref, type NotationScale, type ThemePref } from '../state/AppState';
 import { useAccount } from '../state/AccountState';
+import { EXPERIENCE_OPTIONS, INSTRUMENT_INFO } from '../data/students';
+import type { Experience, StudentInstrument } from '../state/progress';
 import styles from './Settings.module.css';
 
 const PREVIEW = [{ key: 'c/4', duration: 'q' }, { key: 'e/4', duration: 'q' }, { key: 'g/4', duration: 'q' }, { key: 'c/5', duration: 'q' }];
 
 export function Settings() {
-  const { prefs, setPrefs, resetDevice } = useAppState();
+  const { prefs, setPrefs, resetDevice, progress, setStudent } = useAppState();
+  const student = progress.student;
   const account = useAccount();
   const [confirming, setConfirming] = useState(false);
   const [resetDone, setResetDone] = useState(false);
@@ -28,6 +31,28 @@ export function Settings() {
   return (
     <>
       <PageHeader eyebrow="Preferences" title="Settings" lede="Changes are saved automatically on this device." />
+
+      <section className={styles.group} aria-labelledby="instrument-title" id="instrument-h">
+        <h2 id="instrument-title" className={styles.groupTitle} tabIndex={-1}>Your instrument</h2>
+        {student ? (
+          <>
+            <div className={styles.row}>
+              <div><p className={styles.rowTitle}>Instrument</p><p className={styles.rowHelp}>Stave shows play-along pieces, the tuner and lessons for this instrument only. Your levels, XP and badges stay as they are when you switch.</p></div>
+              <Segmented<StudentInstrument> name="student-instrument" label="Instrument" value={student.instrument}
+                onChange={(v) => setStudent({ instrument: v, experience: student.experience })}
+                options={INSTRUMENT_INFO.map((i) => ({ value: i.id, label: i.name }))} />
+            </div>
+            <div className={styles.row}>
+              <div><p className={styles.rowTitle}>Experience</p><p className={styles.rowHelp}>Changes the suggestions on Home; brand-new players start play-alongs at the slower speed.</p></div>
+              <Segmented<Experience> name="student-experience" label="Experience" value={student.experience}
+                onChange={(v) => setStudent({ instrument: student.instrument, experience: v })}
+                options={EXPERIENCE_OPTIONS.map((o) => ({ value: o.id, label: o.label.replace('I’m ', '').replace('I can ', '').replace('I’ve ', '') }))} />
+            </div>
+          </>
+        ) : (
+          <p className={styles.rowHelp}>You haven’t chosen an instrument yet. <Link to="/welcome">Answer the welcome questions</Link>.</p>
+        )}
+      </section>
 
       <section className={styles.group} aria-labelledby="appearance">
         <h2 id="appearance" className={styles.groupTitle}>Appearance</h2>

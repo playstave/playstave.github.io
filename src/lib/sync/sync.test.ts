@@ -156,3 +156,20 @@ describe('sign-up rules', () => {
     expect(syntheticEmail(' Mira_7 ')).toBe('mira_7@students.stave.invalid');
   });
 });
+
+describe('student setup (instrument, experience)', () => {
+  it('survives migration and the newer answer wins a merge', async () => {
+    const { migrate } = await import('../rewards');
+    const { DEFAULT_PROGRESS } = await import('../../state/progress');
+    const { merge } = await import('./merge');
+    const old = migrate({} as never, DEFAULT_PROGRESS);
+    expect(old.student).toBeNull();
+    const a = { ...old, student: { instrument: 'violin' as const, experience: 'new' as const, setAt: '2026-11-15T10:00:00.000Z' } };
+    const b = { ...old, student: { instrument: 'cello' as const, experience: 'some' as const, setAt: '2026-11-15T12:00:00.000Z' } };
+    expect(merge(a, b).student?.instrument).toBe('cello');
+    expect(merge(b, a).student?.instrument).toBe('cello');
+    expect(merge(a, old).student?.instrument).toBe('violin');
+    expect(merge(old, a).student?.instrument).toBe('violin');
+    expect(migrate(JSON.parse(JSON.stringify(a)), DEFAULT_PROGRESS).student).toEqual(a.student);
+  });
+});

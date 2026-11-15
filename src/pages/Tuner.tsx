@@ -2,7 +2,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Notice, PageHeader, Panel, Segmented, SectionTitle } from '../components/ui';
 import { Icon } from '../components/Icon';
 import { useListener } from '../audio/useListener';
-import { centsFrom, INSTRUMENTS, midiName, midiToHz, nearestString, readNote, type InstrumentId } from '../audio/notes';
+import { centsFrom, INSTRUMENTS, midiName, midiToHz, nearestString, readNote } from '../audio/notes';
+import { Link } from 'react-router-dom';
+import { useAppState } from '../state/AppState';
+import { instrumentInfo } from '../data/students';
 import { DEFAULT_IN_TUNE_CENTS, TOLERANCE_CHOICES, verdict, type Tolerance } from '../audio/tolerance';
 import { readJSON, writeJSON } from '../lib/storage';
 import { createDevSource, devToneEnabled, devToneSettings, updateDevTone, type DevToneSettings } from '../audio/devTone';
@@ -10,8 +13,8 @@ import styles from './Tuner.module.css';
 
 type Target = 'auto' | 'chromatic' | number; // number = index of a string
 
-interface TunerPrefs { instrument: InstrumentId; a4: number; tolerance: Tolerance }
-const DEFAULT_PREFS: TunerPrefs = { instrument: 'violin', a4: 440, tolerance: DEFAULT_IN_TUNE_CENTS };
+interface TunerPrefs { a4: number; tolerance: Tolerance }
+const DEFAULT_PREFS: TunerPrefs = { a4: 440, tolerance: DEFAULT_IN_TUNE_CENTS };
 
 const DEV_TONE = import.meta.env.DEV && devToneEnabled();
 
@@ -20,7 +23,10 @@ export function Tuner() {
   const [target, setTarget] = useState<Target>('auto');
   useEffect(() => { writeJSON('tuner', prefs); }, [prefs]);
 
-  const inst = INSTRUMENTS.find((i) => i.id === prefs.instrument) ?? INSTRUMENTS[0];
+  // Only the student's own instrument (chosen in the welcome questions / Settings).
+  const { progress } = useAppState();
+  const inst = INSTRUMENTS.find((i) => i.id === progress.student?.instrument) ?? INSTRUMENTS[0];
+  useEffect(() => { setTarget('auto'); }, [inst.id]);
   const { state, error, frame, start, stop, playTone, toneHz } = useListener({
     minHz: inst.minHz, maxHz: inst.maxHz, devSource: DEV_TONE ? createDevSource : undefined,
   });
@@ -71,7 +77,6 @@ export function Tuner() {
   const level = frame ? Math.min(1, frame.level * 8) : 0;
   const quiet = listening && frame && !reading && frame.level < 0.004;
 
-  const setInstrument = (id: InstrumentId) => { setPrefs((p) => ({ ...p, instrument: id })); setTarget('auto'); };
 
   return (
     <>
@@ -81,10 +86,7 @@ export function Tuner() {
         lede="Tune your strings, or check any note you play. Stave listens through your microphone and shows how close you are."
       />
 
-      <div className={styles.instruments}>
-        <Segmented name="tuner-instrument" label="Instrument" value={prefs.instrument}
-          options={INSTRUMENTS.map((i) => ({ value: i.id, label: i.name }))} onChange={setInstrument} />
-      </div>
+      <p className={styles.instrumentLine}>Tuning your <strong>{instrumentInfo(inst.id).noun}</strong> · strings {inst.strings.map((x) => x.name).join(' ')}. <Link to="/settings#instrument-h">Change instrument</Link></p>
 
       <Panel className={styles.meterPanel} aria-labelledby="tuner-h" data-tuner-state={state}>
         <h2 id="tuner-h" className="visually-hidden">Tuner display</h2>

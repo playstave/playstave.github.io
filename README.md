@@ -89,6 +89,7 @@ src/
 | 5 | Sheet music library + viewer | **Complete** |
 | 6 | Accounts & persistent progress | **Complete** — tested on a real Supabase project (setup steps in PROGRESS.md) |
 | R1 | **Remodel step 1:** listening engine + tuner | **Complete** (tested with synthetic sound; real-instrument check by the owner) |
+| — | Welcome questions (instrument, experience) + personalised app: only the chosen instrument's pieces, tuner and (soon) lessons | **Complete** |
 | R2 | Remodel: play-along assessment — score marks notes green/red as you play; count-in, metronome, backing tracks | **Complete** (tested with synthetic playing; real-instrument check by the owner) |
 | R3 | Remodel: instruments (violin, viola, cello, bass), fingering, tutorial → play test lesson flow | Not started |
 | R4 | Remodel: 500-level map (30–40 theory levels at random positions; the rest play-along) + first levels per instrument | Not started |

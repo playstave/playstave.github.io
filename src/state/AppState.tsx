@@ -3,7 +3,7 @@ import { clearAll, readJSON, writeJSON } from '../lib/storage';
 import { migrate, recordActivity, type Activity, type Outcome } from '../lib/rewards';
 import { streakInfo } from '../lib/streak';
 import { getAchievement } from '../data/achievements';
-import { DEFAULT_PROGRESS, type StudentProgress } from './progress';
+import { DEFAULT_PROGRESS, type StudentProgress, type StudentSetup } from './progress';
 
 export type { StudentProgress } from './progress';
 export type ThemePref = 'system' | 'light' | 'dark';
@@ -28,6 +28,8 @@ interface AppStateValue {
   setPrefs: (patch: Partial<Preferences>) => void;
   progress: StudentProgress;
   setDisplayName: (name: string) => void;
+  /** Save the welcome answers (instrument, experience). */
+  setStudent: (s: Omit<StudentSetup, 'setAt'>) => void;
   recordNoteAnswer: (correct: boolean) => void;
   /** Record a passed level: progression, XP, streak, achievements. Throws if the level is locked. */
   completeLevel: (n: number, stars: number, score: number) => Outcome;
@@ -92,6 +94,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
   const setPrefs = useCallback((patch: Partial<Preferences>) => setPrefsState((p) => ({ ...p, ...patch })), []);
   const setDisplayName = useCallback((name: string) => setProgress((p) => ({ ...p, displayName: sanitizeName(name) })), []);
+  const setStudent = useCallback((st: Omit<StudentSetup, 'setAt'>) => setProgress((p) => ({ ...p, student: { ...st, setAt: new Date().toISOString() } })), []);
   const recordNoteAnswer = useCallback((correct: boolean) => {
     setProgress((p) => ({ ...p, noteDrill: { answered: p.noteDrill.answered + 1, correct: p.noteDrill.correct + (correct ? 1 : 0) } }));
   }, []);
@@ -193,7 +196,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const resetJourney = useCallback(() => {
-    const next = { ...structuredClone(DEFAULT_PROGRESS), displayName: progressRef.current.displayName };
+    const next = { ...structuredClone(DEFAULT_PROGRESS), displayName: progressRef.current.displayName, student: progressRef.current.student };
     progressRef.current = next;
     setProgress(next);
     setCelebration(null);
@@ -223,8 +226,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   }, [progress]);
 
   const value = useMemo<AppStateValue>(
-    () => ({ prefs, setPrefs, progress, setDisplayName, recordNoteAnswer, completeLevel, recordPracticeSet, completeDaily, celebration, dismissCelebration, toasts, dismissToast, openScore, toggleFavorite, createCollection, renameCollection, deleteCollection, setInCollection, replaceProgress, resetJourney, resetDevice, derived }),
-    [prefs, setPrefs, progress, setDisplayName, recordNoteAnswer, completeLevel, recordPracticeSet, completeDaily, celebration, dismissCelebration, toasts, dismissToast, openScore, toggleFavorite, createCollection, renameCollection, deleteCollection, setInCollection, replaceProgress, resetJourney, resetDevice, derived],
+    () => ({ prefs, setPrefs, progress, setDisplayName, setStudent, recordNoteAnswer, completeLevel, recordPracticeSet, completeDaily, celebration, dismissCelebration, toasts, dismissToast, openScore, toggleFavorite, createCollection, renameCollection, deleteCollection, setInCollection, replaceProgress, resetJourney, resetDevice, derived }),
+    [prefs, setPrefs, progress, setDisplayName, setStudent, recordNoteAnswer, completeLevel, recordPracticeSet, completeDaily, celebration, dismissCelebration, toasts, dismissToast, openScore, toggleFavorite, createCollection, renameCollection, deleteCollection, setInCollection, replaceProgress, resetJourney, resetDevice, derived],
   );
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;

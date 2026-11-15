@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
+import { Link, Navigate, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Icon } from './Icon';
 import { Logo } from './Logo';
 import { MOBILE_TABS, NAV } from './nav';
@@ -71,7 +71,20 @@ function MoreSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   );
 }
 
+/** Pages a student can reach before answering the welcome questions (to sign in, or change settings). */
+const OPEN_BEFORE_WELCOME = ['/profile', '/settings'];
+
 export function AppShell() {
+  const { pathname, hash, search } = useLocation();
+  const { progress } = useAppState();
+  if (!progress.student && !OPEN_BEFORE_WELCOME.includes(pathname)) {
+    const next = pathname === '/' ? '' : `?next=${encodeURIComponent(pathname + search + hash)}`;
+    return <Navigate to={`/welcome${next}`} replace />;
+  }
+  return <Shell />;
+}
+
+function Shell() {
   const { pathname, hash } = useLocation();
   const [moreOpen, setMoreOpen] = useState(false);
   const { dismissCelebration } = useAppState();

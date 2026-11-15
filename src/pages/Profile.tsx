@@ -4,6 +4,7 @@ import { Button, EmptyState, PageHeader, Panel, SectionTitle, Stars, Stat } from
 import { getLesson } from '../lessons';
 import { AccountPanel } from '../components/AccountPanel';
 import { useAppState } from '../state/AppState';
+import { instrumentInfo } from '../data/students';
 import styles from './Profile.module.css';
 
 export function Profile() {
@@ -34,6 +35,7 @@ export function Profile() {
         <div>
           <p className={styles.name}>{shown}</p>
           <p className="muted">Level {Math.min(progress.currentLevel, 500)} · {progress.xp} XP · {derived.totalStars} stars</p>
+          {progress.student && <p className="muted" data-profile-instrument>{instrumentInfo(progress.student.instrument).name} · <Link to="/settings#instrument-h">Change</Link></p>}
         </div>
       </div>
 

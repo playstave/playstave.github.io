@@ -6,6 +6,7 @@
  *   badges: union, earliest unlock date; practice days: union
  *   counters: the larger value; history: union by (time, level), newest first
  *   library: favourites/opened union, collections merged by id, recent by recency
+ *   instrument/experience: the most recently chosen answer wins
  */
 import { HISTORY_LIMIT, RECENT_LIMIT, XP_LOG_LIMIT, type Collection, type StudentProgress } from '../../state/progress';
 import { xpFromKeys } from '../xp';
@@ -70,6 +71,8 @@ export function mergeProgress(local: StudentProgress, remote: StudentProgress): 
     collections: [...cols.values()].sort((a, b) => a.createdAt.localeCompare(b.createdAt)),
     recentScores: unionOrdered(local.recentScores, remote.recentScores).slice(0, RECENT_LIMIT),
     openedScores: unionOrdered(local.openedScores, remote.openedScores),
+    student: !local.student ? remote.student ?? null : !remote.student ? local.student
+      : local.student.setAt >= remote.student.setAt ? local.student : remote.student,
   };
 }
 

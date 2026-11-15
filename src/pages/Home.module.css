@@ -50,3 +50,13 @@
 .recentTitle { font-weight: 600; }
 .recent .muted { font-size: var(--text-sm); }
 .recoGrid { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+
+.instrumentLine { margin-top: var(--space-2); color: var(--ink-2); font-size: var(--text-sm); }
+.plan { display: grid; gap: var(--space-3); }
+.planList { list-style: none; display: grid; gap: var(--space-2); }
+.planItem { display: grid; grid-template-columns: 36px 1fr; gap: var(--space-2) var(--space-3); align-items: center; padding: var(--space-3) var(--space-4); border: 1px solid var(--rule); border-radius: var(--radius-md); background: var(--paper-raised); }
+.planItem > a { grid-column: 2; justify-self: start; }
+@media (min-width: 760px) { .planItem { grid-template-columns: 36px 1fr auto; } .planItem > a { grid-column: 3; } }
+.planNo { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--paper-sunk); font-weight: 700; }
+.planTitle { font-weight: 600; }
+.planText { min-width: 0; }

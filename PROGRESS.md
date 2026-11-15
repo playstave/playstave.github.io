@@ -180,6 +180,14 @@ Build order (revised): R1 listening + tuner → R2 play-along assessment engine 
 - [ ] Not yet verified with a real microphone and instrument — owner to try the Play-along page (ideally with headphones for backing tracks)
 - Known limits: one note at a time (no double stops/chords); fast passages on double bass are limited by its longer analysis window (85 ms); real devices' audio latency differs — a calibration step may be needed (hook exists: `latencyOffset`)
 
+### Welcome questions + personalised experience: COMPLETE (2026-11-15, owner request)
+- [x] First visit (any page except Profile/Settings) goes to `/welcome`: 1) which instrument (violin, viola, cello, double bass — original line drawings scaled by size), 2) experience (brand new / a little / for a while), 3) "your plan"; then returns to the page the student asked for. "Already have an account? Sign in" link
+- [x] Answers saved in progress (`student: { instrument, experience, setAt }`) → synced to the account; merge keeps the most recent choice; kept when the journey is reset; migration test
+- [x] Owner rule "if the person selects violin, only show violin": Play-along lists only that instrument's pieces (another instrument's piece link shows a friendly notice), Tuner shows only that instrument's strings; lessons will follow in R3
+- [x] Personalised: Home shows "Learning the cello · I can play a little · Change", "Your first steps on the cello" plan (until 3 levels done), and the hero staff in the instrument's own clef (treble / alto / bass); brand-new players start play-alongs at the slower speed; Settings → "Your instrument" (change instrument / experience); Profile shows the instrument
+- [x] Browser-tested on a clean origin (production preview :4173): redirect with return path, step validation, plan per experience, saved answers, other-instrument notice, Play-along/Tuner/Home/Profile personalised, switching to double bass in Settings updates everything, phone 375 layout (fixed the double-bass drawing overflowing its card)
+- Note: the existing reading lessons (Levels 1–10) are still treble-clef for everyone until R3 adds instrument-specific lessons
+
 ## Next: R3 — instruments, fingering, tutorial → play-test lesson flow (not started)
 
 ## Later: Stage 7 — Advertising integration (not started)
