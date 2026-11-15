@@ -1,0 +1,26 @@
+.figure { margin: 0; display: grid; justify-items: center; gap: var(--space-2); width: 100%; }
+.wrap { position: relative; width: 100%; }
+.svg { width: 100%; height: 100%; overflow: visible; }
+.line, .bar { stroke: var(--ink); stroke-width: 1.3; }
+.head { fill: var(--ink); }
+.hole { fill: var(--paper-raised); }
+.note .head { fill: var(--ink); }
+.hl { fill: var(--accent); opacity: 0.28; }
+.num { font-family: var(--font-mono); font-size: 11px; fill: var(--ink-3); }
+.spaceNum { fill: var(--world-1); font-style: italic; }
+.noteLabel { font-family: var(--font-mono); font-size: 11px; fill: var(--ink-3); }
+.arc path { fill: none; stroke: var(--accent); stroke-width: 1.4; }
+.arc text { font-family: var(--font-body); font-size: 10px; font-weight: 600; fill: var(--accent); }
+.ghost .head { fill: var(--ink-3); opacity: 0.85; }
+.okNote .head { fill: var(--success); }
+.badNote .head { fill: var(--danger); }
+.rightBand { fill: var(--success); opacity: 0.22; }
+.wrongBand { fill: var(--danger); opacity: 0.2; }
+.caption { font-size: var(--text-sm); color: var(--ink-3); text-align: center; max-width: 52ch; }
+
+.rows { position: absolute; inset: 0; }
+.row { position: absolute; padding: 0; border: 0; background: transparent; cursor: pointer; border-radius: 3px; }
+.row:hover:not(:disabled) { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.row:focus-visible { outline: 2px solid var(--focus); outline-offset: 0; background: color-mix(in srgb, var(--focus) 12%, transparent); }
+.row:disabled { cursor: default; }
+.rowOn { background: color-mix(in srgb, var(--ink) 8%, transparent); }
