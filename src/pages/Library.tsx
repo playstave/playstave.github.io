@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Button, EmptyState, Notice, PageHeader, SectionTitle } from '../components/ui';
 import { Icon } from '../components/Icon';
@@ -16,7 +16,7 @@ export function Library() {
   const view = (params.get('view') as View) || 'browse';
   const { progress } = useAppState();
 
-  const setView = (v: View) => { const p = new URLSearchParams(params); if (v === 'browse') p.delete('view'); else p.set('view', v); setParams(p, { replace: true }); };
+  const setView = (v: View) => setParams((prev) => { const p = new URLSearchParams(prev); if (v === 'browse') p.delete('view'); else p.set('view', v); return p; }, { replace: true });
   const tabs: { id: View; label: string; count?: number; icon: 'search' | 'heart' | 'folder' | 'clock' }[] = [
     { id: 'browse', label: 'Browse', icon: 'search' },
     { id: 'favourites', label: 'Favourites', count: progress.favorites.length, icon: 'heart' },
@@ -55,7 +55,7 @@ export function Library() {
   );
 }
 
-function Browse({ params, setParams }: { params: URLSearchParams; setParams: (p: URLSearchParams, o?: { replace?: boolean }) => void }) {
+function Browse({ params, setParams }: { params: URLSearchParams; setParams: ReturnType<typeof useSearchParams>[1] }) {
   const q: Query = {
     q: params.get('q') ?? '',
     instrument: (params.get('instrument') as Instrument) || '',
@@ -63,7 +63,13 @@ function Browse({ params, setParams }: { params: URLSearchParams; setParams: (p:
     genre: (params.get('genre') as Genre) || '',
     sort: (params.get('sort') as Query['sort']) || 'title',
   };
-  const set = (k: string, v: string) => { const p = new URLSearchParams(params); if (v) p.set(k, v); else p.delete(k); setParams(p, { replace: true }); };
+  // React Router's setSearchParams does not queue updates: two changes before the
+  // next render would each start from the same old URL. Keep the latest pending
+  // params in a ref so successive changes always build on each other.
+  const pending = useRef<URLSearchParams | null>(null);
+  useEffect(() => { pending.current = null; }, [params]);
+  const commit = (p: URLSearchParams) => { pending.current = p; setParams(p, { replace: true }); };
+  const set = (k: string, v: string) => { const p = new URLSearchParams(pending.current ?? params); if (v) p.set(k, v); else p.delete(k); commit(p); };
   const results = useMemo(() => searchScores(SCORES, q), [q.q, q.instrument, q.difficulty, q.genre, q.sort]); // eslint-disable-line react-hooks/exhaustive-deps
   const counts = useMemo(() => ({
     instrument: facetCounts(SCORES, q, 'instrument', INSTRUMENTS),
@@ -71,7 +77,7 @@ function Browse({ params, setParams }: { params: URLSearchParams; setParams: (p:
     genre: facetCounts(SCORES, q, 'genre', GENRES),
   }), [q.q, q.instrument, q.difficulty, q.genre]); // eslint-disable-line react-hooks/exhaustive-deps
   const filtered = !!(q.q || q.instrument || q.difficulty || q.genre);
-  const clear = () => { const p = new URLSearchParams(); if (params.get('sort')) p.set('sort', params.get('sort')!); setParams(p, { replace: true }); };
+  const clear = () => { const prev = pending.current ?? params; const p = new URLSearchParams(); if (prev.get('sort')) p.set('sort', prev.get('sort')!); commit(p); };
 
   return (
     <>

@@ -46,7 +46,7 @@ export function drawScore(V: VF, host: HTMLElement, o: DrawOptions): SVGSVGEleme
 
   if (o.header) {
     ctx.save();
-    ctx.setFont('Source Serif 4 Variable, Georgia, serif', 22, 'bold');
+    ctx.setFont("'Source Serif 4 Variable', Georgia, serif", 22, 'bold');
     const tw = ctx.measureText(o.header.title).width;
     ctx.fillText(o.header.title, (width - tw) / 2, TOP_MARGIN + 30);
     ctx.setFont('IBM Plex Sans, system-ui, sans-serif', 11, 'normal');

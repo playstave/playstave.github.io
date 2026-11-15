@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { Part, ScoreSource } from '../../music/score';
 import { canDownload } from '../../music/score';
 import { layoutScore } from '../../music/layout';
@@ -32,7 +32,12 @@ export function ScoreViewer({ score, part }: { score: ScoreSource; part: Part })
   const zoom = ZOOMS[zoomIdx];
   const downloadable = canDownload(score);
 
-  // Track the available width.
+  // Track the available width. Measure synchronously first so the first draw
+  // never waits on a ResizeObserver callback (which can be delayed in background tabs).
+  useLayoutEffect(() => {
+    const el = frameRef.current;
+    if (el) setFrameW(Math.floor(el.getBoundingClientRect().width));
+  }, []);
   useEffect(() => {
     const el = frameRef.current;
     if (!el) return;
@@ -42,7 +47,12 @@ export function ScoreViewer({ score, part }: { score: ScoreSource; part: Part })
   }, []);
 
   const logicalW = Math.max(300, Math.round(frameW / zoom));
-  const layout = useMemo(() => (frameW ? layoutScore(part.measures, part.clef, part.key, logicalW) : null), [part, logicalW, frameW]);
+  // On narrow screens a page is one screenful (minus the app chrome), not a tall A4 sheet.
+  const [viewH, setViewH] = useState(() => window.innerHeight);
+  useEffect(() => { const on = () => setViewH(window.innerHeight); window.addEventListener('resize', on); return () => window.removeEventListener('resize', on); }, []);
+  const narrow = frameW > 0 && frameW < 640;
+  const pageH = narrow ? Math.round((viewH - (isFs ? 90 : 230)) * (logicalW / frameW)) : undefined;
+  const layout = useMemo(() => (frameW ? layoutScore(part.measures, part.clef, part.key, logicalW, pageH) : null), [part, logicalW, frameW, pageH]);
   const pageCount = layout?.pages.length ?? 1;
   useEffect(() => { setPage((p) => Math.min(p, pageCount - 1)); }, [pageCount]);
   useEffect(() => { setPage(0); }, [part.id]);
@@ -91,11 +101,17 @@ export function ScoreViewer({ score, part }: { score: ScoreSource; part: Part })
     document.addEventListener('fullscreenchange', on);
     return () => document.removeEventListener('fullscreenchange', on);
   }, []);
+  const [fsMsg, setFsMsg] = useState('');
   const toggleFs = () => {
     const el = frameRef.current?.parentElement;
     if (!el) return;
-    if (document.fullscreenElement) void document.exitFullscreen();
-    else void el.requestFullscreen().catch(() => {});
+    if (document.fullscreenElement) { void document.exitFullscreen(); return; }
+    setFsMsg('');
+    // Some embedded browsers refuse or silently ignore full-screen requests. Never
+    // leave the button looking broken: explain if it didn't work.
+    const explain = () => setFsMsg('Full screen isn’t available in this browser window. Try your browser’s own full-screen mode, or zoom in instead.');
+    const timer = setTimeout(() => { if (!document.fullscreenElement) explain(); }, 1500);
+    el.requestFullscreen().then(() => clearTimeout(timer)).catch(() => { clearTimeout(timer); explain(); });
   };
 
   /** Full score, every page, at a fixed print width. */
@@ -175,6 +191,7 @@ export function ScoreViewer({ score, part }: { score: ScoreSource; part: Part })
         {status === 'error' && <p className={styles.error} role="alert">This score could not be displayed. Please reload the page.</p>}
         <div ref={pageRef} className={styles.page} role="img" aria-label={`${score.title}, page ${page + 1} of ${pageCount}`} data-render-ms={renderMs ?? undefined} data-systems={layout?.pages[page]?.length} />
       </div>
+      {fsMsg && <p className={styles.small} role="status">{fsMsg}</p>}
       {!downloadable && <p className={styles.small}>This score’s licence allows viewing only — printing and downloading are not available.</p>}
       <p className={styles.small}>Tip: ← and → turn pages, + and − zoom.</p>
       <div ref={printRef} className={styles.printArea} aria-hidden="true" />

@@ -28,7 +28,8 @@ export function headerWidth(clef: Clef, key: string, withTime: boolean): number 
 export interface System { first: number; last: number; widths: number[] }
 export interface Layout { pageWidth: number; pageHeight: number; systems: System[]; pages: number[][] }
 
-export function layoutScore(measures: Measure[], clef: Clef, key: string, pageWidth: number): Layout {
+/** `pageHeight` defaults to an A4 page; narrow screens pass the visible height so one page fills one screen. */
+export function layoutScore(measures: Measure[], clef: Clef, key: string, pageWidth: number, pageHeightOverride?: number): Layout {
   const usable = pageWidth - MARGIN_X * 2;
   const systems: System[] = [];
   let i = 0;
@@ -51,7 +52,7 @@ export function layoutScore(measures: Measure[], clef: Clef, key: string, pageWi
     systems.push({ first: i, last: j - 1, widths });
     i = j;
   }
-  const pageHeight = Math.round(pageWidth * PAGE_RATIO);
+  const pageHeight = Math.round(Math.max(TOP_MARGIN * 2 + HEADER_HEIGHT + SYSTEM_HEIGHT, pageHeightOverride ?? pageWidth * PAGE_RATIO));
   const pages: number[][] = [];
   let page: number[] = [];
   let y = TOP_MARGIN + HEADER_HEIGHT;

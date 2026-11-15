@@ -111,10 +111,25 @@ Verification after the fix:
 Note for future testing: the in-app browser's screenshot sometimes does not capture the browser top layer (open `<dialog>`s) even when the dialog is open — check `dialog.open` rather than trusting a single screenshot.
 Note: a page reload intentionally does not re-show a celebration (it is transient UI); the result itself is already saved.
 
-## Next: Stage 5 — Sheet music library (NOT STARTED, awaiting user go-ahead)
-Plan:
-- Score data model (title, composer, instrument, difficulty, genre, description, licence, source, files, page count) designed to scale
-- Seed catalogue with genuinely public-domain / openly licensed material only (likely Stave-original educational pieces rendered with VexFlow, plus a curated set of PD works with verified sources) — no claim of “thousands”
-- Search (title/composer) + filters (instrument, difficulty, genre), favourites, collections, recently opened
-- Viewer: zoom, page navigation, fullscreen, print/download only where licence permits
-- Wire `scoresOpened` counter → Sheet Music Explorer badge
+## Stage 5 — Sheet music library & viewer: COMPLETE (2026-11-14)
+- [x] `music/pitch.ts` spelling-correct transposition + key signatures (tests)
+- [x] `music/score.ts` compact score format, validation (bars add up), instrument parts with range checks
+- [x] `data/scores.ts` 27 scores: 13 public-domain (engraved by Stave, CC0 edition) + 14 Stave originals (CC0); provenance + licence on each
+- [x] `music/layout.ts` + `music/render.ts` paged VexFlow engraving (beams, dots, accidentals vs key, pickups, end barline, measure numbers)
+- [x] ScoreViewer: zoom, pages, keyboard, full screen, print (all pages), SVG download — permission-gated by licence
+- [x] Library: search, instrument/difficulty/genre filters with counts, sort, URL state, favourites, collections, recently opened, lazy previews; Home recommendations
+- [x] Progress model: favorites, collections, recentScores, openedScores; `openScore` activity (no XP, not a practice day) → Sheet Music Explorer badge
+- [x] 112/112 unit tests; build passes; browser-tested on phone/tablet/desktop; Stage 1–4 regression clean
+
+Bugs found and fixed during Stage 5 testing:
+- Score title fell back to a sans font (unquoted family name containing a digit) → quoted
+- Phone pages were tall A4 sheets holding ~5 bars → narrow screens use one screenful per page
+- Large header buttons pushed the score below the fold on phones → compact buttons
+- Changing two filters at once lost one (React Router's setSearchParams doesn't queue) → pending-params ref
+- First draw could wait for a delayed ResizeObserver callback → width measured synchronously on mount
+- Full screen silently did nothing when the browser refused permission → explains and suggests alternatives
+
+Not verifiable in this environment: the native print dialog (print content verified) and actual full screen (the in-app test browser refuses the permission).
+
+## Next: Stage 6 — Accounts & persistent progress (NOT STARTED, awaiting user go-ahead)
+Needs a decision before building: which backend/auth provider (e.g. Supabase or Firebase) and whether a managed service account can be created — this requires credentials the user must provide. Plan: auth (email magic link or username+password with parental-consent considerations for under-13s), server-side progress sync with the existing device progress as an offline cache, merge on first sign-in, access rules so students only read their own data.

@@ -46,8 +46,8 @@ export function ScorePage() {
         lede={score.composer}
         actions={
           <>
-            <Button variant={fav ? 'primary' : 'secondary'} icon="heart" onClick={() => toggleFavorite(score.id)} aria-pressed={fav}>{fav ? 'Favourite' : 'Add to favourites'}</Button>
-            <Button variant="secondary" icon="folder" onClick={() => setColOpen((o) => !o)} aria-expanded={colOpen} aria-controls="collection-panel">Add to collection</Button>
+            <Button size="sm" variant={fav ? 'primary' : 'secondary'} icon="heart" onClick={() => toggleFavorite(score.id)} aria-pressed={fav}>{fav ? 'Favourite' : 'Add to favourites'}</Button>
+            <Button size="sm" variant="secondary" icon="folder" onClick={() => setColOpen((o) => !o)} aria-expanded={colOpen} aria-controls="collection-panel">Add to collection</Button>
           </>
         }
       />

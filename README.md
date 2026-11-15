@@ -3,7 +3,7 @@
 A free music-reading education platform: a 500-level journey from the first staff line to
 master-level sight-reading, plus a legal sheet music library. Funded by advertising, free for students.
 
-> **Status:** Stages 1–4 of 8 complete (foundation; 500-level roadmap; lesson engine + Levels 1–10; gamification).
+> **Status:** Stages 1–5 of 8 complete (foundation; 500-level roadmap; lesson engine + Levels 1–10; gamification; sheet music library).
 > See [PROGRESS.md](PROGRESS.md) for the live checklist and resume notes.
 
 ## Technology stack
@@ -31,7 +31,7 @@ npm install
 npm run dev        # http://localhost:5180
 npm run build      # typecheck + production build to dist/
 npm run preview    # serve the production build
-npm test           # unit tests (progression, levels, lesson engine, content, XP/streak/achievements/daily)
+npm test           # unit tests (progression, levels, lessons, rewards, music/transposition, catalogue, search)
 ```
 
 ## Project structure
@@ -45,6 +45,8 @@ src/
     base.css            reset, focus styles, reduced-motion handling
   lessons/              lesson content: types.ts (schema), staff.ts (positions), helpers.ts (question builders),
                         level01–level10.ts, index.ts (registry), lessons.test.ts (content validation)
+  music/                pitch.ts (spelling-correct transposition), score.ts (score format, validation, instrument parts),
+                        layout.ts (measures per line / lines per page), render.ts (VexFlow drawing)
   state/progress.ts     the stored progress model (version 2)
   state/AppState.tsx    preferences + device-local student progress (React context)
   lib/                  progression.ts (unlocks), lessonEngine.ts (lesson flow + scoring), xp.ts (XP rules),
@@ -55,6 +57,7 @@ src/
     achievements.ts     badge definitions + criteria
     levels.ts           the 500 levels: world, unit, difficulty tier, checkpoint/milestone flags
     trebleNotes.ts      note range + position explanations for the drill
+    scores.ts           the sheet music catalogue (27 scores, all public domain or Stave originals)
   components/
     AppShell            sidebar (desktop) / icon rail (tablet) / top bar + tab bar + "More" sheet (mobile)
     Notation            VexFlow wrapper — always pass a text `label`
@@ -64,6 +67,7 @@ src/
     StaffDiagram        precise SVG staff for Unit 1 (highlights, numbered notes, step/skip arcs, tap-to-locate)
     CelebrationOverlay  lesson/milestone celebration (stars, XP count-up, unlock, badges, confetti)
     Toasts              notifications for XP, streak bonuses and badges outside lessons
+    library/            ScoreViewer (paged, zoom, print, SVG download, full screen), ScoreCard, ScoreThumb (lazy previews)
     lesson/             LessonPlayer (intro → lesson → practice → challenge → result) and QuestionView
     ui.tsx              Button, ButtonLink, PageHeader, Panel, Stat, ProgressBar, Stars, Notice, EmptyState, Segmented
     Badge, Icon, Logo, WeekStrip, MonthCalendar
@@ -83,7 +87,7 @@ document each variable here. Secrets will never be placed in frontend code.
 | 2 | 500-level roadmap | **Complete** |
 | 3 | Lesson engine + Levels 1–10 | **Complete** |
 | 4 | Gamification (XP, stars, achievements, streaks, daily challenges) | **Complete** |
-| 5 | Sheet music library + viewer | Not started |
+| 5 | Sheet music library + viewer | **Complete** |
 | 6 | Accounts & persistent progress | Not started |
 | 7 | Advertising integration | Not started |
 | 8 | Full application testing | Not started |
@@ -99,6 +103,9 @@ document each variable here. Secrets will never be placed in frontend code.
 - **Streaks:** any finished lesson, daily challenge or practice set counts. One rest day between practice days never breaks a streak; today never counts against you; your best streak is kept forever. Messages are encouraging ("Start a new streak today — your best is 12 days").
 - **Daily challenge** (`/practice/daily`): 5 review questions from levels you've completed, favouring the ones with fewer stars, fixed for the day. Any finish counts; missed questions link back to their lessons.
 - **Celebrations:** passing a level opens an overlay over a dimmed page: stars appear one by one, XP counts up with a breakdown, the next level unlocks, badges and streak changes are announced, with subtle notation-shaped confetti. Every 50th level gets a gold milestone variant. With reduced motion (OS setting or Settings → Motion → Reduce) there is no confetti and no animation, and numbers appear immediately.
+- **Sheet music library** (`/library`): 27 scores — 13 public-domain works (Beethoven, Petzold, Pierpont and traditional tunes) and 14 Stave originals — covering all five difficulty levels, treble/bass/alto/percussion clefs and meters from 2/4 to 7/8. Search (title, composer, instrument, description; accent- and case-insensitive; every word must match), filters for instrument, difficulty and genre with live counts (empty options disabled), sorting, shareable URLs. Tabs for Favourites, Collections (create, rename, delete with confirmation, add/remove scores; validated names) and Recently opened. Lazy-rendered notation previews on every card. Home recommends scores for your current world.
+- **Instrument parts generated per score:** concert pitch, B♭ (trumpet, clarinet — up a major second), E♭ alto sax (up a major sixth), bass clef (octave down) and alto clef (viola), with correct note spelling and key signatures. An instrument is listed only if the part fits its range.
+- **Score viewer** (`/library/:id`): engraved with VexFlow; paged layout that reflows to the screen (A4-shaped pages on desktop, one screenful per page on phones); zoom 75–200%; previous/next page; keyboard ← → and + −; full screen (explains itself if the browser refuses); Print / save as PDF (prints every page); Download SVG (with licence comment); all print/download actions appear only when the licence allows. Each score page shows provenance and licence.
 - Sequential unlocking: only the current level and completed levels can be opened, from the roadmap or by URL (`/level/N` for a locked level explains why it is locked). Replays keep the best stars and score and never unlock anything.
 - Home: greeting, current level/unit, Continue/Start learning (opens the current level's lesson), journey stats, today's practice with a 7-day strip, honest empty states for badges and the library.
 - Learn: six worlds with level ranges and progress; each world page lists its 10 (or 5) units with outcomes and topics.
@@ -107,14 +114,15 @@ document each variable here. Secrets will never be placed in frontend code.
 
 ## Known limitations
 
+- **Library size:** 27 scores (no Religious or Jazz pieces yet — those filters show 0). Melodies only (single staff); no piano grand-staff or ensemble scores yet. No PDF file download — use Print → Save as PDF; SVG download is available.
+- **Not testable here:** the browser print dialog itself (print content is verified), and full screen inside the in-app test browser (the host refuses the permission; the viewer now explains this). Both use standard browser APIs.
+
 - (Fixed) A stale dialog `close` event could dismiss a newly opened celebration; see PROGRESS.md for the investigation.
 
 - **Only Levels 1–10 have lessons.** Level 11 onward opens a page saying its lesson isn't available yet; the remaining 490 are planned in batches after Stage 8. Levels beyond 10 can only be completed with the dev-build tools on the Roadmap.
-- The Sheet Music Explorer badge can't be earned until the library opens (Stage 5); its counter is already in the progress model.
 - The XP history keeps the latest 100 events and learning history the latest 200 attempts (XP totals and badges are unaffected).
 - Unit 1 draws its own staff (no clef yet, by design — clefs are taught in Unit 3). VexFlow is used for clef-based notation elsewhere.
 - **Milestone celebrations** are marked on the roadmap; the celebration animations and major achievement awards come with gamification (Stage 4).
-- **Library is empty (0 scores)** by design until Stage 5 adds licence-checked scores.
 - **Achievements** are defined but cannot be earned until Stage 4.
 - **Progress lives in this browser only.** Clearing site data erases it. No accounts yet.
 - **No advertising** is integrated, and nothing claims otherwise.
@@ -122,13 +130,16 @@ document each variable here. Secrets will never be placed in frontend code.
 
 ## Testing
 
-`npm test` runs 59 unit tests:
+`npm test` runs 112 unit tests:
 - **progression** (7): no skipping, invalid input, replay keeps best, all 500 in order.
 - **level model** (6): 500 levels, world boundaries, checkpoint/milestone placement, difficulty never decreases.
 - **lesson engine** (6): phase flow, practice retry rules, challenge one-try rule, star scoring, and that the thresholds shown to students agree with the scoring for every challenge length and pass mark.
 - **XP and rewards** (15): first pass, checkpoint, replay with same/fewer/more stars, history, locked levels, milestones once, practice/daily once per day, streak bonuses once (including across a rest day), broken streaks never remove XP, badges unlock once from real progress, migration credits old progress exactly once.
 - **streaks** (9): today never breaks a streak, one rest day forgiven, two missed days end the run, best kept, month boundaries, future dates ignored.
 - **daily challenge** (5): empty before Level 1, 5 distinct questions only from completed levels, stable for the day, changes daily, favours weaker levels.
+- **music** (8): pitch parsing, spelling-correct transposition, key-signature transposition; layout places every measure once, within the line, on correctly sized pages at four widths.
+- **catalogue** (37): every one of the 27 scores is notationally valid (every bar adds up, pickups balanced), licensing/provenance complete, playable by at least one instrument, drums only for percussion, every listed instrument family covered, transposed parts correct (B♭ in A major, E♭ in E major, bass clef an octave down), rhythms unchanged by transposition, range limits respected.
+- **library search** (6) and **library activity** (2): title/composer/accents, all words must match, combined filters, sort orders, facet counts; opening scores tracks recent/distinct opens, pays no XP, unlocks Sheet Music Explorer at 25.
 - **lesson content** (11): Levels 1–10 present and in Unit 1; unique titles, objectives and question ids; all four parts in every lesson; every answer key valid; every wrong option has specific feedback; every step/skip arc label matches the drawn notes; question builders produce correct answers.
 
 **Lesson walkthrough (browser, dev only):** with `npm run dev` open, run this in the browser console:
@@ -141,6 +152,8 @@ await walk(1, [[false,false,false,false,false], [true,true,true,true,true]]);
 It opens the level, pages through the lesson, answers every practice question wrong first (checking the mistake-specific feedback and that you can't continue), then right (checking the explanation), then runs each challenge attempt in the plan and reports the result, stars, unlock and saved record. It reads answers from the lesson files and drives the real UI. `scripts/` is not part of the production bundle.
 
 **Developer tools (dev builds only):** at the bottom of the Roadmap in `npm run dev` there are buttons to complete the current level with 1–3 stars, complete the next 10, attempt a skip (it must be refused), and reset the journey. They are excluded from production builds (verified: not present in `dist/`).
+
+Stage 5 checks (browser): all 117 score parts rendered with every note present (avg 3.9 ms per page, max 16 ms, no errors); zoom 75–200% and page navigation keep all notes across pages; keyboard shortcuts; B♭/E♭/bass parts visually checked; phone (375 px: one screenful per page, no overflow), tablet (768 px) and desktop; dark mode keeps the score page ink-on-paper; print renders the full score into the print area; SVG download is valid SVG with every note and a licence comment; search, filters (including several changed at once), sorting, URL state; favourites, collections, recently opened persist after reload; Sheet Music Explorer unlocks at 25 scores; production build: page load 33 ms, VexFlow fetched only when notation is shown, first viewer page in 125 ms.
 
 Stage 4 checks (browser): fresh Level 1 pass at 2★ → +30 XP, Level 2 unlocked, First Lesson, 1-day streak, all shown in the overlay; replay at 2★ and 1★ → "No new XP"; replay at 3★ → +5 and First Perfect Score; again → nothing; daily challenge +15 and Daily Start, second run that day no XP; practice set +5, second set no XP; injected histories for streak continuing (+10 at 3 days), rest day, broken (best kept) and 7 days across a rest day (+10 and +25 once); Level 50 milestone overlay (+105 XP, Fifty Levels, gold variant); reduced vs full motion (no confetti and ~0 s animations vs confetti and 0.36–0.52 s); reload keeps XP, level, badges and streak identical; old-format progress upgraded once (+90 XP for 3 levels, stable on a second reload); all ten lessons walked again with total XP equal to the computed value (345); overlay fits at 375 px.
 
