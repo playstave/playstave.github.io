@@ -76,8 +76,7 @@ src/
 
 ## Environment variables
 
-None yet. Accounts (Stage 6) and advertising (Stage 7) will require configuration; those stages will
-document each variable here. Secrets will never be placed in frontend code.
+`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` in `.env.local` (see `.env.example`). Without them the app runs in device-only mode. Never put the service_role key in the frontend. Dev-only mock backend: `localStorage.setItem('stave:dev-mock-backend','1')`.
 
 ## Stages
 
@@ -88,7 +87,7 @@ document each variable here. Secrets will never be placed in frontend code.
 | 3 | Lesson engine + Levels 1–10 | **Complete** |
 | 4 | Gamification (XP, stars, achievements, streaks, daily challenges) | **Complete** |
 | 5 | Sheet music library + viewer | **Complete** |
-| 6 | Accounts & persistent progress | Not started |
+| 6 | Accounts & persistent progress | **Built; awaiting test on a real Supabase project** (setup steps in PROGRESS.md) |
 | 7 | Advertising integration | Not started |
 | 8 | Full application testing | Not started |
 

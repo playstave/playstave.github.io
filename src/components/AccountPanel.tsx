@@ -107,8 +107,8 @@ export function AccountPanel() {
   return (
     <div data-account="signed-out">
       <div className={styles.tabs} role="tablist" aria-label="Account">
-        <button type="button" role="tab" aria-selected={mode === 'signin'} className={mode === 'signin' ? styles.tabOn : ''} onClick={() => { setMode('signin'); setError(''); setFieldErr({}); }}>Sign in</button>
-        <button type="button" role="tab" aria-selected={mode === 'signup'} className={mode === 'signup' ? styles.tabOn : ''} onClick={() => { setMode('signup'); setError(''); setFieldErr({}); }}>Create account</button>
+        <button type="button" role="tab" aria-selected={mode === 'signin'} className={mode === 'signin' ? styles.tabOn : ''} onClick={() => { setMode('signin'); setError(''); setFieldErr({}); setPassword(''); setConfirm(''); }}>Sign in</button>
+        <button type="button" role="tab" aria-selected={mode === 'signup'} className={mode === 'signup' ? styles.tabOn : ''} onClick={() => { setMode('signup'); setError(''); setFieldErr({}); setPassword(''); setConfirm(''); }}>Create account</button>
       </div>
       <form onSubmit={submit} className={styles.form} noValidate>
         {mode === 'signup' && (

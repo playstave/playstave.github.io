@@ -131,5 +131,20 @@ Bugs found and fixed during Stage 5 testing:
 
 Not verifiable in this environment: the native print dialog (print content verified) and actual full screen (the in-app test browser refuses the permission).
 
-## Next: Stage 6 — Accounts & persistent progress (NOT STARTED, awaiting user go-ahead)
-Needs a decision before building: which backend/auth provider (e.g. Supabase or Firebase) and whether a managed service account can be created — this requires credentials the user must provide. Plan: auth (email magic link or username+password with parental-consent considerations for under-13s), server-side progress sync with the existing device progress as an offline cache, merge on first sign-in, access rules so students only read their own data.
+## Stage 6 — Accounts & persistent progress: BUILT, AWAITING CLOUD TEST (2026-11-14)
+Decisions: Supabase cloud project (user creates it); username + password sign-up, no email collected.
+- [x] `supabase/schema.sql` profiles + progress tables, RLS (own rows only, anon nothing), signup trigger, username_available(), delete_own_account()
+- [x] `supabase/rls_check.sql` self-check (run in SQL editor → "ALL CHECKS PASSED")
+- [x] `lib/sync/` backend interface, Supabase backend, merge (never loses progress; XP recomputed from award keys), debounced sync engine with offline retry; 14 unit tests (126 total pass)
+- [x] Account UI on Profile (sign in / create / sync status / sign out clears device / delete account), sidebar chip, Settings reset signs out first, updated privacy text
+- [x] Browser-tested end to end with a DEV-ONLY in-browser mock backend (excluded from prod build): validation, sign-up, sync, sign-out, wrong password, isolation between accounts, device-merge choice, offline + recovery, reload, reset, delete
+- [ ] NOT YET TESTED against real Supabase — needs the user's project
+
+User setup steps (to finish Stage 6):
+1. Create a free Supabase project. Auth → Providers → Email: turn OFF "Confirm email" (required: sign-up uses non-deliverable addresses).
+2. SQL editor: run `supabase/schema.sql`, then `supabase/rls_check.sql` → expect "ALL CHECKS PASSED".
+3. Copy `.env.example` to `.env.local`, fill VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (never the service_role key). Restart `npm run dev`.
+4. In the app: Profile → Create account, play a lesson, sign out, sign in again on another browser → progress should appear.
+Open risk to verify: Supabase must accept the `@students.stave.invalid` synthetic emails.
+
+## Next: Stage 7 — Advertising integration (not started)
