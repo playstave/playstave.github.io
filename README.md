@@ -89,8 +89,8 @@ src/
 | 5 | Sheet music library + viewer | **Complete** |
 | 6 | Accounts & persistent progress | **Complete** — tested on a real Supabase project (setup steps in PROGRESS.md) |
 | R1 | **Remodel step 1:** listening engine + tuner | **Complete** (tested with synthetic sound; real-instrument check by the owner) |
-| R2 | Remodel: instruments (violin, viola, cello, bass) + fingering diagrams | Not started |
-| R3 | Remodel: Learn → Play test → score lesson flow | Not started |
+| R2 | Remodel: play-along assessment — score marks notes green/red as you play; count-in, metronome, backing tracks | Not started |
+| R3 | Remodel: instruments (violin, viola, cello, bass), fingering, tutorial → play test lesson flow | Not started |
 | R4 | Remodel: 500-level map (~30 theory levels) + first levels per instrument | Not started |
 | R5 | Remodel: remaining levels, in batches | Not started |
 | 7 | Advertising integration | Not started (after the remodel) |

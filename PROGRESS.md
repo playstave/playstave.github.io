@@ -156,7 +156,8 @@ Open risk to verify: Supabase must accept the `@students.stave.invalid` syntheti
 
 ## Remodel — string-orchestra tutor (decided 2026-11-15)
 Owner's direction: instrument tabs (violin, viola, cello, double bass) with fingering; each playing level teaches something new (fingering, notes, terms like ritardando) and then a play test where the app listens and scores pitch + rhythm; ~30 of 500 levels are theory, spread through; difficulty from very easy to near-impossible at 450–500 (always taught first); tuner; play-along with library scores. In tune = within ±20 cents by default ("don't make it too harsh"). Singing: mentioned earlier, not yet confirmed as a track.
-Build order: R1 listening + tuner → R2 instruments + fingering → R3 learn/play-test/score flow → R4 500-level map + first levels → R5 remaining levels in batches → Stage 7 ads → Stage 8 full testing.
+Core experience (owner, 2026-11-15): play-along assessment — music on screen, the app listens and marks each note green (correct) or red (wrong pitch or timing); some exercises with a backing track; a tutorial before every lesson on whatever is new in it. Original product; do not copy any existing app's name, look or content.
+Build order (revised): R1 listening + tuner → R2 play-along assessment engine (green/red notes, count-in, metronome, backing tracks) → R3 instruments + fingering + tutorial→play-test lesson flow → R4 500-level map + first levels → R5 remaining levels in batches → Stage 7 ads → Stage 8 full testing.
 
 ### R1 — Listening engine + tuner: COMPLETE (2026-11-15)
 - [x] `src/audio/pitch.ts` McLeod pitch method, FFT autocorrelation (`fft.ts`), multi-period refinement for high notes; `notes.ts` (Hz/MIDI/cents, four instruments' tunings, sounding pitch); `tracker.ts` (confirm over 3 frames, trimmed mean in cents for vibrato, hold/clear); `tolerance.ts` (±20 default, ±10/±5 optional)
@@ -167,6 +168,6 @@ Build order: R1 listening + tuner → R2 instruments + fingering → R3 learn/pl
 - Bugs found and fixed: high-note error ~4 c (→ multi-period refinement); vibrato centre off 10 c (median → trimmed mean); one-frame glitch blanked display; analysis loop on requestAnimationFrame froze when the browser stopped painting (→ timer); "loosen by 1400 cents" when the wrong string was played (→ "that sounds like …")
 - [ ] Not yet verified with a real microphone/instrument — owner to try a violin (and ideally viola/cello/bass) on the Tuner page
 
-## Next: R2 — instruments + fingering diagrams (not started)
+## Next: R2 — play-along assessment engine (not started)
 
 ## Later: Stage 7 — Advertising integration (not started)
