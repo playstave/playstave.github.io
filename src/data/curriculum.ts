@@ -2,9 +2,8 @@
  * Curriculum architecture for the 500-level journey.
  *
  * This file defines the *structure* of the course: six worlds, each divided
- * into units of ten levels. Individual lesson content (introduction, lesson,
- * guided practice, challenge) is authored separately per level, starting with
- * Levels 1–10 in Stage 3. Nothing here pretends a lesson exists before it does.
+ * into units of ten levels. Lesson content is generated or authored per level
+ * (course/), world by world. Nothing here pretends a lesson exists before it does.
  */
 
 export type WorldId = 1 | 2 | 3 | 4 | 5 | 6;
@@ -33,112 +32,89 @@ export interface World {
 
 type UnitSeed = Omit<Unit, 'id' | 'firstLevel' | 'lastLevel'>;
 
+// ---------------------------------------------------------------------------
+// The course for violin, viola, cello and double bass. Each unit teaches a
+// playing skill; theory levels appear at fixed random positions (course/map.ts).
+// Skills the microphone can't judge (bowing, posture, tone, double stops) are
+// taught and practised, but only pitch and rhythm are scored.
+// ---------------------------------------------------------------------------
+
 const world1Units: UnitSeed[] = [
-  {
-    title: 'The Staff',
-    outcome: 'Find and name every line and space of the five-line staff.',
-    topics: ['Five lines, four spaces', 'Counting from the bottom', 'Line notes and space notes', 'Higher and lower on the staff', 'Steps and skips'],
-  },
-  {
-    title: 'The Musical Alphabet',
-    outcome: 'Recite the seven letter names forwards and backwards from any starting letter.',
-    topics: ['A to G and repeat', 'Moving up and down', 'Octaves: same letter, higher pitch', 'Letters on the keyboard'],
-  },
-  {
-    title: 'The Treble Clef',
-    outcome: 'Recognise the treble clef and explain why it is called the G clef.',
-    topics: ['Drawing the treble clef', 'The G line', 'Which instruments read treble', 'Middle C below the staff'],
-  },
-  {
-    title: 'Reading Treble Notes',
-    outcome: 'Name any note on the treble staff, including the first ledger lines.',
-    topics: ['Line notes E G B D F', 'Space notes F A C E', 'Landmark notes', 'Ledger lines above and below'],
-  },
-  {
-    title: 'The Bass Clef',
-    outcome: 'Recognise the bass clef and explain why it is called the F clef.',
-    topics: ['Drawing the bass clef', 'The F line', 'Which instruments read bass', 'Middle C above the staff'],
-  },
-  {
-    title: 'Reading Bass Notes',
-    outcome: 'Name any note on the bass staff and connect it to the grand staff.',
-    topics: ['Line notes G B D F A', 'Space notes A C E G', 'The grand staff', 'Crossing between clefs'],
-  },
-  {
-    title: 'Note Durations',
-    outcome: 'Identify whole, half, quarter, eighth, and sixteenth notes and their relative lengths.',
-    topics: ['Note heads, stems, flags', 'Whole and half notes', 'Quarter notes', 'Eighths, sixteenths, and beams', 'Dotted notes'],
-  },
-  {
-    title: 'Rests',
-    outcome: 'Match every common rest to the note value it replaces.',
-    topics: ['Whole and half rests', 'Quarter rests', 'Eighth and sixteenth rests', 'Counting silence'],
-  },
-  {
-    title: 'Beat and Rhythm',
-    outcome: 'Count and clap simple rhythms against a steady pulse.',
-    topics: ['Pulse and beat', 'Bar lines and measures', 'Counting aloud', 'Ties'],
-  },
-  {
-    title: 'Simple Time Signatures',
-    outcome: 'Read 2/4, 3/4 and 4/4 and fill a measure with the correct total duration.',
-    topics: ['What the two numbers mean', '4/4 and common time', '3/4 and waltz feel', '2/4 and marches', 'World 1 checkpoint exam'],
-  },
+  { title: 'First Sounds', outcome: 'Hold the instrument and bow, play every open string and the first three notes on the D string.',
+    topics: ['Holding the instrument', 'Bow hold', 'Open strings', 'First fingers on D', 'Your first tune'] },
+  { title: 'Counting in Time', outcome: 'Keep a steady beat in 3/4 and 4/4 and play the notes of the A string.',
+    topics: ['3/4 and 4/4', 'Dotted half notes', 'Fingers on the A string', 'Counting rests'] },
+  { title: 'The D Major Scale', outcome: 'Play the one-octave D major scale in tune, up and down.',
+    topics: ['D major, one octave', 'Crossing from D to A', 'Scale rhythms', 'Listening for in-tune F♯ and C♯'] },
+  { title: 'Eighth Notes', outcome: 'Play pairs of eighth notes evenly and count “1 and 2 and”.',
+    topics: ['Eighth-note pairs', 'Counting “and”', 'Even bow strokes', 'Mixing quarters and eighths'] },
+  { title: 'G Major', outcome: 'Play in G major using the next string down, with a natural C.',
+    topics: ['The G major scale', 'Notes on the lower string', 'Natural C (low 2)', 'G major tunes'] },
+  { title: 'Dotted Rhythms', outcome: 'Play dotted-quarter-and-eighth rhythms with the right lilt.',
+    topics: ['Dotted quarter notes', 'Long–short patterns', 'Bow distribution', 'Dotted rhythms in 3/4'] },
+  { title: 'A Major', outcome: 'Play in A major with a high G♯.',
+    topics: ['A major scale', 'G♯ (high 3rd finger, or its equivalent)', 'Three sharps', 'A major melodies'] },
+  { title: 'Low Fingers', outcome: 'Move between high and low finger patterns (C♯/C and F♯/F).',
+    topics: ['Low 2nd finger', 'C major on your instrument', 'Switching patterns', 'Listening for half steps'] },
+  { title: 'Melodies to Play', outcome: 'Play longer folk-style melodies with phrasing.',
+    topics: ['Four-bar phrases', 'Question and answer', 'Breathing with the bow', 'Remembering a tune'] },
+  { title: 'World 1 Finale', outcome: 'Perform longer pieces that use everything from World 1.',
+    topics: ['Mixed keys', 'Mixed rhythms', 'Stamina', 'Level 100 performance'] },
 ];
 
 const world2Units: UnitSeed[] = [
-  { title: 'Sharps, Flats and Naturals', outcome: 'Read and apply accidentals within a measure.', topics: ['Half steps and whole steps', 'Sharps', 'Flats', 'Naturals', 'Accidentals and the bar line'] },
-  { title: 'The Major Scale', outcome: 'Build any major scale from the whole/half-step pattern.', topics: ['W W H W W W H', 'C major', 'G and F major', 'Scale degrees'] },
-  { title: 'Major Key Signatures', outcome: 'Identify major keys up to four sharps and four flats.', topics: ['Order of sharps', 'Order of flats', 'Finding the key from the signature', 'The circle of fifths'] },
-  { title: 'Minor Scales', outcome: 'Build natural, harmonic and melodic minor scales.', topics: ['Natural minor', 'Harmonic minor', 'Melodic minor', 'Comparing major and minor'] },
-  { title: 'Relative and Parallel Keys', outcome: 'Find the relative minor of any major key.', topics: ['Relative minor', 'Parallel minor', 'Minor key signatures'] },
-  { title: 'Intervals I', outcome: 'Name intervals by number from a 2nd to an octave.', topics: ['Counting letter names', 'Steps vs. leaps', 'Unisons and octaves'] },
-  { title: 'Intervals II', outcome: 'Classify intervals as major, minor, perfect, augmented or diminished.', topics: ['Interval quality', 'Perfect intervals', 'Major and minor 2nds, 3rds, 6ths, 7ths'] },
-  { title: 'Melodic Patterns', outcome: 'Recognise sequences, repetition and contour in a melody.', topics: ['Repetition', 'Sequence', 'Contour', 'Scale and chord-tone patterns'] },
-  { title: 'Compound Rhythm', outcome: 'Count in 6/8, 9/8 and 12/8 with dotted-quarter beats.', topics: ['Simple vs. compound', '6/8', '9/8 and 12/8', 'Beaming in compound time'] },
-  { title: 'More Time Signatures', outcome: 'Read cut time, 3/8, 2/2 and changing meters.', topics: ['Cut time', '3/8 and 2/2', 'Pickup measures', 'World 2 checkpoint exam'] },
+  { title: 'Slurs', outcome: 'Play two or more notes in one bow, smoothly.', topics: ['Two-note slurs', 'Bow speed', 'Slurred string crossings', 'Ties versus slurs'] },
+  { title: 'Loud and Soft', outcome: 'Play piano, forte, crescendo and diminuendo.', topics: ['p and f', 'Crescendo and diminuendo', 'Bow weight and speed', 'Contact point'] },
+  { title: 'All Four Strings in First Position', outcome: 'Read and play every first-position note on all four strings.', topics: ['Lowest string notes', 'Highest string notes', 'Range of first position', 'Landmark notes'] },
+  { title: 'C Major and F Major', outcome: 'Play keys with flats, including B♭ (low first finger).', topics: ['Flats', 'B♭ and low 1', 'F major', 'C major'] },
+  { title: 'Minor Keys', outcome: 'Play in D, A and E minor and hear the difference from major.', topics: ['Natural minor', 'Raised 7th (harmonic minor)', 'Minor tunes', 'Major vs. minor'] },
+  { title: 'Sixteenth Notes', outcome: 'Play groups of four sixteenth notes evenly.', topics: ['Counting 1 e & a', 'Sixteenths on one string', 'Sixteenths across strings', 'Mixed rhythms'] },
+  { title: 'Bow Strokes', outcome: 'Play staccato, hooked bowings and accents.', topics: ['Staccato', 'Hooked bowings', 'Accents', 'Martelé'] },
+  { title: 'Two-Octave Scales Begin', outcome: 'Play a two-octave G major scale (or your instrument’s equivalent).', topics: ['Two-octave G major', 'Scale patterns', 'Arpeggios', 'Scale speed'] },
+  { title: 'Playing With Others', outcome: 'Count long rests, follow cues and keep your place.', topics: ['Multi-bar rests', 'Cue notes', 'Keeping your place', 'Ensemble listening'] },
+  { title: 'World 2 Finale', outcome: 'Perform pieces with slurs, dynamics and sixteenth notes.', topics: ['Mixed bowings', 'Dynamics in performance', 'Longer pieces', 'Level 200 performance'] },
 ];
 
 const world3Units: UnitSeed[] = [
-  { title: 'Triads', outcome: 'Stack thirds to build triads on any note.', topics: ['Root, third, fifth', 'Stacking thirds', 'Triads in C major'] },
-  { title: 'Major and Minor Chords', outcome: 'Tell major and minor triads apart by sight and by structure.', topics: ['Major triads', 'Minor triads', 'Chord symbols'] },
-  { title: 'Diminished and Augmented', outcome: 'Identify all four triad qualities.', topics: ['Diminished triads', 'Augmented triads', 'Quality by intervals'] },
-  { title: 'Chord Inversions', outcome: 'Name root position, first and second inversion.', topics: ['Root position', 'First inversion', 'Second inversion', 'Figured bass basics'] },
-  { title: 'Harmony in a Key', outcome: 'Label diatonic chords with Roman numerals.', topics: ['Roman numerals', 'Primary chords I IV V', 'Minor-key harmony'] },
-  { title: 'Phrases and Cadences', outcome: 'Locate phrase endings and name the cadence.', topics: ['Phrases', 'Authentic cadence', 'Half cadence', 'Plagal and deceptive'] },
-  { title: 'Dynamics', outcome: 'Read dynamic markings from pp to ff, including hairpins.', topics: ['p, mp, mf, f', 'pp and ff', 'Crescendo and diminuendo', 'Accents in context'] },
-  { title: 'Articulation', outcome: 'Interpret staccato, legato, tenuto, accent and marcato.', topics: ['Slurs and legato', 'Staccato', 'Tenuto and accent', 'Marcato and fermata'] },
-  { title: 'Tempo Markings', outcome: 'Order Italian tempo terms and read metronome marks.', topics: ['Largo to Presto', 'Metronome marks', 'Ritardando and accelerando', 'A tempo'] },
-  { title: 'Musical Expression', outcome: 'Combine dynamics, articulation and tempo to interpret a passage.', topics: ['Expression terms', 'Character words', 'Reading a full passage', 'World 3 checkpoint exam'] },
+  { title: 'Third Position', outcome: 'Play in third position (fourth position on cello) on one string.', topics: ['Where third position is', 'Hand frame', 'Reading in third position', 'Checking with open strings'] },
+  { title: 'Shifting', outcome: 'Shift smoothly between first and third position.', topics: ['Guide fingers', 'Light thumb', 'Shifting on one string', 'Shifts in tunes'] },
+  { title: 'Position Reading', outcome: 'Read music in third position fluently.', topics: ['Third-position notes on all strings', 'Choosing positions', 'Fingering marks', 'Sight-reading'] },
+  { title: 'Scales and Arpeggios', outcome: 'Play two-octave scales and arpeggios with shifts.', topics: ['Two-octave scales', 'Arpeggios', 'Shifting in scales', 'Intonation'] },
+  { title: 'Vibrato', outcome: 'Develop a relaxed, even vibrato (taught; not scored).', topics: ['Vibrato motion', 'Slow and even', 'Vibrato on long notes', 'Vibrato and intonation'] },
+  { title: 'Six-Eight Time', outcome: 'Play in 6/8 with a two-beat feel.', topics: ['6/8 counting', 'Dotted-quarter beats', 'Jigs and barcarolles', 'Bowing in 6/8'] },
+  { title: 'Syncopation', outcome: 'Play off-beat rhythms with confidence.', topics: ['Off-beats', 'Ties across the beat', 'Syncopated patterns', 'Feeling the pulse'] },
+  { title: 'Chromatic Notes', outcome: 'Play half-step passages and chromatic scales.', topics: ['Chromatic fingerings', 'Half steps', 'Chromatic scale', 'Accidentals in tunes'] },
+  { title: 'Baroque Style', outcome: 'Play baroque-style pieces with clear, light bowing.', topics: ['Détaché', 'Terraced dynamics', 'Ornaments', 'Dance forms'] },
+  { title: 'World 3 Finale', outcome: 'Perform pieces with shifting and vibrato.', topics: ['Shifting in performance', 'Expressive playing', 'Longer pieces', 'Level 300 performance'] },
 ];
 
 const world4Units: UnitSeed[] = [
-  { title: 'Advanced Notation', outcome: 'Read repeats, codas, first/second endings and octave signs.', topics: ['Repeat signs', 'D.C. and D.S.', 'Coda', '8va and 8vb'] },
-  { title: 'Complex Rhythms', outcome: 'Count dotted and double-dotted rhythms and 32nd notes.', topics: ['Double dots', '32nd notes', 'Mixed subdivisions'] },
-  { title: 'Syncopation', outcome: 'Recognise and count off-beat accents and ties across the beat.', topics: ['Off-beats', 'Ties across beats', 'Syncopated patterns'] },
-  { title: 'Triplets and Tuplets', outcome: 'Count triplets, duplets and quintuplets in context.', topics: ['Eighth-note triplets', 'Quarter-note triplets', 'Duplets in compound time', 'Quintuplets'] },
-  { title: 'Compound Meter in Depth', outcome: 'Read dense rhythms in compound meters fluently.', topics: ['Subdividing 6/8', 'Hemiola', 'Compound syncopation'] },
-  { title: 'Advanced Intervals', outcome: 'Identify compound and enharmonic intervals.', topics: ['Compound intervals', 'Enharmonic equivalents', 'Interval inversion'] },
-  { title: 'Seventh Chords', outcome: 'Build and name the five common seventh-chord qualities.', topics: ['Dominant 7th', 'Major and minor 7th', 'Half-diminished', 'Fully diminished'] },
-  { title: 'Chord Progressions', outcome: 'Analyse common progressions with Roman numerals.', topics: ['ii–V–I', 'Circle progressions', 'Secondary dominants'] },
-  { title: 'Sight-Reading Strategy', outcome: 'Scan, chunk and read an unfamiliar 8-bar passage.', topics: ['Scanning before playing', 'Reading in patterns', 'Keeping the pulse'] },
-  { title: 'Interpretation', outcome: 'Make and justify interpretive choices from a score.', topics: ['Style periods', 'Phrasing decisions', 'World 4 checkpoint exam'] },
+  { title: 'Second and Fourth Positions', outcome: 'Play in second and fourth positions.', topics: ['Second position', 'Fourth position', 'Half position', 'Choosing between positions'] },
+  { title: 'Fifth Position and Higher', outcome: 'Play up to fifth position and beyond.', topics: ['Fifth position', 'Higher positions', 'Tone up high', 'Shifts of a fourth and more'] },
+  { title: 'High Positions and Thumb Position', outcome: 'Play in the upper register (thumb position on cello and bass).', topics: ['Thumb position (cello, bass)', 'Upper positions (violin, viola)', 'Intonation up high', 'High-register melodies'] },
+  { title: 'Off-the-String Bowing', outcome: 'Play spiccato and other bounced strokes.', topics: ['Spiccato', 'Sautillé', 'Controlled bounce', 'Fast détaché'] },
+  { title: 'Three-Octave Scales', outcome: 'Play three-octave scales and arpeggios.', topics: ['Three-octave scales', 'Arpeggios across positions', 'Speed and evenness', 'Scale routines'] },
+  { title: 'Harmonics', outcome: 'Play natural harmonics.', topics: ['Natural harmonics', 'Light finger', 'Harmonic notation', 'Harmonics in music'] },
+  { title: 'Double Stops', outcome: 'Play two strings at once (taught; scored on the melody line only).', topics: ['Open-string double stops', 'Thirds and sixths', 'Bow balance', 'Tuning double stops'] },
+  { title: 'Changing Tempo', outcome: 'Follow ritardando, accelerando and fermatas.', topics: ['Ritardando', 'Accelerando', 'Fermata', 'A tempo'] },
+  { title: 'Classical Style', outcome: 'Play classical-era style: elegant, balanced and clear.', topics: ['Phrasing', 'Articulation', 'Balance', 'Classical forms'] },
+  { title: 'World 4 Finale', outcome: 'Perform advanced pieces across the whole instrument.', topics: ['High positions', 'Bow strokes', 'Longer pieces', 'Level 400 performance'] },
 ];
 
 const world5Units: UnitSeed[] = [
-  { title: 'Remote Key Signatures', outcome: 'Read keys with five to seven sharps or flats.', topics: ['B, F♯ and C♯ major', 'D♭, G♭ and C♭ major', 'Enharmonic keys'] },
-  { title: 'Dense Rhythm', outcome: 'Read mixed tuplets, rests and ties at speed.', topics: ['Nested subdivisions', 'Rests inside tuplets', 'Reading rhythm in chunks'] },
-  { title: 'Chromatic Harmony', outcome: 'Identify borrowed chords, Neapolitan and augmented sixths.', topics: ['Modal mixture', 'Neapolitan sixth', 'Augmented sixth chords'] },
-  { title: 'Challenging Melodic Passages', outcome: 'Sight-read wide leaps and chromatic lines.', topics: ['Wide leaps', 'Chromatic lines', 'Alto and tenor clefs'] },
-  { title: 'Fast Recognition', outcome: 'Name notes, intervals and chords under time pressure.', topics: ['Timed note naming', 'Timed intervals', 'World 5 checkpoint exam'] },
+  { title: 'Fast Passagework', outcome: 'Play fast runs cleanly and in tune.', topics: ['Finger independence', 'Rhythmic practice', 'Speed building', 'Passages in context'] },
+  { title: 'Chords and Multiple Stops', outcome: 'Play three- and four-note chords (taught; melody scored).', topics: ['Broken chords', 'Three-note chords', 'Four-note chords', 'Chord bowing'] },
+  { title: 'Romantic Expression', outcome: 'Play with rubato, portamento and wide dynamics.', topics: ['Rubato', 'Portamento', 'Tone colour', 'Long lines'] },
+  { title: 'Special Effects', outcome: 'Play left-hand pizzicato, ricochet and sul ponticello.', topics: ['Left-hand pizzicato', 'Ricochet', 'Sul ponticello', 'Col legno'] },
+  { title: 'Orchestral Excerpts', outcome: 'Play famous orchestral passages for your instrument (public domain).', topics: ['Audition excerpts', 'Style', 'Counting in context', 'Excerpt performance'] },
 ];
 
 const world6Units: UnitSeed[] = [
-  { title: 'Irregular Meters', outcome: 'Read 5/8, 7/8, 11/8 and additive groupings.', topics: ['5/8 and 7/8', 'Additive meter', 'Changing meters bar to bar'] },
-  { title: 'Polyrhythm and Precision', outcome: 'Read 3-against-2, 4-against-3 and metric modulation.', topics: ['3:2 and 4:3', 'Metric modulation', 'Precision timing'] },
-  { title: 'Extended Harmony', outcome: 'Analyse extended chords, modulation and pivot chords.', topics: ['9ths, 11ths, 13ths', 'Pivot-chord modulation', 'Chromatic modulation'] },
-  { title: 'Advanced Score Reading', outcome: 'Read multi-staff and transposing-instrument parts.', topics: ['Transposing instruments', 'Open score', 'Multiple clefs at once'] },
-  { title: 'Mastery Examinations', outcome: 'Pass comprehensive exams across every skill in the course.', topics: ['Sight-reading exam', 'Harmony exam', 'Rhythm exam', 'Final mastery exam'] },
+  { title: 'Virtuoso Studies', outcome: 'Master demanding studies in the style of the great études.', topics: ['Velocity', 'Extreme shifts', 'Bow control', 'Endurance'] },
+  { title: 'Bach', outcome: 'Play movements from Bach’s solo works (public domain).', topics: ['Solo Suites and Partitas', 'Implied harmony', 'Baroque bowing', 'Bach performance'] },
+  { title: 'Concerto Movements', outcome: 'Play concerto movements from the public-domain repertoire.', topics: ['Solo style', 'Cadenzas', 'Projection', 'Concerto performance'] },
+  { title: 'The Edge of the Instrument', outcome: 'Play at the extremes of range and speed.', topics: ['Highest positions', 'Fastest passages', 'Hardest bowings', 'Near-impossible studies'] },
+  { title: 'The Four Seasons', outcome: 'Perform Vivaldi’s The Four Seasons — the final level is a full movement (public domain).', topics: ['Vivaldi’s style', 'Fast concerto writing', 'Your part in the orchestra', 'Level 500: the final performance'] },
 ];
 
 function buildWorld(
@@ -167,18 +143,18 @@ function buildWorld(
 }
 
 export const WORLDS: World[] = [
-  buildWorld(1, 'Beginner Musician', 1,
-    'From a blank staff to reading notes in both clefs and counting simple rhythms.', world1Units, 0),
-  buildWorld(2, 'Developing Musician', 101,
-    'Scales, key signatures, accidentals and intervals — the grammar of tonal music.', world2Units, 10),
-  buildWorld(3, 'Musical Explorer', 201,
-    'Chords, harmony and the markings that turn notes into expressive music.', world3Units, 20),
-  buildWorld(4, 'Advanced Musician', 301,
-    'Syncopation, tuplets, seventh chords and the strategy behind sight-reading.', world4Units, 30),
-  buildWorld(5, 'Expert Musician', 401,
-    'Remote keys, chromatic harmony and recognising complex notation at speed.', world5Units, 40),
-  buildWorld(6, 'Master Musician', 451,
-    'Irregular meters, polyrhythm, extended harmony and the final mastery exams.', world6Units, 45),
+  buildWorld(1, 'First Steps', 1,
+    'From holding your instrument to playing tunes in D, G and A major in first position.', world1Units, 0),
+  buildWorld(2, 'First Position Fluency', 101,
+    'Slurs, dynamics, flats, minor keys and sixteenth notes across all four strings.', world2Units, 10),
+  buildWorld(3, 'Shifting', 201,
+    'Third position, shifting, vibrato, 6/8 and baroque style.', world3Units, 20),
+  buildWorld(4, 'Upper Positions', 301,
+    'High positions, spiccato, harmonics, double stops and classical style.', world4Units, 30),
+  buildWorld(5, 'Advanced Technique', 401,
+    'Fast passagework, chords, romantic expression and orchestral excerpts.', world5Units, 40),
+  buildWorld(6, 'Virtuoso', 451,
+    'Virtuoso studies, Bach, concertos — and Vivaldi’s The Four Seasons at Level 500.', world6Units, 45),
 ];
 
 export const TOTAL_LEVELS = 500;

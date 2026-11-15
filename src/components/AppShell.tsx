@@ -106,7 +106,7 @@ function Shell() {
     // Child effects run first, so the 404 page is already in the DOM here.
     if (document.querySelector('[data-not-found]')) { document.title = 'Page not found · Stave'; return; }
     if (pathname === '/') { document.title = 'Stave — Learn to read music'; return; }
-    // Title follows the page's own heading, e.g. "Level 7 · Stave", "Beginner Musician · Stave".
+    // Title follows the page's own heading, e.g. "Level 7 · Stave", "First Steps · Stave".
     const h1 = document.querySelector<HTMLElement>('[data-page-title]')?.innerText.trim();
     const page = NAV.find((n) => isActivePath(n.to, pathname));
     document.title = `${h1 || page?.label || 'Stave'} · Stave`;

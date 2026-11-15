@@ -1,5 +1,5 @@
-import { getInstrument, midiName, type InstrumentId } from '../audio/notes';
-import { placeNote } from '../course/fingering';
+import { getInstrument, type InstrumentId } from '../audio/notes';
+import { placeNote, sharpName } from '../course/fingering';
 import styles from './Fingerboard.module.css';
 
 interface Props {
@@ -24,7 +24,7 @@ export function Fingerboard({ instrument, notes, highlight = [] }: Props) {
   const placed = notes.map((m) => ({ m, p: placeNote(instrument, m) })).filter((x) => x.p);
   const x = (s: number) => left + s * gap;
   const y = (offset: number) => top + (offset - 0.5) * step;
-  const name = (m: number) => midiName(m).replace(/\d+$/, '');
+  const name = (m: number) => sharpName(m);
   const label = `${inst.name} fingerboard: ${placed.map(({ m, p }) => `${name(m)} = ${p!.finger === 0 ? `open ${p!.stringName} string` : `${p!.stringName} string, finger ${p!.finger}`}`).join('; ')}.`;
 
   return (

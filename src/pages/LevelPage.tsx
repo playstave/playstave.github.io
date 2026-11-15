@@ -6,7 +6,7 @@ import { getLesson } from '../lessons';
 import { LessonPlayer } from '../components/lesson/LessonPlayer';
 import { PlayLessonPlayer } from '../components/lesson/PlayLessonPlayer';
 import { levelKind } from '../course/map';
-import { getPlayLevel } from '../course/playLevels';
+import { getPlayLevel, LAST_WRITTEN_LEVEL } from '../course/playLevels';
 import { canOpen, levelStatus, nextLevel } from '../lib/progression';
 import { useAppState } from '../state/AppState';
 import styles from './LevelPage.module.css';
@@ -66,7 +66,7 @@ export function LevelPage() {
         {level.isCheckpoint && <div><dt className="eyebrow">Type</dt><dd>{level.isMajor ? 'Major milestone' : level.isMilestone ? 'Milestone' : 'Checkpoint review'}</dd></div>}
       </dl>
       <Notice title="This level’s lesson is not available yet">
-        <p>Lessons are being written in order. {kind.kind === 'play'
+        <p>Lessons are written world by world — Levels 1–{LAST_WRITTEN_LEVEL} are ready for every instrument, and the next world is on its way. {kind.kind === 'play'
           ? 'When this playing lesson is ready it will open here: a short tutorial on what’s new, a chance to try the new notes, then a play-along test.'
           : 'When this theory lesson is ready it will open here with a short lesson, guided practice and a challenge.'}</p>
       </Notice>

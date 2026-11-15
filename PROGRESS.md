@@ -210,6 +210,17 @@ Build order (revised): R1 listening + tuner → R2 play-along assessment engine 
 - [ ] Not verified with a real instrument (owner)
 - Known: World/unit titles on the roadmap are still the original reading syllabus — R4 rewrites the 500-level map for playing; Levels 13+ show "not written yet" until R4/R5
 
-## Next: R4 — 500-level map (worlds/units for playing) + more levels per instrument (not started)
+### R4 — 500-level map for playing + all of World 1 (Levels 1–100): COMPLETE (2026-11-15)
+- [x] New curriculum (`data/curriculum.ts`): 6 worlds / 50 units for string playing — First Steps (1–100), First Position Fluency (101–200), Shifting (201–300), Upper Positions (301–400), Advanced Technique (401–450), Virtuoso (451–500, ending with Vivaldi's The Four Seasons at Level 500). Skills the mic can't judge (bowing, vibrato, double stops) are marked "taught; not scored"
+- [x] Skill badges redefined on the new course (Bright Beginnings, Theory Expert, Rhythm Master, Key Keeper, Checkpoint Champion); earned badges are never removed
+- [x] Unit-based level generator (`course/generator.ts`) + World 1 unit specs (`course/world1.ts`, Units 2–10): each level teaches ONE idea (card + fingering for the student's instrument + "Today's piece"), with an original practice piece composed by rule (fixed per level, mostly stepwise, phrase endings, ends on the tonic, I/IV/V backing), every note checked playable in first position; per-instrument registers (e.g. the bass reaches down where first position can't reach up)
+- [x] Owner request "every level gets much harder": difficulty is a course-wide curve (tempo, length, busier rhythms, more leaps, fewer long notes; rhythms once learned keep coming back), AND a hard rule — every playing level must score higher than the previous one (score = notes/sec × √bars × (1 + ½·leaps) × (1 + range/36)); the generator picks the gentlest candidate that beats the last level, then lengthens / speeds up / busies the rhythm, with tempo as a guaranteed last step. Hand-written early levels follow the same rule (faster, then "play it twice"). Measured (violin): L13 ♩77, 9 bars, 0.9 notes/s → L50 ♩97, 16 bars, 2.2 n/s → L100 ♩118, 40 bars, 2.7 n/s; score 4.3 → 13.5 → 32.8
+- [x] Fingering refinements: violin/viola low 1 / low 2 / high 2 / high 3 labels, cello extended 4th finger; lesson note names spelled with sharps (G♯ not A♭)
+- [x] Tests (663 total pass): every World 1 level exists for every instrument; every playing level on every instrument is playable in first position, ends on a note, valid backing, and a clean simulated take scores 100% (372 checks); EVERY playing level is harder than the one before on all 4 instruments; each unit harder than the last; Level 100 the hardest; tempos ≤ 150, bars ≤ 40, ≤ 4.5 notes/s; no duplicate titles
+- [x] Browser (separate test server): roadmap shows the new worlds/units; World 1 says "Every lesson in this world is ready"; World 6 plan; generated Levels 37/61/64/97 open with unit intro, idea card, fingering, piece; cello Level 61 played through at 100%; Level 101 explains it isn't written yet
+- Bugs found and fixed: repeated eighth notes on bass were marked early (onset taken from the previous identical note); lesson note names used flats (A♭ for G♯)
+- Known: first visit to a late level computes the earlier levels once (~0.5 s in development, cached afterwards)
+
+## Next: R5 — World 2 (Levels 101–200): slurs, dynamics, flats, minor keys, sixteenths (needs slur/dynamic notation) — then Worlds 3–6 (positions/shifting, high positions, advanced, Vivaldi)
 
 ## Later: Stage 7 — Advertising integration (not started)

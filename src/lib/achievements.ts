@@ -6,12 +6,14 @@ import { ACHIEVEMENTS } from '../data/achievements';
 import type { StudentProgress } from '../state/progress';
 import { streakInfo } from './streak';
 
+import { THEORY_LEVELS } from '../course/map';
+
 const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
 const UNIT1 = range(1, 10);
-const CLEF_LEVELS = range(21, 60);
-const RHYTHM_LEVELS = [...range(61, 100), ...range(181, 200)];
-const KEY_LEVELS = range(111, 130);
-const SIGHT_LEVELS = range(381, 390);
+const CLEF_LEVELS = THEORY_LEVELS.filter((n) => n <= 100);
+const RHYTHM_LEVELS = [...range(11, 20), ...range(31, 40), ...range(51, 60)];
+const KEY_LEVELS = [...range(21, 30), ...range(41, 50), ...range(61, 70)];
+const SIGHT_LEVELS = range(1, 10).map((k) => k * 10);
 
 export interface Measure { current: number; target: number }
 

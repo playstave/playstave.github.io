@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { THEORY_COUNT, THEORY_LEVELS, levelKind, playLevel, theoryLevel } from './map';
 import { FIRST_POSITION, placeNote, placeOnString } from './fingering';
-import { getPlayLevel, PLAY_LEVEL_COUNT } from './playLevels';
+import { getPlayLevel, HAND_WRITTEN as PLAY_LEVEL_COUNT } from './playLevels';
 import { buildTimeline } from '../play/exercise';
 import { assessTake, summarise } from '../play/assess';
 import { framesFromAudio, renderPerformance } from '../play/perform';
@@ -79,8 +79,8 @@ describe('playing levels', () => {
     const bars = (i: number) => buildTimeline(getPlayLevel('violin', i)!.exercise).measures.length;
     expect(bars(9)).toBeGreaterThan(bars(1));
   });
-  it('returns undefined for levels not written yet', () => {
-    expect(getPlayLevel('violin', PLAY_LEVEL_COUNT + 1)).toBeUndefined();
+  it('returns undefined for levels not written yet (beyond World 1)', () => {
+    expect(getPlayLevel('violin', levelKind(101).index)).toBeUndefined();
   });
 });
 

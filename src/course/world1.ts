@@ -1,0 +1,145 @@
+/**
+ * World 1 (Levels 1–100), Units 2–10. Unit 1 and Level 11 are hand-written in
+ * playLevels.ts. Each idea teaches one new thing; the generator writes a
+ * matching practice piece for each instrument. Positions that are theory
+ * levels or hand-written are skipped automatically.
+ */
+import type { UnitSpec } from './generator';
+
+export const WORLD1: UnitSpec[] = [
+  {
+    unit: 2, key: 'D', time: '4/4', cells: ['q', 'h', 'q', 'rest'], tempo: [76, 88], bars: [4, 8], low: 0, high: 12, backing: 'block',
+    ideas: [
+      { title: 'Three beats in a bar', text: ['Hand-written level.'] },
+      { title: 'Theory', text: ['Theory level.'] },
+      { title: 'B on the A string', text: ['Your next new note is B, on the A string. Place the finger shown, the same distance from the nut as E on the D string.'], focus: [5], time: '3/4', cells: ['q', 'h', 'hd'] },
+      { title: 'C♯ on the A string', text: ['C♯ sits right next to D — listen for a bright, close half step up to D.'], focus: [6], time: '3/4', cells: ['q', 'h', 'hd'] },
+      { title: 'High D: an octave', text: ['D on the A string is the same letter as your open D string, one octave higher. Play them one after the other: they should sound like the same note, high and low.'], focus: [7] },
+      { title: 'Counting rests in 3/4', text: ['A quarter rest is one silent beat. In 3/4, count “1 2 3” through rests just as you do through notes.'], time: '3/4', cells: ['q', 'rest', 'h'], demo: ['q', 'rest', 'q'], tip: 'Stop the bow on the string during rests, ready for the next note.' },
+      { title: 'Back to four beats', text: ['Switching between 3/4 and 4/4 trains your counting. This piece is in 4/4: four beats in each bar.'], cells: ['q', 'h', 'q'] },
+      { title: 'Keeping a steady tempo', text: ['A steady tempo means every beat the same length, even on tricky notes. Let the metronome lead — don’t rush the easy bits.'], tempo: 92 },
+      { title: 'Longer phrases', text: ['A phrase is a musical sentence, usually four bars. This piece has two: keep the bow moving smoothly to the end of each one.'], bars: 8 },
+    ],
+    checkpoint: { title: 'Checkpoint: Counting in Time', text: ['A longer piece using every note on the D and A strings so far, in 4/4.'] },
+  },
+  {
+    unit: 3, key: 'D', time: '4/4', cells: ['q', 'h'], tempo: [76, 92], bars: [4, 8], low: 5, high: 12, backing: 'block',
+    ideas: [
+      { title: 'The D major scale', text: ['A scale is eight notes climbing step by step from a home note to the same note an octave higher. D major uses D E F♯ G A B C♯ D.'], pattern: 'scale', cells: ['q'], tip: 'Keep each finger down until you need to lift it — it helps the next note land in tune.' },
+      { title: 'Scale in half notes', text: ['Slow scales are the best intonation practice. Two beats per note gives you time to listen — and this time you go up and down the scale several times without stopping.'], pattern: 'scale', cells: ['h'] },
+      { title: 'Scale rhythm: long, short, short', text: ['Practising scales in rhythms keeps them interesting and builds control. Here: a half note then two quarter notes.'], pattern: 'scale', cells: ['h', 'q'] },
+      { title: 'Stepping downwards', text: ['Going down, lift each finger cleanly off the string — the note underneath is already there.'], skips: 0.1 },
+      { title: 'Skipping in thirds', text: ['A third skips one note of the scale: D to F♯, E to G. Thirds are a classic scale exercise.'], pattern: 'thirds', cells: ['q'] },
+      { title: 'The D major arpeggio', text: ['An arpeggio plays only the notes of the chord, one after another: D, F♯, A, and D again.'], pattern: 'arpeggio', cells: ['q', 'h'], focus: [2, 4] },
+      { title: 'Steps and skips together', text: ['Most tunes mix steps (next note) and skips (jumping over notes). Look ahead for the skips.'], skips: 0.45 },
+      { title: 'Below home: low A, B and C♯', text: ['Notes below your home D lead back up to it. C♯ just below D is called the leading note — it pulls strongly back home.'], focus: [-1, -3], low: 7, high: 7 },
+      { title: 'A scale-based melody', text: ['This melody grows out of the scale. Listen for patterns that repeat.'], bars: 8 },
+    ],
+    checkpoint: { title: 'Checkpoint: The D Major Scale', text: ['Scales, thirds, arpeggios and melody in D major — the biggest piece so far.'] },
+  },
+  {
+    unit: 4, key: 'D', time: '4/4', cells: ['q', 'e2', 'h'], tempo: [72, 88], bars: [4, 8], low: 5, high: 12, backing: 'pulse',
+    ideas: [
+      { title: 'Eighth notes', text: ['An eighth note is half a beat. Two eighths joined by a beam fill one beat — the same time as one quarter note.'], demo: ['e2', 'e2', 'q', 'q'], cells: ['q', 'e2'] },
+      { title: 'Counting “1 and 2 and”', text: ['Say the numbers on the beat and “and” halfway between. Each eighth note gets one syllable.'], cells: ['q', 'e2'], tip: 'Count out loud once before playing.' },
+      { title: 'Eighths on one note', text: ['Repeated eighths on the same note train an even bow: same length, same speed, down–up.'], pattern: 'repeat', cells: ['e2', 'q'] },
+      { title: 'Eighths moving by step', text: ['Now the eighths move. Keep the left hand ahead of the bow: fingers ready before each note.'], cells: ['e2', 'q', 'h'], skips: 0.1 },
+      { title: 'Eighths across two strings', text: ['Crossing strings on eighth notes needs a small, early arm movement.'], cells: ['e2', 'q'], skips: 0.55 },
+      { title: 'Four eighths in a row', text: ['Four eighths make two beats. Use small bows from the middle of the bow.'], cells: ['e4', 'q', 'h'], demo: ['e4', 'h'] },
+      { title: 'Eighths in 3/4', text: ['Eighth notes in a waltz: count “1 and 2 and 3 and”.'], time: '3/4', cells: ['e2', 'q', 'h'] },
+      { title: 'A little faster', text: ['Same rhythms, slightly faster. If it gets messy, use the slower speed first.'], tempo: 96 },
+      { title: 'An eighth-note tune', text: ['Eight bars mixing quarters and eighths — the rhythm most music is made of.'], bars: 8, cells: ['q', 'e2', 'e4', 'h'] },
+    ],
+    checkpoint: { title: 'Checkpoint: Eighth Notes', text: ['A long piece full of eighth notes in D major.'] },
+  },
+  {
+    unit: 5, key: 'G', time: '4/4', cells: ['q', 'h'], tempo: [76, 92], bars: [4, 8], low: 0, high: 12, backing: 'block',
+    ideas: [
+      { title: 'G major', text: ['G major has one sharp, F♯. Its home note is G — on most of your instruments that means playing on the next string down.'], tip: 'Lower string, heavier bow: let the arm weight sink in a little more.' },
+      { title: 'Fingers on the lower string', text: ['On the lower string, the finger pattern is the same shape you learned on D: a whole step, a whole step, then a half step.'], focus: [1, 2] },
+      { title: 'C natural', text: ['In G major the C is natural, not sharp. On violin and viola that means a low 2nd finger on the A string or a 3rd finger on the G string; on cello and bass, see the diagram.'], focus: [3] },
+      { title: 'The G major scale', text: ['G A B C D E F♯ G. Notice where the half steps fall: B–C and F♯–G.'], pattern: 'scale', cells: ['q', 'h'] },
+      { title: 'The G major arpeggio', text: ['G, B, D, G — the notes of the G major chord.'], pattern: 'arpeggio', cells: ['q', 'h'], focus: [2, 4] },
+      { title: 'Crossing three strings', text: ['G major spreads across three strings. Plan each crossing a moment early.'], skips: 0.5 },
+      { title: 'Eighths in G', text: ['Eighth notes in G major, starting low.'], cells: ['e2', 'q', 'h'] },
+      { title: 'G major in 3/4', text: ['A waltz in G: strong first beat, lighter second and third.'], time: '3/4', cells: ['q', 'h', 'hd'] },
+      { title: 'A G major tune', text: ['Eight bars in G major. Find every C before you start — they’re all natural.'], bars: 8, cells: ['q', 'e2', 'h'] },
+    ],
+    checkpoint: { title: 'Checkpoint: G Major', text: ['A long G major piece using the lower strings.'] },
+  },
+  {
+    unit: 6, key: 'D', time: '4/4', cells: ['q', 'dq', 'h'], tempo: [72, 88], bars: [4, 8], low: 5, high: 12, backing: 'block',
+    ideas: [
+      { title: 'Dotted quarter notes', text: ['A dot adds half the note’s length. A dotted quarter lasts one and a half beats, and is usually followed by an eighth note to finish the beat.'], demo: ['dq', 'h'], cells: ['dq', 'h', 'q'] },
+      { title: 'Counting the dot', text: ['Count “1 – 2 and”: hold through “2”, then play the eighth on “and”.'], cells: ['dq', 'q', 'h'] },
+      { title: 'Long–short on one note', text: ['Practise the rhythm on one note first so the bow can learn it: long bow, then a quick short one.'], pattern: 'repeat', cells: ['dq', 'q'] },
+      { title: 'Dotted rhythms moving', text: ['Now the dotted rhythm moves between notes. The short note leads into the next beat.'], cells: ['dq', 'q', 'h'], skips: 0.15 },
+      { title: 'Dotted rhythms in G', text: ['The same rhythm in G major.'], key: 'G', low: 0, high: 12, cells: ['dq', 'q', 'h'] },
+      { title: 'Dotted rhythms in 3/4', text: ['In 3/4 a dotted quarter and an eighth take two of the three beats.'], time: '3/4', cells: ['dq', 'q'] },
+      { title: 'Saving bow', text: ['Use slow bow on the long note and a quick, light bow on the short one, so you don’t run out.'], cells: ['dq', 'h', 'q'] },
+      { title: 'Brighter dotted rhythms', text: ['Dotted rhythms at a brighter tempo — keep the short note short.'], tempo: 96 },
+      { title: 'A dotted-rhythm tune', text: ['Eight bars with a lilt.'], bars: 8, cells: ['dq', 'q', 'e2', 'h'] },
+    ],
+    checkpoint: { title: 'Checkpoint: Dotted Rhythms', text: ['A long piece with dotted rhythms, quarters and eighths.'] },
+  },
+  {
+    unit: 7, key: 'A', time: '4/4', cells: ['q', 'h'], tempo: [76, 92], bars: [4, 8], low: 0, high: 12, backing: 'block',
+    ideas: [
+      { title: 'A major: three sharps', text: ['A major has three sharps: F♯, C♯ and G♯. The new one is G♯.'], tip: 'Check the key signature at the start of every line.' },
+      { title: 'G♯', text: ['G♯ is a half step below A. Reach for it and listen: it should pull up towards A.'], focus: [6] },
+      { title: 'The A major scale', text: ['A B C♯ D E F♯ G♯ A.'], pattern: 'scale', cells: ['q', 'h'], focus: [6] },
+      { title: 'The A major arpeggio', text: ['A, C♯, E, A.'], pattern: 'arpeggio', cells: ['q', 'h'], focus: [2, 4] },
+      { title: 'Around G♯', text: ['Melodies that circle the leading note G♯ and resolve to A.'], focus: [6], skips: 0.1 },
+      { title: 'Eighths in A major', text: ['Eighth notes in A major.'], cells: ['e2', 'q', 'h'] },
+      { title: 'A major in 3/4', text: ['A waltz in A major.'], time: '3/4', cells: ['q', 'h', 'hd'] },
+      { title: 'Dotted rhythms in A', text: ['Dotted rhythms come back, in A major.'], cells: ['dq', 'q', 'h'] },
+      { title: 'An A major tune', text: ['Eight bars in A major.'], bars: 8, cells: ['q', 'e2', 'h'] },
+    ],
+    checkpoint: { title: 'Checkpoint: A Major', text: ['A long piece in A major.'] },
+  },
+  {
+    unit: 8, key: 'C', time: '4/4', cells: ['q', 'h'], tempo: [76, 92], bars: [4, 8], low: 0, high: 12, backing: 'block',
+    ideas: [
+      { title: 'Low second finger', text: ['C major has no sharps. Where you played C♯ and F♯ before, you now play C and F — a half step lower. Violin and viola players call this “low 2”.'], focus: [3, 6] },
+      { title: 'F natural', text: ['F natural is a half step above E. Keep it close to the finger below.'], focus: [3] },
+      { title: 'The C major scale', text: ['C D E F G A B C — no sharps or flats.'], pattern: 'scale', cells: ['q', 'h'] },
+      { title: 'The C major arpeggio', text: ['C, E, G, C.'], pattern: 'arpeggio', cells: ['q', 'h'], focus: [2, 4] },
+      { title: 'Listening for half steps', text: ['C major has half steps between E–F and B–C. Make them really close.'], skips: 0.1, focus: [3, 7] },
+      { title: 'Eighths in C', text: ['Eighth notes in C major.'], cells: ['e2', 'q', 'h'] },
+      { title: 'C major in 3/4', text: ['A waltz in C.'], time: '3/4', cells: ['q', 'h', 'hd'] },
+      { title: 'Dotted rhythms in C', text: ['Dotted rhythms in C major.'], cells: ['dq', 'q', 'h'] },
+      { title: 'A C major tune', text: ['Eight bars in C major.'], bars: 8, cells: ['q', 'e2', 'h'] },
+    ],
+    checkpoint: { title: 'Checkpoint: Low Fingers', text: ['A long piece in C major.'] },
+  },
+  {
+    unit: 9, key: 'G', time: '4/4', cells: ['q', 'e2', 'h'], tempo: [80, 96], bars: [8, 12], low: 0, high: 12, backing: 'pulse',
+    ideas: [
+      { title: 'Phrases', text: ['Melodies are built from phrases. Shape each one: a little louder towards the middle, softer at the end.'], bars: 8 },
+      { title: 'Question and answer', text: ['The first phrase asks a question (it ends away from home); the second answers it (it ends at home).'], key: 'D', low: 5, high: 12 },
+      { title: 'A melody in A', text: ['A longer melody in A major.'], key: 'A' },
+      { title: 'A waltz in D', text: ['A waltz: lean into beat one.'], key: 'D', time: '3/4', low: 5, high: 12, cells: ['q', 'h', 'hd', 'e2'] },
+      { title: 'A march in G', text: ['A march: crisp, steady and proud.'], cells: ['q', 'e2', 'dq'] },
+      { title: 'A song in C', text: ['A singing melody in C major — long, smooth bows.'], key: 'C', cells: ['q', 'h'] },
+      { title: 'Singing with the bow', text: ['On long notes keep the bow speed even so the sound doesn’t fade.'], cells: ['h', 'w', 'q'] },
+      { title: 'A dance with eighths', text: ['A lively dance tune with eighth notes.'], key: 'D', low: 5, high: 12, cells: ['e2', 'e4', 'q'] },
+      { title: 'A longer melody', text: ['Twelve bars: three phrases.'], bars: 12 },
+    ],
+    checkpoint: { title: 'Checkpoint: Melodies to Play', text: ['A long, lyrical melody.'] },
+  },
+  {
+    unit: 10, key: 'D', time: '4/4', cells: ['q', 'e2', 'h', 'dq'], tempo: [84, 100], bars: [8, 14], low: 5, high: 12, backing: 'pulse',
+    ideas: [
+      { title: 'Finale study in D', text: ['Everything from World 1 comes together. First, D major.'] },
+      { title: 'Finale study in G', text: ['G major, using the lower strings.'], key: 'G', low: 0 },
+      { title: 'Finale study in A', text: ['A major, with G♯.'], key: 'A', low: 0 },
+      { title: 'Finale study in C', text: ['C major, with low fingers.'], key: 'C', low: 0 },
+      { title: 'Rhythm review', text: ['Quarters, eighths, dotted rhythms and rests in one piece.'], cells: ['q', 'e2', 'dq', 'rest', 'h'] },
+      { title: 'Scale and arpeggio review', text: ['Scales and arpeggios in D major.'], pattern: 'scale', cells: ['q', 'e2'] },
+      { title: '3/4 review', text: ['A long waltz.'], time: '3/4', cells: ['q', 'h', 'hd', 'e2'] },
+      { title: 'Stamina', text: ['A long piece: pace yourself and keep the bow relaxed.'], bars: 16 },
+      { title: 'Dress rehearsal', text: ['A full run-through before the World 1 performance.'], bars: 14, key: 'G', low: 0 },
+    ],
+    checkpoint: { title: 'World 1 Performance', text: ['Your Level 100 performance: the longest piece in World 1. Take a breath, tune up, and play it like a concert.'] },
+  },
+];

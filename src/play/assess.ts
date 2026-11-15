@@ -109,7 +109,9 @@ export function assessNote(note: TimedNote, frames: Frame[], beatSec: number, o:
   const centre = trimmedMean(matching);
 
   // --- Timing: when did this note begin?
-  const searchFrom = note.start - Math.max(0.5, tTol * 2);
+  // An onset before the middle of the previous note belongs to that note (e.g. repeated eighths).
+  const prevMid = prev && !prev.rest ? prev.start + (prev.end - prev.start) * 0.5 : -Infinity;
+  const searchFrom = Math.max(note.start - Math.max(0.5, tTol * 2), prevMid);
   // Look for the start up to the end of the written note, so even a very late start is found and marked late.
   const searchTo = Math.max(note.start + Math.max(0.5, tTol * 2), note.end);
   const near = frames.filter((f) => f.t >= searchFrom - 0.15 && f.t <= searchTo);
@@ -129,7 +131,7 @@ export function assessNote(note: TimedNote, frames: Frame[], beatSec: number, o:
     if (repeated) {
       const lookback = near.slice(Math.max(0, i - 4), i);
       const minRms = Math.min(...lookback.map((x) => x.rms));
-      levelStart = minRms > 0 && f.rms >= minRms * 1.6;
+      levelStart = minRms > 0 && f.rms >= minRms * 1.3;
     }
     if (pitchStart || levelStart) {
       // A loud but pitch-less stretch just before (scratchy bow attack, or a

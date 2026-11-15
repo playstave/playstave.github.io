@@ -3,6 +3,7 @@ import { Icon } from '../components/Icon';
 import { ButtonLink, Notice, PageHeader } from '../components/ui';
 import { getWorld, WORLDS } from '../data/curriculum';
 import { levelInfo } from '../course';
+import { LAST_WRITTEN_LEVEL } from '../course/playLevels';
 import { useAppState } from '../state/AppState';
 import { NotFound } from './NotFound';
 import styles from './WorldDetail.module.css';
@@ -29,8 +30,8 @@ export function WorldDetail() {
       />
 
       <div className={styles.notice}>
-        <Notice title="Lessons are being written level by level">
-          <p>This is the full syllabus for the world. Lessons unlock one at a time — playing lessons for your instrument, with a theory lesson now and then. Use the button on your current unit to open your next lesson.</p>
+        <Notice title={world.lastLevel <= LAST_WRITTEN_LEVEL ? 'Every lesson in this world is ready' : 'This world’s lessons are being written'}>
+          <p>{world.lastLevel <= LAST_WRITTEN_LEVEL ? 'Each level teaches one new thing, then listens to you play it.' : `This is the full plan for the world. Lessons are written world by world; Levels 1–${LAST_WRITTEN_LEVEL} are ready now.`} Lessons unlock one at a time — playing lessons for your instrument, with a theory lesson now and then.</p>
         </Notice>
       </div>
 

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { LESSONS } from './index';
+import { LESSONS, getLesson } from './index';
+import { theoryLevel } from '../course/map';
 import { classifyMove, namePosition, whichLine, whichSpace } from './helpers';
 import { motion, posName } from './staff';
 import type { Figure, Question } from './types';
@@ -9,9 +10,13 @@ const lessons = Object.values(LESSONS);
 const figuresOf = (q: Question): Figure[] => (q.kind === 'choice' && q.figure ? [q.figure] : []);
 
 describe('lesson catalogue', () => {
-  it('has Levels 1–10, each matching its roadmap unit', () => {
+  it('has theory lessons 1–10, each at its fixed theory level in the course', () => {
     expect(lessons.map((l) => l.level).sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-    for (const l of lessons) expect(getLevel(l.level)!.unit.title).toBe('The Staff');
+    for (const l of lessons) {
+      const n = theoryLevel(l.level);
+      expect(getLevel(n)).toBeDefined();
+      expect(getLesson(n)).toBe(l);
+    }
   });
 
   it('every lesson has its own title and objective', () => {

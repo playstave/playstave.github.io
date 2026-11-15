@@ -3,9 +3,9 @@ import { Button } from '../ui';
 import { Icon } from '../Icon';
 import { Fingerboard } from '../Fingerboard';
 import { useListener } from '../../audio/useListener';
-import { centsFrom, getInstrument, midiName, midiToHz, readNote, type InstrumentId } from '../../audio/notes';
+import { centsFrom, getInstrument, midiToHz, readNote, type InstrumentId } from '../../audio/notes';
 import { DEFAULT_IN_TUNE_CENTS } from '../../audio/tolerance';
-import { describePlacement, placeNote } from '../../course/fingering';
+import { describePlacement, placeNote, sharpName, sharpNameOct } from '../../course/fingering';
 import { createDevSource, devToneEnabled, updateDevTone } from '../../audio/devTone';
 import styles from './Lesson.module.css';
 
@@ -24,7 +24,7 @@ export function TryNote({ instrument, midi, onDone, last }: { instrument: Instru
   const [done, setDone] = useState(false);
   const heldSince = useRef<number | null>(null);
   const p = placeNote(instrument, midi)!;
-  const name = midiName(midi).replace(/\d+$/, '');
+  const name = sharpName(midi);
 
   // DEV: point the synthetic tone at the target so the flow can be tested.
   useEffect(() => { if (DEV_TONE) updateDevTone({ hz: midiToHz(midi) }); }, [midi]);
@@ -47,13 +47,13 @@ export function TryNote({ instrument, midi, onDone, last }: { instrument: Instru
     : state !== 'listening' ? ''
     : !reading ? 'Play the note and let it ring…'
     : near ? (inTune ? 'In tune — hold it…' : cents! < 0 ? `${name} is a little flat — aim slightly higher` : `${name} is a little sharp — aim slightly lower`)
-    : `That sounds like ${readNote(reading.hz).name.replace(/\d+$/, '')}. Look at the fingering again.`;
+    : `That sounds like ${sharpName(readNote(reading.hz).midi)}. Look at the fingering again.`;
 
   return (
-    <div className={styles.tryBox} data-try-note={midiName(midi)} data-try-done={done}>
+    <div className={styles.tryBox} data-try-note={sharpNameOct(midi)} data-try-done={done}>
       <div className={styles.tryNote}>
         <p className={`${styles.tryName} ${done ? styles.tryOk : ''}`}>{name}{done && <Icon name="check" size={40} />}</p>
-        <p className={styles.para}>{describePlacement(p).replace(/^./, (c) => c.toUpperCase())}.</p>
+        <p className={styles.para}>{describePlacement(p, instrument).replace(/^./, (c) => c.toUpperCase())}.</p>
         <Button variant="ghost" icon="speaker" onClick={() => playTone(midiToHz(midi))} disabled={toneHz != null}>Hear it</Button>
       </div>
       <div className={styles.tryBoard}><Fingerboard instrument={instrument} notes={[midi]} highlight={[midi]} /></div>

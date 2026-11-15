@@ -10,6 +10,10 @@
 import { getInstrument, type InstrumentId } from '../audio/notes';
 import { soundingShift, type Backing, type PlayExercise } from '../play/exercise';
 import { describePlacement, placeNote } from './fingering';
+import { ensureHarder, generateLevel, pieceScore, setFirstIdeaPosition } from './generator';
+import { WORLD1 } from './world1';
+import { levelKind, playLevel } from './map';
+import { unitForLevel, WORLDS } from '../data/curriculum';
 
 export type CardShow =
   | { kind: 'fingerboard'; notes: number[]; highlight: number[] }
@@ -273,20 +277,79 @@ const DEFS: Def[] = [
   },
 ];
 
-export const PLAY_LEVEL_COUNT = DEFS.length;
+
+
+/** Playing levels written by hand (indexes 1–10); the rest come from unit specs. */
+export const HAND_WRITTEN = DEFS.length;
 
 /** The Nth playing level for an instrument, or undefined if not written yet. */
 export function getPlayLevel(inst: InstrumentId, index: number): PlayLevel | undefined {
   const def = DEFS[index - 1];
-  if (!def) return undefined;
+  if (!def) return generatedLevel(inst, index);
+  const ck = `${inst}:${index}`;
+  if (cache.has(ck)) return cache.get(ck) ?? undefined;
+  const built = handWritten(inst, index, def);
+  cache.set(ck, built);
+  return built;
+}
+
+/** Repeat the chord list to match a "play it twice" exercise. */
+function repeatChords(chords: string, music: string): string {
+  const c = chords.split('|').map((x) => x.trim());
+  const bars = music.split('|').length;
+  const body = c.slice(0, -1);
+  const out: string[] = [];
+  while (out.length < bars - 1) out.push(...body);
+  return [...out.slice(0, bars - 1), c[c.length - 1]].join(' | ');
+}
+
+function handWritten(inst: InstrumentId, index: number, def: Def): PlayLevel {
   const g = geo(inst);
   const d = def(g);
-  const exercise: PlayExercise = {
+  let exercise: PlayExercise = {
     id: `${inst}-p${index}`, title: d.title, instrument: inst, clef: g.clef,
     key: d.key ?? 'D', time: d.time ?? '4/4', tempo: inst === 'bass' ? Math.round(d.tempo * 0.9) : d.tempo,
     music: music(inst, d.bars), backing: d.backing, hint: d.hint,
   };
+  // Every level must be harder than the one before.
+  const prev = index > 1 ? getPlayLevel(inst, index - 1) : undefined;
+  if (prev) {
+    const before = exercise.music;
+    exercise = ensureHarder(exercise, pieceScore(prev.exercise), (playLevel(index) - 1) / 99);
+    if (exercise.music !== before) exercise = { ...exercise, hint: `${d.hint} Play it through twice.`, backing: exercise.backing && exercise.backing.style !== 'drone' ? { ...exercise.backing, chords: repeatChords(exercise.backing.chords, exercise.music) } : exercise.backing };
+  }
   return { index, title: d.title, objective: d.objective, newIdeas: d.newIdeas, cards: d.cards, tryNotes: d.tryNotes, exercise };
 }
+
+const SPECS = new Map(WORLD1.map((s) => [s.unit, s]));
+// The first generated position in each unit gets the unit introduction card.
+for (const spec of WORLD1) {
+  const u = WORLDS.flatMap((w) => w.units).find((x) => x.id === spec.unit)!;
+  for (let n = u.firstLevel; n <= u.lastLevel; n++) {
+    const k = levelKind(n);
+    if (k.kind === 'play' && k.index > HAND_WRITTEN) { setFirstIdeaPosition(spec, n - u.firstLevel + 1); break; }
+  }
+}
+
+const cache = new Map<string, PlayLevel | null>();
+
+function generatedLevel(inst: InstrumentId, index: number): PlayLevel | undefined {
+  const key = `${inst}:${index}`;
+  if (cache.has(key)) return cache.get(key) ?? undefined;
+  const n = playLevel(index);
+  const unit = n <= 500 ? unitForLevel(n) : undefined;
+  const spec = unit && SPECS.get(unit.id);
+  let lv: PlayLevel | undefined;
+  if (unit && spec) {
+    // Every level must be harder than the previous playing level.
+    const prev = getPlayLevel(inst, index - 1);
+    lv = generateLevel({ inst, spec, level: n, indexInUnit: n - unit.firstLevel + 1, playIndex: index, unitTitle: unit.title, unitOutcome: unit.outcome, unitTopics: unit.topics, beat: prev ? pieceScore(prev.exercise) : undefined });
+  }
+  cache.set(key, lv ?? null);
+  return lv;
+}
+
+/** Highest level number with written content (for "lessons written up to Level N"). */
+export const LAST_WRITTEN_LEVEL = Math.max(...WORLD1.map((s) => WORLDS.flatMap((w) => w.units).find((x) => x.id === s.unit)!.lastLevel));
 
 export const writtenKey = written;

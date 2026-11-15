@@ -4,8 +4,8 @@
  * Distances are in semitones above the open string. The finger used for each
  * distance differs by instrument — that difference is exactly what each
  * instrument's lessons teach:
- *   violin/viola  1 = a whole step, 2 = a minor or major third ("low 2"/"high 2"), 3 = a fourth, 4 = a fifth (same note as the next open string)
- *   cello         each finger a half step apart: 1 = whole step, 2 = minor third, 3 = major third, 4 = fourth
+ *   violin/viola  1 = a half or whole step ("low 1"/"1"), 2 = a minor or major third ("low 2"/"high 2"), 3 = a fourth, or an augmented fourth ("high 3"), 4 = a fifth (same note as the next open string)
+ *   cello         each finger a half step apart: 1 = whole step, 2 = minor third, 3 = major third, 4 = fourth; an augmented fourth needs a forward extension (4th finger, extended)
  *   double bass   1 = whole step, 2 = minor third, 4 = major third (bassists don't use 3 alone in the lower positions); a fourth is the next open string
  */
 import { getInstrument, midiName, type InstrumentId } from '../audio/notes';
@@ -22,9 +22,9 @@ export interface Placement {
 
 /** Semitone offset → finger, in first position (no shifting). */
 export const FIRST_POSITION: Record<InstrumentId, Record<number, 0 | 1 | 2 | 3 | 4>> = {
-  violin: { 0: 0, 1: 1, 2: 1, 3: 2, 4: 2, 5: 3, 6: 4, 7: 4 },
-  viola: { 0: 0, 1: 1, 2: 1, 3: 2, 4: 2, 5: 3, 6: 4, 7: 4 },
-  cello: { 0: 0, 1: 1, 2: 1, 3: 2, 4: 3, 5: 4 },
+  violin: { 0: 0, 1: 1, 2: 1, 3: 2, 4: 2, 5: 3, 6: 3, 7: 4 },
+  viola: { 0: 0, 1: 1, 2: 1, 3: 2, 4: 2, 5: 3, 6: 3, 7: 4 },
+  cello: { 0: 0, 1: 1, 2: 1, 3: 2, 4: 3, 5: 4, 6: 4 },
   bass: { 0: 0, 1: 1, 2: 1, 3: 2, 4: 4 },
 };
 
@@ -56,8 +56,18 @@ export function placeOnString(inst: InstrumentId, soundingMidi: number, string: 
 }
 
 /** "D string, 1st finger" — for tutorials and tips. */
-export function describePlacement(p: Placement): string {
-  return p.finger === 0 ? `open ${p.stringName} string` : `${p.stringName} string, ${['', '1st', '2nd', '3rd', '4th'][p.finger]} finger`;
+export function describePlacement(p: Placement, inst?: InstrumentId): string {
+  if (p.finger === 0) return `open ${p.stringName} string`;
+  const f = ['', '1st', '2nd', '3rd', '4th'][p.finger];
+  const shade = inst === 'cello' && p.offset === 6 ? ' (extended)'
+    : (inst === 'violin' || inst === 'viola') ? (p.offset === 1 ? ' (low 1)' : p.offset === 3 ? ' (low 2)' : p.offset === 4 ? ' (high 2)' : p.offset === 6 ? ' (high 3)' : '')
+    : '';
+  return `${p.stringName} string, ${f} finger${shade}`;
 }
 
 export const noteLabel = (soundingMidi: number) => midiName(soundingMidi);
+
+const SHARP_DISPLAY = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
+/** Note name for lessons, spelled with sharps (every key so far — C, G, D, A — uses sharps). */
+export const sharpName = (midi: number) => SHARP_DISPLAY[((midi % 12) + 12) % 12];
+export const sharpNameOct = (midi: number) => `${sharpName(midi)}${Math.floor(midi / 12) - 1}`;
