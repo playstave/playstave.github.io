@@ -3,7 +3,7 @@
 A free music-reading education platform: a 500-level journey from the first staff line to
 master-level sight-reading, plus a legal sheet music library. Funded by advertising, free for students.
 
-> **Status:** Stage 1 of 8 complete (design system & application foundation).
+> **Status:** Stages 1–2 of 8 complete (foundation; 500-level roadmap).
 > See [PROGRESS.md](PROGRESS.md) for the live checklist and resume notes.
 
 ## Technology stack
@@ -17,6 +17,7 @@ master-level sight-reading, plus a legal sheet music library. Funded by advertis
 | Styling | CSS Modules + design tokens in `src/styles/tokens.css` |
 | Fonts | Self-hosted via Fontsource: Source Serif 4 (display), IBM Plex Sans (UI), IBM Plex Mono (numbers/labels) |
 | Persistence (Stage 1) | `localStorage` on the device only. A server database arrives in Stage 6 |
+| Unit tests | Vitest 2 (`npm test`) |
 
 ## Install and run
 
@@ -30,6 +31,7 @@ npm install
 npm run dev        # http://localhost:5180
 npm run build      # typecheck + production build to dist/
 npm run preview    # serve the production build
+npm test           # unit tests (progression rules, level model)
 ```
 
 ## Project structure
@@ -42,15 +44,18 @@ src/
     tokens.css          colour, type, spacing, motion tokens; light + dark
     base.css            reset, focus styles, reduced-motion handling
   state/AppState.tsx    preferences + device-local student progress (React context)
-  lib/                  storage (failure-tolerant localStorage), date/streak helpers
+  lib/                  storage, date/streak helpers, progression.ts (unlock rules, pure + tested)
   data/
     curriculum.ts       6 worlds × 50 units × 500 levels (structure, not lesson content)
     achievements.ts     badge definitions + criteria
+    levels.ts           the 500 levels: world, unit, difficulty tier, checkpoint/milestone flags
     trebleNotes.ts      note range + position explanations for the drill
   components/
     AppShell            sidebar (desktop) / icon rail (tablet) / top bar + tab bar + "More" sheet (mobile)
     Notation            VexFlow wrapper — always pass a text `label`
     NoteDrill           working note-identification exercise
+    LevelPath           one world's winding path of level nodes (SVG road + buttons)
+    LevelDialog         level details; locked levels explain how to unlock, no start action
     ui.tsx              Button, ButtonLink, PageHeader, Panel, Stat, ProgressBar, Stars, Notice, EmptyState, Segmented
     Badge, Icon, Logo, WeekStrip, MonthCalendar
   pages/                one file (+ .module.css) per route
@@ -66,7 +71,7 @@ document each variable here. Secrets will never be placed in frontend code.
 | # | Stage | Status |
 |---|---|---|
 | 1 | Design system & application foundation | **Complete** |
-| 2 | 500-level roadmap | Not started |
+| 2 | 500-level roadmap | **Complete** |
 | 3 | Lesson engine + Levels 1–10 | Not started |
 | 4 | Gamification (XP, stars, achievements, streaks, daily challenges) | Not started (streak counting from the practice drill already works) |
 | 5 | Sheet music library + viewer | Not started |
@@ -76,25 +81,33 @@ document each variable here. Secrets will never be placed in frontend code.
 
 ## What works today
 
-- All 9 sections plus world syllabus pages and a 404 page; responsive at phone, tablet and desktop widths.
-- Home: greeting, current level/unit, Continue/Start learning (opens the current world's syllabus), journey stats, today's practice with a 7-day strip, honest empty states for badges and the library.
+- All 9 sections plus world syllabus pages, level pages and a 404 page; responsive at phone, tablet and desktop widths.
+- Roadmap: all 500 levels on a winding path across six worlds. Each node shows number, status (current / completed / locked), stars earned and a 6-step difficulty indicator. Checkpoints every 10 (square nodes), milestones every 50 (ringed), major milestones at 100–500 (double ring), unit labels. Opens scrolled to the current level; "Jump to Level N" and world shortcuts; `#level-N` deep links.
+- Sequential unlocking: only the current level and completed levels can be opened, from the roadmap or by URL (`/level/N` for a locked level explains why it is locked). Replays keep the best stars and score and never unlock anything.
+- Home: greeting, current level/unit, Continue/Start learning (opens the current level's page), journey stats, today's practice with a 7-day strip, honest empty states for badges and the library.
 - Learn: six worlds with level ranges and progress; each world page lists its 10 (or 5) units with outcomes and topics.
 - Practice: a real note-identification drill (treble C4–A5) with explanations for every answer, keyboard support (A–G, Enter), a 5-note set that records the day for the streak, a month calendar and lifetime accuracy.
 - Profile: validated nickname, saved on the device. Settings: theme (system/light/dark), notation size, motion (system/reduce/full), and a confirmed device reset.
 
 ## Known limitations
 
-- **No lessons yet.** Levels can't be opened; the lesson engine is Stage 3. "Start learning" currently opens the World 1 syllabus.
-- **Roadmap** shows a world overview only; the 500-node winding path is Stage 2.
+- **No lessons yet.** A level page shows the level's details and says its lesson isn't available; the lesson engine and Levels 1–10 are Stage 3. Until then, levels can only be completed with the dev-build tools on the Roadmap.
+- **Milestone celebrations** are marked on the roadmap; the celebration animations and major achievement awards come with gamification (Stage 4).
 - **Library is empty (0 scores)** by design until Stage 5 adds licence-checked scores.
 - **Achievements** are defined but cannot be earned until Stage 4.
 - **Progress lives in this browser only.** Clearing site data erases it. No accounts yet.
 - **No advertising** is integrated, and nothing claims otherwise.
 - VexFlow adds a ~314 kB (gzipped) chunk, loaded only on pages that show notation.
 
-## Testing (Stage 1)
+## Testing
 
-There is no automated suite yet; Stage 1 was tested manually in the in-app browser:
+`npm test` runs 13 unit tests covering the unlock rules (no skipping, invalid input, replay keeps best, all 500 in order) and the level model (500 levels, world boundaries, checkpoint/milestone placement, monotonic difficulty).
+
+**Developer tools (dev builds only):** at the bottom of the Roadmap in `npm run dev` there are buttons to complete the current level with 1–3 stars, complete the next 10, attempt a skip (it must be refused), and reset the journey. They are excluded from production builds (verified: not present in `dist/`).
+
+Stage 2 manual checks: fresh student → only Level 1 open; skip attempt refused; completing a level unlocks exactly the next; `/level/20` while on Level 12 shows the locked page; `/level/0`, `/level/abc`, `/level/501` → roadmap; completed-level dialog offers Practice again, locked dialog offers only Go to current; World 1 → 2 hand-off; milestone labels at 50/100/…/500; no horizontal scroll at 375 px; dark mode.
+
+Stage 1 manual checks:
 
 1. `npm run build` → typecheck and build pass with no errors.
 2. Visit every route from the sidebar → each renders its page, updates the tab title and moves focus to the `<h1>`.

@@ -44,8 +44,8 @@ export function LevelDialog({ level, progress, onClose, onGoTo }: Props) {
 
           <div className={styles.status}>
             {status === 'completed' && <><Stars earned={record?.stars ?? 0} size={20} /><span>Completed · best score {record?.bestScore ?? 0}%</span></>}
-            {status === 'current' && <span><strong>Up next.</strong> This is the level you are on.</span>}
-            {status === 'locked' && <span><Icon name="lock" size={16} /> Locked. Complete Level {current} and every level after it to reach this one.</span>}
+            {status === 'current' && <p><strong>Up next.</strong> This is the level you are on.</p>}
+            {status === 'locked' && <><Icon name="lock" size={16} className={styles.statusIcon} /><p>Locked. {l.n - 1 === current ? `Complete Level ${current} to unlock it.` : `Complete Levels ${current}–${l.n - 1} to unlock it.`}</p></>}
           </div>
 
           <div className={styles.actions}>

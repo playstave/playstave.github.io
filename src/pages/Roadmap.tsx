@@ -9,9 +9,13 @@ import { isCourseComplete, nextLevel } from '../lib/progression';
 import { useAppState } from '../state/AppState';
 import styles from './Roadmap.module.css';
 
-function scrollToLevel(n: number, behavior: ScrollBehavior = 'smooth') {
+function scrollToLevel(n: number, behavior: ScrollBehavior = 'smooth', onlyIfHidden = false) {
   const el = document.getElementById(`level-${n}`);
   if (!el) return;
+  if (onlyIfHidden) {
+    const r = el.getBoundingClientRect();
+    if (r.top >= 80 && r.bottom <= window.innerHeight - 80) return; // already comfortably visible
+  }
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.dataset.motion === 'reduced';
   el.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : behavior });
 }
@@ -26,7 +30,8 @@ export function Roadmap() {
   // Land on the requested level (#level-N) or the current one.
   useLayoutEffect(() => {
     const m = /^#level-(\d+)$/.exec(hash);
-    scrollToLevel(m ? Number(m[1]) : current, 'auto');
+    if (m) scrollToLevel(Number(m[1]), 'auto');
+    else scrollToLevel(current, 'auto', true);
     // Only on arrival; later progress changes shouldn't yank the page around.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hash]);
@@ -69,7 +74,7 @@ export function Roadmap() {
             </a>
           ))}
         </nav>
-        <Button size="sm" icon="roadmap" onClick={() => goTo(current)}>Jump to Level {current}</Button>
+        <Button size="sm" icon="roadmap" onClick={() => goTo(current)} aria-label={`Jump to Level ${current}`}><span className={styles.jumpLong}>Jump to </span>Level {current}</Button>
       </div>
 
       <div className={styles.legend} aria-label="Legend">

@@ -34,11 +34,27 @@ Bugs found and fixed during Stage 1 testing:
 - Fixed: 404 page inside /learn showed tab title "Learn · Stave" → now "Page not found · Stave"
 - Fixed: Library intro said "searchable" before search exists → reworded
 
-## Next: Stage 2 — 500-level roadmap (NOT STARTED, awaiting user go-ahead)
+## Stage 2 — 500-level roadmap: COMPLETE (2026-11-14)
+- [x] `src/data/levels.ts`: 500 levels derived from curriculum (difficulty tiers, checkpoint/milestone/major flags)
+- [x] `src/lib/progression.ts`: pure unlock rules (`levelStatus`, `canOpen`, `completeLevel`, `nextLevel`) + Vitest (13 tests pass)
+- [x] AppState: `completeLevel(n, stars, score)` (sync via ref, safe under StrictMode) and `resetJourney()`
+- [x] Winding path UI (`LevelPath`), level dialog, sticky toolbar (world shortcuts, Jump to current), legend
+- [x] `/level/:n` route with lock guard; Home "Continue learning" → current level page
+- [x] Dev-only progression tools on Roadmap (excluded from prod bundle — verified)
+- [x] Tested at 1280 / 375 px, dark mode; regression sweep of Stage 1 routes, console clean
+
+Bugs found and fixed during Stage 2 testing:
+- AppShell scrolled to top after the roadmap positioned itself → pages can opt out with `data-manages-scroll`
+- Dashed road ran through star/difficulty marks → marks get a paper background
+- Roadmap auto-scroll hid the header even when Level 1 was visible → scroll only if the current node is off-screen
+- Locked dialog wording ("every level after it") → "Complete Levels X–Y to unlock it"
+- Phone toolbar wrapped to two rows → single row, scrollable world chips, shorter button label
+- CSS order bug: phone padding for world chips overridden by base rule → moved after
+
+## Next: Stage 3 — Lesson engine + Levels 1–10 (NOT STARTED, awaiting user go-ahead)
 Plan:
-- Level model: `src/data/levels.ts` deriving 500 level stubs (number, world, unit, difficulty, checkpoint/milestone flags) from curriculum.ts
-- Unlock logic as pure functions (`canOpen(level, progress)`) + unit tests (add Vitest)
-- Winding SVG path with circular nodes (virtualised/sectioned per world for performance), states: locked / current / completed (stars)
-- Checkpoints every 10, milestone markers every 50, major markers at 100/200/300/400/500
-- Auto-scroll to current level; keyboard-navigable nodes; works at 375 px
-- Dev-only way to simulate progress for testing (removed or guarded before release)
+- Lesson content schema (`src/lessons/level-001.ts` …): intro, lesson steps with notation, guided practice items with per-option explanations, challenge items
+- Lesson player at `/level/:n`: Intro → Lesson → Guided practice (immediate feedback, explain wrong answers) → Challenge → result
+- Star thresholds defined and shown up front (e.g. pass ≥ 60%, ★★ ≥ 80%, ★★★ = 100% with no hints) — final rules in Stage 4
+- On pass: call `completeLevel` (unlocks next); replay via Practice again
+- Author Levels 1–10 (Unit 1: The Staff) with distinct objectives; test every question's correct and incorrect paths
