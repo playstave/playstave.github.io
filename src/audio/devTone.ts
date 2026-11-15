@@ -72,7 +72,7 @@ export function updateDevTone(patch: Partial<DevToneSettings>) {
 import type { Timeline } from '../play/exercise';
 import { midiToHz } from './notes';
 
-export type DevPerformance = 'perfect' | 'mistakes' | 'silent';
+export type DevPerformance = 'perfect' | 'mistakes' | 'silent' | 'delayed';
 export const devPerformerSettings: { mode: DevPerformance; bleed: boolean } = { mode: 'perfect', bleed: false };
 
 /**
@@ -96,7 +96,9 @@ export function createDevPerformer(ctx: AudioContext, tl: Timeline, t0: number):
   g.gain.value = 0;
   osc.connect(g).connect(out);
   const plan = devPerformerSettings.mode === 'mistakes' ? devMistakePlan(tl) : null;
-  const starts = tl.notes.map((n) => t0 + n.start + (plan && n.index === plan.late ? 0.35 : 0));
+  // 'delayed': every note 350 ms late, like a computer with a large audio delay.
+  const global = devPerformerSettings.mode === 'delayed' ? 0.35 : 0;
+  const starts = tl.notes.map((n) => t0 + global + n.start + (plan && n.index === plan.late ? 0.35 : 0));
   for (const n of tl.notes) {
     if (n.rest || n.midi == null || (plan && n.index === plan.skip)) continue;
     let m = n.midi;
@@ -104,7 +106,7 @@ export function createDevPerformer(ctx: AudioContext, tl: Timeline, t0: number):
     let hz = midiToHz(m);
     if (plan && n.index === plan.flat) hz *= 2 ** (-35 / 1200);
     const s = starts[n.index];
-    const e = Math.min(t0 + n.end, n.index + 1 < starts.length ? starts[n.index + 1] : Infinity) - 0.03;
+    const e = Math.min(t0 + global + n.end, n.index + 1 < starts.length ? starts[n.index + 1] : Infinity) - 0.03;
     osc.frequency.setValueAtTime(hz, s);
     g.gain.setValueAtTime(0, s);
     g.gain.linearRampToValueAtTime(0.3, s + 0.02);
@@ -112,6 +114,6 @@ export function createDevPerformer(ctx: AudioContext, tl: Timeline, t0: number):
     g.gain.linearRampToValueAtTime(0, e);
   }
   osc.start();
-  osc.stop(t0 + tl.duration + 1);
+  osc.stop(t0 + tl.duration + 1 + global);
   return out;
 }

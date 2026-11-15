@@ -31,7 +31,9 @@ export interface SessionCallbacks {
   onPhase: (p: Phase) => void;
   onMicState: (s: ListenState) => void;
   onResult: (r: NoteResult) => void;
-  onFinish: (summary: Summary, results: NoteResult[]) => void;
+  onFinish: (summary: Summary, results: NoteResult[], frames: Frame[]) => void;
+  /** Every analysis frame, for a live "what Stave hears" display. */
+  onHear?: (hz: number | null, rms: number) => void;
 }
 
 const FRAME_MS = 33;
@@ -139,6 +141,7 @@ export class PlaySession {
     const r = detectPitch(this.buf, { sampleRate: ctx.sampleRate, minHz: inst.minHz, maxHz: inst.maxHz });
     const t = pos - this.buf.length / 2 / ctx.sampleRate - this.latency;
     this.frames.push({ t, hz: r.hz, rms: r.rms });
+    this.cb.onHear?.(r.hz, r.rms);
 
     // Judge every note whose time is fully past.
     const notes = this.timeline.notes;
@@ -149,14 +152,15 @@ export class PlaySession {
       if (!n.rest) this.cb.onResult(res);
       this.next++;
     }
-    if (this.next >= notes.length) this.finish();
+    // Keep listening a little after the last note, so a device delay can still be measured and corrected.
+    if (this.next >= notes.length && t >= this.timeline.duration + 0.9) this.finish();
   };
 
   private finish() {
     const results = this.timeline.notes.map((n) => this.results.get(n.index)!).filter(Boolean);
     this.teardown();
     this.setPhase('finished');
-    this.cb.onFinish(summarise(results, this.timeline), results);
+    this.cb.onFinish(summarise(results, this.timeline), results, this.frames);
   }
 
   private teardown() {

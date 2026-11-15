@@ -34,3 +34,13 @@
 .dev strong { width: 100%; color: var(--danger); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.05em; }
 .dev select { max-width: 100%; }
 .dev label { display: flex; align-items: center; gap: 6px; max-width: 100%; min-width: 0; } .dev select { min-width: 0; flex: 1; }
+.hearing { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); color: var(--ink-2); margin-top: var(--space-1); }
+.meter { display: inline-block; width: 90px; height: 6px; border-radius: 3px; background: var(--paper-sunk); overflow: hidden; }
+.meter span { display: block; height: 100%; background: var(--success); transition: width 80ms linear; }
+.fixNote { padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--success-wash); color: var(--ink); font-size: var(--text-sm); }
+.diag { padding: var(--space-3) var(--space-4); border-left: 3px solid var(--accent); background: var(--paper-sunk); border-radius: 0 var(--radius-md) var(--radius-md) 0; display: grid; gap: var(--space-2); font-size: var(--text-sm); }
+.diag ul { padding-left: 1.2em; display: grid; gap: var(--space-1); }
+.diagTitle { font-weight: 700; color: var(--ink); }
+.diagMeta { color: var(--ink-3); font-size: var(--text-xs); }
+.report summary { cursor: pointer; font-weight: 600; color: var(--ink-2); }
+.report pre { white-space: pre-wrap; font-family: var(--font-mono); font-size: var(--text-xs); background: var(--paper); padding: var(--space-2); border-radius: var(--radius-sm, 6px); margin: var(--space-2) 0; max-height: 220px; overflow: auto; }

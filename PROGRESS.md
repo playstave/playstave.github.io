@@ -230,6 +230,15 @@ Build order (revised): R1 listening + tuner → R2 play-along assessment engine 
 - Finding: the desktop app's built-in browser pane reports microphone permission "denied" and offers no way to allow it — listening must be tested in Chrome/Safari/Edge/Firefox (http://localhost:5180)
 - Lesson for future sessions: never leave DEV test mode on in a tab the owner can reach; use the banner; stop test servers and close/redirect their tabs
 
+### "Marks everything wrong on violin" in Chrome (owner report, 2026-11-15)
+- Real-microphone takes can't be reproduced here, so the app now explains itself instead of guessing:
+- [x] `play/diagnose.ts` — "What Stave heard" after a low-scoring take: share of time a clear pitch was heard, input level, notes heard most, and plain advice (mic not hearing / unclear pitch / mostly other notes → try the Tuner / out of tune / off the beat)
+- [x] Device audio delay measured directly (heard pitches slid against the written notes, −0.2…+0.8 s); when found, the take is re-scored with the delay removed (only if clearly better) and the delay is remembered per device (`stave:device-delay`) and applied to later takes; the session now listens 0.9 s past the last note so late playing is captured
+- [x] Live "Hearing D4" + level meter while playing, so a silent microphone is obvious immediately
+- [x] "Details for support": a short text report of the take (reasons per red note, level, notes heard, delay, browser) with a Copy button — no audio
+- [x] Tests on ALL FOUR instruments (28 new): clean take → no diagnosis; 250/400/600 ms delay → found within 40 ms and re-scored to 100%; wrong notes → no false delay; silence → "heard almost nothing"; out of tune → Tuner advice (703 total pass). Browser: 350 ms simulated delay → measured 340 ms, re-scored 100%, saved; test mode cleaned up afterwards
+- [ ] Owner to retry in Chrome and paste "Details for support" if it is still wrong
+
 ## Next: R5 — World 2 (Levels 101–200): slurs, dynamics, flats, minor keys, sixteenths (needs slur/dynamic notation) — then Worlds 3–6 (positions/shifting, high positions, advanced, Vivaldi)
 
 ## Later: Stage 7 — Advertising integration (not started)
