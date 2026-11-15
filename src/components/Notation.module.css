@@ -1,0 +1,4 @@
+.figure { margin: 0; color: var(--ink); width: 100%; max-width: calc(var(--w) * var(--notation-scale, 1)); }
+.host { width: 100%; min-height: 40px; }
+.host :global(svg) { width: 100%; height: auto; overflow: visible; }
+.error { font-size: var(--text-sm); color: var(--danger); }

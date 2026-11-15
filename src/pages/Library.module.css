@@ -1,0 +1,9 @@
+.layout { display: grid; gap: var(--space-8); align-items: start; }
+.count { font-size: var(--text-sm); color: var(--ink-3); }
+.tax { display: grid; gap: var(--space-4); margin: 0; }
+.tax dd { margin: var(--space-1) 0 0; color: var(--ink-2); line-height: 1.7; }
+.licensing { margin-top: var(--space-12); display: grid; gap: var(--space-5); }
+.licences { list-style: none; display: grid; gap: var(--space-5); }
+.licName { font-weight: 600; }
+@media (min-width: 720px) { .licences { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1000px) { .layout { grid-template-columns: minmax(0, 1.6fr) minmax(260px, 1fr); } }

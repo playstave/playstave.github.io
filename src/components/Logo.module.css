@@ -1,0 +1,13 @@
+.logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+.mark { flex: none; }
+.tile { fill: var(--ink); }
+.lines { stroke: var(--paper); opacity: 0.5; }
+.head { fill: var(--accent); }
+.stem { stroke: var(--accent); }
+.word {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}

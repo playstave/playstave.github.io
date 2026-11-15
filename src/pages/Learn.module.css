@@ -1,0 +1,18 @@
+.worlds { list-style: none; display: grid; }
+.world { border-top: 1px solid var(--rule); }
+.world:last-child { border-bottom: 1px solid var(--rule); }
+.worldLink { display: grid; grid-template-columns: auto 1fr auto; gap: var(--space-4); align-items: start; padding: var(--space-6) var(--space-2); text-decoration: none; border-radius: var(--radius-md); transition: background-color var(--dur-fast); }
+.worldLink:hover { background: var(--paper-raised); }
+.worldLink:hover .chev { transform: translateX(3px); color: var(--ink); }
+.worldNum { font-family: var(--font-display); font-size: 3rem; line-height: 0.9; font-weight: 600; color: var(--wc); width: 1.4ch; text-align: center; font-variant-numeric: lining-nums; }
+.worldBody { display: grid; gap: var(--space-2); min-width: 0; }
+.worldTop { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); }
+.worldName { font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 600; line-height: var(--leading-tight); }
+.worldSummary { color: var(--ink-2); max-width: 60ch; }
+.worldFoot { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-2); font-size: var(--text-sm); }
+.bar { flex: 1; max-width: 240px; }
+.units { color: var(--ink-3); }
+.current { font-size: var(--text-xs); font-weight: 600; color: var(--accent-ink); background: var(--accent); padding: 2px 8px; border-radius: var(--radius-sm); }
+.locked { display: inline-flex; align-items: center; gap: 4px; font-size: var(--text-xs); color: var(--ink-3); }
+.chev { margin-top: var(--space-2); color: var(--ink-3); transition: transform var(--dur-fast) var(--ease-out); }
+@media (max-width: 520px) { .worldNum { font-size: 2.25rem; } .chev { display: none; } .worldLink { grid-template-columns: auto 1fr; } }

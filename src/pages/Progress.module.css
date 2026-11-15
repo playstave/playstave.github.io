@@ -1,0 +1,10 @@
+.stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-8) var(--space-4); margin: 0 0 var(--space-12); }
+.section { margin-bottom: var(--space-12); }
+.worlds { list-style: none; display: grid; gap: var(--space-4); }
+.worlds li { display: grid; grid-template-columns: minmax(150px, 1fr) 2fr auto; gap: var(--space-4); align-items: center; font-size: var(--text-sm); }
+.wName { display: flex; align-items: center; gap: var(--space-2); font-weight: 500; }
+.dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.split { display: grid; gap: var(--space-6); }
+@media (min-width: 720px) { .stats { grid-template-columns: repeat(5, 1fr); } }
+@media (min-width: 900px) { .split { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 520px) { .worlds li { grid-template-columns: 1fr auto; } .worlds li > :nth-child(2) { grid-column: 1 / -1; grid-row: 2; } }

@@ -1,0 +1,10 @@
+.badge { width: 72px; height: 72px; flex: none; }
+.rim { fill: var(--tier); }
+.face { fill: var(--paper-raised); stroke: var(--tier-dark); stroke-width: 1.2; }
+.glyph { fill: var(--tier-dark); }
+.glyphText { font-family: var(--font-display); font-weight: 700; fill: var(--tier-dark); }
+.glyphStroke { stroke: var(--tier-dark); }
+.bronze { --tier: #c08a5a; --tier-dark: #6e4423; }
+.silver { --tier: #a9b0b6; --tier-dark: #48525b; }
+.gold { --tier: var(--star-fill); --tier-dark: #6d4d0e; }
+.locked { --tier: var(--rule); --tier-dark: var(--ink-3); }

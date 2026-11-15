@@ -1,0 +1,12 @@
+.group { padding: var(--space-6) 0; border-bottom: 1px solid var(--rule); scroll-margin-top: calc(var(--topbar-h) + var(--space-4)); }
+.group:first-of-type { padding-top: 0; }
+.groupTitle { font-size: var(--text-xl); margin-bottom: var(--space-4); outline: none; }
+.row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-3) var(--space-6); padding: var(--space-4) 0; }
+.row > div:first-child { flex: 1 1 260px; }
+.rowTitle { font-weight: 600; }
+.rowHelp { font-size: var(--text-sm); color: var(--ink-3); max-width: 52ch; }
+.preview { padding: var(--space-4); border: 1px dashed var(--rule-strong); border-radius: var(--radius-md); display: grid; place-items: center; }
+.prose { display: grid; gap: var(--space-3); color: var(--ink-2); max-width: 64ch; margin-bottom: var(--space-2); }
+.confirm { padding: var(--space-4) var(--space-5); background: var(--danger-wash); border-radius: var(--radius-md); }
+.confirmActions { display: flex; gap: var(--space-2); margin-top: var(--space-3); }
+.ok { color: var(--success); font-size: var(--text-sm); margin-top: var(--space-2); }

@@ -1,0 +1,14 @@
+.cal { width: 100%; }
+.head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3); }
+.title { font-weight: 600; }
+.nav { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid var(--rule); border-radius: var(--radius-md); background: transparent; color: var(--ink-2); }
+.nav:hover:not(:disabled) { background: var(--paper-sunk); color: var(--ink); }
+.nav:disabled { opacity: 0.35; cursor: not-allowed; }
+.flip svg { transform: scaleX(-1); }
+.grid { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.grid th { font-size: var(--text-xs); color: var(--ink-3); font-weight: 500; padding-bottom: var(--space-2); font-family: var(--font-mono); }
+.grid td { text-align: center; padding: 2px 0; }
+.day { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; font-size: var(--text-sm); font-variant-numeric: tabular-nums; color: var(--ink-2); }
+.done { background: var(--ink); color: var(--paper); font-weight: 600; }
+.today { box-shadow: inset 0 0 0 2px var(--accent); color: var(--ink); font-weight: 600; }
+.done.today { background: var(--accent); color: var(--accent-ink); box-shadow: none; }

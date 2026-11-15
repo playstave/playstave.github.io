@@ -1,0 +1,88 @@
+import { useState, type FormEvent } from 'react';
+import { Button, EmptyState, Notice, PageHeader, Panel, SectionTitle, Stat } from '../components/ui';
+import { useAppState } from '../state/AppState';
+import styles from './Profile.module.css';
+
+export function Profile() {
+  const { progress, setDisplayName, derived } = useAppState();
+  const [draft, setDraft] = useState(progress.displayName);
+  const [saved, setSaved] = useState(false);
+  const [error, setError] = useState('');
+
+  const submit = (e: FormEvent) => {
+    e.preventDefault();
+    const v = draft.trim();
+    if (v.length > 24) { setError('Use 24 characters or fewer.'); return; }
+    if (v && !/^[\p{L}\p{N} _.'-]+$/u.test(v)) { setError('Use letters, numbers, spaces, and . _ \' - only.'); return; }
+    setError('');
+    setDisplayName(v);
+    setDraft(v);
+    setSaved(true);
+  };
+
+  const shown = progress.displayName || 'Musician';
+  const initials = shown.split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+
+  return (
+    <>
+      <PageHeader eyebrow="Student profile" title="Profile" />
+      <div className={styles.top}>
+        <div className={styles.avatar} aria-hidden="true">{initials}</div>
+        <div>
+          <p className={styles.name}>{shown}</p>
+          <p className="muted">Level {progress.currentLevel} · {progress.xp} XP · {derived.totalStars} stars</p>
+        </div>
+      </div>
+
+      <div className={styles.grid}>
+        <Panel aria-labelledby="name-h">
+          <SectionTitle id="name-h">Display name</SectionTitle>
+          <form onSubmit={submit} className={styles.form} noValidate>
+            <label htmlFor="display-name" className={styles.label}>What should Stave call you?</label>
+            <p id="name-help" className={styles.help}>A nickname is perfect. Please don’t use your full real name.</p>
+            <div className={styles.row}>
+              <input
+                id="display-name"
+                className={styles.input}
+                value={draft}
+                maxLength={24}
+                autoComplete="nickname"
+                aria-describedby={`name-help${error ? ' name-err' : ''}`}
+                aria-invalid={!!error}
+                onChange={(e) => { setDraft(e.target.value); setSaved(false); }}
+              />
+              <Button type="submit">Save</Button>
+            </div>
+            {error && <p id="name-err" className={styles.err} role="alert">{error}</p>}
+            {saved && !error && <p className={styles.ok} role="status">Saved.</p>}
+          </form>
+        </Panel>
+
+        <Panel aria-labelledby="summary-h">
+          <SectionTitle id="summary-h">Summary</SectionTitle>
+          <dl className={styles.stats}>
+            <Stat label="Levels" value={derived.levelsCompleted} />
+            <Stat label="Stars" value={derived.totalStars} />
+            <Stat label="Streak" value={derived.streak} />
+          </dl>
+        </Panel>
+
+        <Panel aria-labelledby="saved-h">
+          <SectionTitle id="saved-h">Saved sheet music</SectionTitle>
+          <EmptyState title="No saved scores">Scores you favourite in the library will be listed here.</EmptyState>
+        </Panel>
+
+        <Panel aria-labelledby="history-h">
+          <SectionTitle id="history-h">Learning history</SectionTitle>
+          <EmptyState title="No lessons yet">Each level you complete will appear here with its date, score and stars.</EmptyState>
+        </Panel>
+      </div>
+
+      <div className={styles.notice}>
+        <Notice title="Your progress is saved on this device only">
+          <p>Accounts that keep your progress across devices are coming. Until then, clearing your browser data will clear your progress. Stave never asks for your email, age or real name.</p>
+        </Notice>
+      </div>
+    </>
+  );
+}
