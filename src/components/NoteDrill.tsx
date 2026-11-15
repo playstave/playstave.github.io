@@ -22,7 +22,7 @@ type Answer = { note: StaffNote; chosen: string; correct: boolean };
  * Finishing a set of five marks today as a practice day.
  */
 export function NoteDrill() {
-  const { recordNoteAnswer, markPracticedToday } = useAppState();
+  const { recordNoteAnswer, recordPracticeSet } = useAppState();
   const [note, setNote] = useState<StaffNote>(() => pickNote());
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [pending, setPending] = useState<Answer | null>(null);
@@ -43,9 +43,9 @@ export function NoteDrill() {
     const all = [...answers, pending];
     setAnswers(all);
     setPending(null);
-    if (all.length === SET_SIZE) markPracticedToday();
+    if (all.length === SET_SIZE) recordPracticeSet();
     else setNote((n) => pickNote(n));
-  }, [answers, pending, markPracticedToday]);
+  }, [answers, pending, recordPracticeSet]);
 
   const restart = () => { setAnswers([]); setPending(null); setNote((n) => pickNote(n)); };
 

@@ -40,7 +40,7 @@ export function LessonPlayer({ lesson, level }: { lesson: Lesson; level: Level }
     if (s.phase !== 'result') { recorded.current = false; return; }
     if (!result?.passed || recorded.current) return;
     recorded.current = true;
-    try { setCompletion(completeLevel(level.n, result.stars, result.percent)); } catch (e) { console.error(e); }
+    try { setCompletion(completeLevel(level.n, result.stars, result.percent).completion ?? null); } catch (e) { console.error(e); }
   }, [s.phase, result, completeLevel, level.n]);
 
   useEffect(() => { if (s.phase !== 'result') setCompletion(null); }, [s.phase]);

@@ -16,6 +16,8 @@ function Glyph({ glyph }: { glyph: BadgeGlyph }) {
     case 'clef': return text('G F', 13);
     case 'key': return text('♯ ♭', 14);
     case 'eye': return <g fill="none" strokeWidth="1.8" className={styles.glyphStroke}><path d="M8 20c3.5-5.5 7.5-8 12-8s8.5 2.5 12 8c-3.5 5.5-7.5 8-12 8s-8.5-2.5-12-8z" /><circle cx="20" cy="20" r="3.5" /></g>;
+    case 'sun': return <g><circle cx="20" cy="20" r="6" /><g strokeWidth="2" strokeLinecap="round" className={styles.glyphStroke}><path d="M20 8v3M20 29v3M8 20h3M29 20h3M11.5 11.5l2 2M26.5 26.5l2 2M11.5 28.5l2-2M26.5 13.5l2-2" /></g></g>;
+    case 'staff': return <g><g strokeWidth="1.2" className={styles.glyphStroke}><path d="M9 13h22M9 17h22M9 21h22M9 25h22M9 29h22" /></g><ellipse cx="20" cy="21" rx="4.2" ry="3" transform="rotate(-22 20 21)" /></g>;
     case 'crown': return <path d="M10 27h20l1.5-12-6 4.5L20 11l-5.5 8.5-6-4.5z" />;
   }
 }

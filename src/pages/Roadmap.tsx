@@ -136,7 +136,7 @@ function DevTools() {
       <div className={styles.devRow}>
         {[1, 2, 3].map((s) => (
           <Button key={s} size="sm" variant="secondary" disabled={cur > TOTAL_LEVELS}
-            onClick={() => run(() => { const r = completeLevel(cur, s, 50 + s * 15); return `Completed Level ${cur} with ${s}★${r.unlockedNext ? `, unlocked Level ${r.state.currentLevel}` : ''}.`; })}>
+            onClick={() => run(() => { const r = completeLevel(cur, s, 50 + s * 15); return `Completed Level ${cur} with ${s}★${r.completion?.unlockedNext ? `, unlocked Level ${r.state.currentLevel}` : ''}.`; })}>
             Complete L{Math.min(cur, TOTAL_LEVELS)} {'★'.repeat(s)}
           </Button>
         ))}

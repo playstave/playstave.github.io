@@ -1,8 +1,11 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { clearAll, readJSON, writeJSON } from '../lib/storage';
-import { currentStreak, dayKey } from '../lib/dates';
-import { completeLevel as applyCompletion, type CompletionResult } from '../lib/progression';
+import { migrate, recordActivity, type Activity, type Outcome } from '../lib/rewards';
+import { streakInfo } from '../lib/streak';
+import { getAchievement } from '../data/achievements';
+import { DEFAULT_PROGRESS, type StudentProgress } from './progress';
 
+export type { StudentProgress } from './progress';
 export type ThemePref = 'system' | 'light' | 'dark';
 export type MotionPref = 'system' | 'reduced' | 'full';
 export type NotationScale = 1 | 1.25 | 1.5;
@@ -13,32 +16,12 @@ export interface Preferences {
   notationScale: NotationScale;
 }
 
-/**
- * Student progress as stored on this device.
- * Stage 1: device-only (localStorage). Stage 6 moves this to an account-backed
- * database; the shape is kept deliberately small and free of personal data.
- */
-export interface StudentProgress {
-  displayName: string;
-  /** Highest level the student may open (1 = nothing completed yet). */
-  currentLevel: number;
-  xp: number;
-  completedLevels: Record<number, { stars: number; bestScore: number }>;
-  /** Local date keys (YYYY-MM-DD) on which the student finished a practice set. */
-  practiceDays: string[];
-  /** Lifetime note-identification answers, used for the practice summary. */
-  noteDrill: { answered: number; correct: number };
-}
+/** A finished lesson, shown by the celebration overlay. */
+export interface Celebration { level: number; stars: number; score: number; outcome: Outcome }
+
+export interface Toast { id: number; title: string; body?: string; kind: 'badge' | 'xp' | 'streak'; link?: string }
 
 const DEFAULT_PREFS: Preferences = { theme: 'system', motion: 'system', notationScale: 1 };
-const DEFAULT_PROGRESS: StudentProgress = {
-  displayName: '',
-  currentLevel: 1,
-  xp: 0,
-  completedLevels: {},
-  practiceDays: [],
-  noteDrill: { answered: 0, correct: 0 },
-};
 
 interface AppStateValue {
   prefs: Preferences;
@@ -46,16 +29,25 @@ interface AppStateValue {
   progress: StudentProgress;
   setDisplayName: (name: string) => void;
   recordNoteAnswer: (correct: boolean) => void;
-  markPracticedToday: () => void;
-  /** Record a passed level. Throws if the level is locked. XP is added in the gamification stage. */
-  completeLevel: (n: number, stars: number, score: number) => CompletionResult<StudentProgress>;
-  /** Clear level progress only (keeps name, practice history and settings). */
+  /** Record a passed level: progression, XP, streak, achievements. Throws if the level is locked. */
+  completeLevel: (n: number, stars: number, score: number) => Outcome;
+  /** A finished 5-note practice set. */
+  recordPracticeSet: () => Outcome;
+  /** A finished daily challenge. */
+  completeDaily: (correct: number, total: number) => Outcome;
+  celebration: Celebration | null;
+  dismissCelebration: () => void;
+  toasts: Toast[];
+  dismissToast: (id: number) => void;
+  /** Developer tool: start the journey over (keeps nickname and settings). */
   resetJourney: () => void;
   resetDevice: () => void;
   derived: {
     totalStars: number;
     levelsCompleted: number;
     streak: number;
+    bestStreak: number;
+    restDayUsed: boolean;
     practicedToday: boolean;
   };
 }
@@ -68,9 +60,13 @@ function sanitizeName(raw: string): string {
   return raw.replace(/[^\p{L}\p{N} _.'-]/gu, '').trim().slice(0, 24);
 }
 
+let toastSeq = 1;
+
 export function AppStateProvider({ children }: { children: ReactNode }) {
   const [prefs, setPrefsState] = useState<Preferences>(() => ({ ...DEFAULT_PREFS, ...readJSON('prefs', {}) }));
-  const [progress, setProgress] = useState<StudentProgress>(() => ({ ...DEFAULT_PROGRESS, ...readJSON('progress', {}) }));
+  const [progress, setProgress] = useState<StudentProgress>(() => migrate(readJSON('progress', {}), DEFAULT_PROGRESS));
+  const [celebration, setCelebration] = useState<Celebration | null>(null);
+  const [toasts, setToasts] = useState<Toast[]>([]);
 
   useEffect(() => { writeJSON('prefs', prefs); }, [prefs]);
   useEffect(() => { writeJSON('progress', progress); }, [progress]);
@@ -85,61 +81,88 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     root.style.setProperty('--notation-scale', String(prefs.notationScale));
   }, [prefs]);
 
-  const setPrefs = useCallback((patch: Partial<Preferences>) => {
-    setPrefsState((p) => ({ ...p, ...patch }));
-  }, []);
-
-  const setDisplayName = useCallback((name: string) => {
-    setProgress((p) => ({ ...p, displayName: sanitizeName(name) }));
-  }, []);
-
+  const setPrefs = useCallback((patch: Partial<Preferences>) => setPrefsState((p) => ({ ...p, ...patch })), []);
+  const setDisplayName = useCallback((name: string) => setProgress((p) => ({ ...p, displayName: sanitizeName(name) })), []);
   const recordNoteAnswer = useCallback((correct: boolean) => {
-    setProgress((p) => ({
-      ...p,
-      noteDrill: { answered: p.noteDrill.answered + 1, correct: p.noteDrill.correct + (correct ? 1 : 0) },
-    }));
+    setProgress((p) => ({ ...p, noteDrill: { answered: p.noteDrill.answered + 1, correct: p.noteDrill.correct + (correct ? 1 : 0) } }));
   }, []);
 
-  const markPracticedToday = useCallback(() => {
-    const today = dayKey();
-    setProgress((p) => (p.practiceDays.includes(today) ? p : { ...p, practiceDays: [...p.practiceDays, today] }));
+  const pushToasts = useCallback((items: Omit<Toast, 'id'>[]) => {
+    if (items.length) setToasts((t) => [...t, ...items.map((x) => ({ ...x, id: toastSeq++ }))].slice(-4));
   }, []);
+  const dismissToast = useCallback((id: number) => setToasts((t) => t.filter((x) => x.id !== id)), []);
 
-  // Computed from a ref so the result is returned synchronously and StrictMode
-  // double-invocation of state updaters can never apply a completion twice.
+  // Activities are computed from a ref so the outcome is returned synchronously,
+  // and StrictMode's double-invoked updaters can never apply an activity twice.
   const progressRef = useRef(progress);
   progressRef.current = progress;
-  const completeLevel = useCallback((n: number, stars: number, score: number) => {
-    const result = applyCompletion(progressRef.current, n, stars, score);
-    progressRef.current = result.state;
-    setProgress(result.state);
-    return result;
+  const apply = useCallback((a: Activity): Outcome => {
+    const outcome = recordActivity(progressRef.current, a);
+    progressRef.current = outcome.state;
+    setProgress(outcome.state);
+    return outcome;
   }, []);
 
+  const toastsFor = (o: Outcome): Omit<Toast, 'id'>[] => [
+    ...o.unlocked.map((id) => ({ kind: 'badge' as const, title: `Badge earned: ${getAchievement(id)?.title ?? id}`, body: getAchievement(id)?.criteria, link: '/achievements' })),
+    ...o.awards.filter((a) => a.key.startsWith('streak:')).map((a) => ({ kind: 'streak' as const, title: `${a.reason}! +${a.amount} XP` })),
+    ...(o.xpGained && !o.awards.some((a) => a.key.startsWith('streak:')) ? [{ kind: 'xp' as const, title: `+${o.xpGained} XP`, body: o.awards.map((a) => a.reason).join(' · ') }] : []),
+  ];
+
+  const completeLevel = useCallback((n: number, stars: number, score: number) => {
+    const outcome = apply({ kind: 'lesson', level: n, stars, score });
+    // The celebration overlay presents XP, badges and milestones for lessons.
+    setCelebration({ level: n, stars, score, outcome });
+    return outcome;
+  }, [apply]);
+
+  const recordPracticeSet = useCallback(() => {
+    const o = apply({ kind: 'practiceSet' });
+    pushToasts(toastsFor(o));
+    return o;
+  }, [apply, pushToasts]);
+
+  const completeDaily = useCallback((correct: number, total: number) => {
+    const o = apply({ kind: 'daily', correct, total });
+    pushToasts(toastsFor(o));
+    return o;
+  }, [apply, pushToasts]);
+
+  const dismissCelebration = useCallback(() => setCelebration(null), []);
+
   const resetJourney = useCallback(() => {
-    setProgress((p) => ({ ...p, currentLevel: 1, completedLevels: {} }));
+    const next = { ...structuredClone(DEFAULT_PROGRESS), displayName: progressRef.current.displayName };
+    progressRef.current = next;
+    setProgress(next);
+    setCelebration(null);
   }, []);
 
   const resetDevice = useCallback(() => {
     clearAll();
     setPrefsState(DEFAULT_PREFS);
-    setProgress(DEFAULT_PROGRESS);
+    const next = structuredClone(DEFAULT_PROGRESS);
+    progressRef.current = next;
+    setProgress(next);
+    setCelebration(null);
+    setToasts([]);
   }, []);
 
   const derived = useMemo(() => {
     const done = Object.values(progress.completedLevels);
-    const days = new Set(progress.practiceDays);
+    const s = streakInfo(progress.practiceDays);
     return {
-      totalStars: done.reduce((s, l) => s + l.stars, 0),
+      totalStars: done.reduce((t, l) => t + l.stars, 0),
       levelsCompleted: done.length,
-      streak: currentStreak(days),
-      practicedToday: days.has(dayKey()),
+      streak: s.current,
+      bestStreak: s.best,
+      restDayUsed: s.restDayUsed,
+      practicedToday: s.practicedToday,
     };
   }, [progress]);
 
   const value = useMemo<AppStateValue>(
-    () => ({ prefs, setPrefs, progress, setDisplayName, recordNoteAnswer, markPracticedToday, completeLevel, resetJourney, resetDevice, derived }),
-    [prefs, setPrefs, progress, setDisplayName, recordNoteAnswer, markPracticedToday, completeLevel, resetJourney, resetDevice, derived],
+    () => ({ prefs, setPrefs, progress, setDisplayName, recordNoteAnswer, completeLevel, recordPracticeSet, completeDaily, celebration, dismissCelebration, toasts, dismissToast, resetJourney, resetDevice, derived }),
+    [prefs, setPrefs, progress, setDisplayName, recordNoteAnswer, completeLevel, recordPracticeSet, completeDaily, celebration, dismissCelebration, toasts, dismissToast, resetJourney, resetDevice, derived],
   );
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;
