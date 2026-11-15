@@ -18,3 +18,4 @@
 .history li { display: grid; grid-template-columns: 1fr auto; gap: 2px var(--space-3); padding: var(--space-2) 0; border-bottom: 1px solid var(--rule); font-size: var(--text-sm); }
 .history a { font-weight: 500; }
 .hStars { grid-column: 1 / -1; display: flex; align-items: center; gap: var(--space-2); color: var(--ink-3); }
+.account { margin-top: var(--space-8); }

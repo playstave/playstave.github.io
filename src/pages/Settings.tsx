@@ -3,12 +3,14 @@ import { useLocation } from 'react-router-dom';
 import { Button, PageHeader, Segmented } from '../components/ui';
 import { Notation } from '../components/Notation';
 import { useAppState, type MotionPref, type NotationScale, type ThemePref } from '../state/AppState';
+import { useAccount } from '../state/AccountState';
 import styles from './Settings.module.css';
 
 const PREVIEW = [{ key: 'c/4', duration: 'q' }, { key: 'e/4', duration: 'q' }, { key: 'g/4', duration: 'q' }, { key: 'c/5', duration: 'q' }];
 
 export function Settings() {
   const { prefs, setPrefs, resetDevice } = useAppState();
+  const account = useAccount();
   const [confirming, setConfirming] = useState(false);
   const [resetDone, setResetDone] = useState(false);
   const { hash } = useLocation();
@@ -56,8 +58,9 @@ export function Settings() {
       <section className={styles.group} aria-labelledby="privacy-h" id="privacy">
         <h2 id="privacy-h" className={styles.groupTitle} tabIndex={-1}>Privacy &amp; data</h2>
         <div className={styles.prose}>
-          <p>Stave is free and designed to be safe for young learners. Right now everything — your nickname, progress and preferences — is stored only in this browser. Nothing is sent to a server, and there is no tracking.</p>
-          <p>When accounts and advertising arrive, this page will explain exactly what is stored and give you control over it. Ads will never interrupt a lesson or cover notation.</p>
+          <p>Stave is free and designed to be safe for young learners. Without an account, your nickname, progress and preferences are stored only in this browser.</p>
+          <p>If you create an account, we store only your username, a securely hashed password, and your learning progress (levels, stars, XP, badges, practice days, favourite scores and collections). We never ask for your email, age or real name. Only you can read your data; you can delete your account and everything in it from your Profile at any time.</p>
+          <p>There is no tracking. When advertising arrives, this page will explain it first. Ads will never interrupt a lesson or cover notation.</p>
         </div>
         <div className={styles.row}>
           <div><p className={styles.rowTitle}>Reset this device</p><p className={styles.rowHelp}>Erase your nickname, progress, practice history and settings from this browser.</p></div>
@@ -66,9 +69,9 @@ export function Settings() {
         {confirming && (
           <div className={styles.confirm} role="alertdialog" aria-labelledby="confirm-t" aria-describedby="confirm-d">
             <p id="confirm-t" className={styles.rowTitle}>Erase everything on this device?</p>
-            <p id="confirm-d" className={styles.rowHelp}>This cannot be undone.</p>
+            <p id="confirm-d" className={styles.rowHelp}>{account.session ? 'You will be signed out first. Progress saved in your account is not affected.' : 'This cannot be undone.'}</p>
             <div className={styles.confirmActions}>
-              <Button variant="danger" onClick={() => { resetDevice(); setConfirming(false); setResetDone(true); }}>Erase</Button>
+              <Button variant="danger" onClick={async () => { if (account.session) await account.signOut(); resetDevice(); setConfirming(false); setResetDone(true); }}>Erase</Button>
               <Button ref={cancelRef} variant="secondary" onClick={() => setConfirming(false)}>Cancel</Button>
             </div>
           </div>

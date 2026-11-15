@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { AppShell } from './components/AppShell';
 import { AppStateProvider } from './state/AppState';
+import { AccountProvider } from './state/AccountState';
 import { RouteError } from './pages/RouteError';
 import { Home } from './pages/Home';
 import { Learn } from './pages/Learn';
@@ -51,7 +52,9 @@ const router = createBrowserRouter([
 export function App() {
   return (
     <AppStateProvider>
-      <RouterProvider router={router} future={{ v7_startTransition: true }} />
+      <AccountProvider>
+        <RouterProvider router={router} future={{ v7_startTransition: true }} />
+      </AccountProvider>
     </AppStateProvider>
   );
 }

@@ -46,6 +46,8 @@ interface AppStateValue {
   renameCollection: (id: string, name: string) => { ok: boolean; error?: string };
   deleteCollection: (id: string) => void;
   setInCollection: (collectionId: string, scoreId: string, included: boolean) => void;
+  /** Replace progress wholesale (used by account sync after merging with the server copy). */
+  replaceProgress: (p: StudentProgress) => void;
   /** Developer tool: start the journey over (keeps nickname and settings). */
   resetJourney: () => void;
   resetDevice: () => void;
@@ -185,6 +187,11 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
   const dismissCelebration = useCallback(() => setCelebration(null), []);
 
+  const replaceProgress = useCallback((p: StudentProgress) => {
+    progressRef.current = p;
+    setProgress(p);
+  }, []);
+
   const resetJourney = useCallback(() => {
     const next = { ...structuredClone(DEFAULT_PROGRESS), displayName: progressRef.current.displayName };
     progressRef.current = next;
@@ -216,8 +223,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   }, [progress]);
 
   const value = useMemo<AppStateValue>(
-    () => ({ prefs, setPrefs, progress, setDisplayName, recordNoteAnswer, completeLevel, recordPracticeSet, completeDaily, celebration, dismissCelebration, toasts, dismissToast, openScore, toggleFavorite, createCollection, renameCollection, deleteCollection, setInCollection, resetJourney, resetDevice, derived }),
-    [prefs, setPrefs, progress, setDisplayName, recordNoteAnswer, completeLevel, recordPracticeSet, completeDaily, celebration, dismissCelebration, toasts, dismissToast, openScore, toggleFavorite, createCollection, renameCollection, deleteCollection, setInCollection, resetJourney, resetDevice, derived],
+    () => ({ prefs, setPrefs, progress, setDisplayName, recordNoteAnswer, completeLevel, recordPracticeSet, completeDaily, celebration, dismissCelebration, toasts, dismissToast, openScore, toggleFavorite, createCollection, renameCollection, deleteCollection, setInCollection, replaceProgress, resetJourney, resetDevice, derived }),
+    [prefs, setPrefs, progress, setDisplayName, recordNoteAnswer, completeLevel, recordPracticeSet, completeDaily, celebration, dismissCelebration, toasts, dismissToast, openScore, toggleFavorite, createCollection, renameCollection, deleteCollection, setInCollection, replaceProgress, resetJourney, resetDevice, derived],
   );
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;

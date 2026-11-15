@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, EmptyState, Notice, PageHeader, Panel, SectionTitle, Stars, Stat } from '../components/ui';
+import { Button, EmptyState, PageHeader, Panel, SectionTitle, Stars, Stat } from '../components/ui';
 import { getLesson } from '../lessons';
+import { AccountPanel } from '../components/AccountPanel';
 import { useAppState } from '../state/AppState';
 import styles from './Profile.module.css';
 
@@ -90,11 +91,10 @@ export function Profile() {
         </Panel>
       </div>
 
-      <div className={styles.notice}>
-        <Notice title="Your progress is saved on this device only">
-          <p>Accounts that keep your progress across devices are coming. Until then, clearing your browser data will clear your progress. Stave never asks for your email, age or real name.</p>
-        </Notice>
-      </div>
+      <section className={styles.account} aria-labelledby="account-h">
+        <SectionTitle id="account-h">Account</SectionTitle>
+        <Panel><AccountPanel /></Panel>
+      </section>
     </>
   );
 }

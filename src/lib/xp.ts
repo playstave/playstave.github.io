@@ -37,6 +37,24 @@ export function streakAwards(current: number): Award[] {
 export const dailyAward = (day: string): Award => ({ key: `daily:${day}`, amount: XP.dailyChallenge, reason: 'Daily challenge' });
 export const practiceSetAward = (day: string): Award => ({ key: `practice:${day}`, amount: XP.practiceSet, reason: 'First practice set today' });
 
+/**
+ * The XP an award key is worth, derived from the key alone. Lets XP be
+ * recomputed exactly from the set of keys (used when merging progress from
+ * two devices), so a merge can never double-count or lose XP.
+ */
+export function amountForKey(key: string): number {
+  const [kind, a, b] = key.split(':');
+  if (kind === 'level' && b === 'pass') return Number(a) % 10 === 0 ? XP.checkpointPass : XP.lessonPass;
+  if (kind === 'level' && b === 'star') return XP.perStar;
+  if (kind === 'milestone') return Number(a) % 100 === 0 ? XP.milestone100 : XP.milestone50;
+  if (kind === 'daily') return XP.dailyChallenge;
+  if (kind === 'practice') return XP.practiceSet;
+  if (kind === 'streak') return XP.streak[Number(a)] ?? 0;
+  return 0;
+}
+
+export const xpFromKeys = (awarded: Record<string, true>) => Object.keys(awarded).reduce((t, k) => t + amountForKey(k), 0);
+
 /** Pay only awards never paid before. Returns the new state and what was actually paid. */
 export function payAwards(s: StudentProgress, candidates: Award[], at: string): { state: StudentProgress; paid: Award[] } {
   const paid = candidates.filter((a, i) => !s.awarded[a.key] && candidates.findIndex((b) => b.key === a.key) === i);

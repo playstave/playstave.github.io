@@ -1,0 +1,25 @@
+.tabs { display: flex; gap: var(--space-1); margin-bottom: var(--space-4); border-bottom: 1px solid var(--rule); }
+.tabs button { min-height: 40px; padding: 0 var(--space-3); border: 0; border-bottom: 2px solid transparent; background: none; color: var(--ink-2); font-weight: 500; margin-bottom: -1px; }
+.tabs .tabOn { color: var(--ink); border-bottom-color: var(--accent); font-weight: 600; }
+.form { display: grid; gap: var(--space-2); max-width: 380px; }
+.form label { font-weight: 600; margin-top: var(--space-2); }
+.form input:not([type='checkbox']) { min-height: 42px; padding: 0 var(--space-3); border: 1px solid var(--rule-strong); border-radius: var(--radius-md); background: var(--paper); }
+.form input[aria-invalid='true'] { border-color: var(--danger); }
+.form :global(button[type='submit']) { margin-top: var(--space-3); justify-self: start; }
+.check { display: flex; gap: var(--space-2); align-items: center; font-weight: 400 !important; }
+.check input { width: 18px; height: 18px; accent-color: var(--accent); }
+.help, .muted { font-size: var(--text-sm); color: var(--ink-3); }
+.err { font-size: var(--text-sm); color: var(--danger); }
+.signedIn { display: grid; gap: var(--space-3); }
+.who { display: flex; align-items: center; gap: var(--space-2); }
+.row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.sync { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); font-size: var(--text-sm); color: var(--ink-2); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-3); }
+.synced .dot { background: var(--success); }
+.syncing .dot { background: var(--star-fill); }
+.offline .dot, .error .dot { background: var(--danger); }
+.link { border: 0; background: none; color: var(--accent); text-decoration: underline; font-size: var(--text-sm); padding: 0; }
+.danger { margin-top: var(--space-4); border-top: 1px solid var(--rule); padding-top: var(--space-3); }
+.danger summary { cursor: pointer; color: var(--danger); font-weight: 500; }
+.dangerBody { display: grid; gap: var(--space-2); margin-top: var(--space-3); max-width: 420px; }
+.dangerBody input { min-height: 40px; padding: 0 var(--space-3); border: 1px solid var(--rule-strong); border-radius: var(--radius-md); background: var(--paper); }

@@ -4,11 +4,22 @@ import { Icon } from './Icon';
 import { Logo } from './Logo';
 import { MOBILE_TABS, NAV } from './nav';
 import { useAppState } from '../state/AppState';
+import { useAccount } from '../state/AccountState';
 import { CelebrationOverlay } from './CelebrationOverlay';
 import { Toasts } from './Toasts';
 import styles from './AppShell.module.css';
 
 const isActivePath = (to: string, pathname: string) => (to === '/' ? pathname === '/' : pathname === to || pathname.startsWith(to + '/'));
+
+function AccountChip() {
+  const a = useAccount();
+  if (!a.configured) return null;
+  return (
+    <Link to="/profile#account-h" className={styles.accountChip} data-account-chip>
+      {a.session ? <>@{a.session.username}<span className={`${styles.syncDot} ${a.status === 'offline' ? styles.syncOff : ''}`} aria-label={a.status === 'offline' ? 'offline' : 'synced'} /></> : 'Sign in to save progress'}
+    </Link>
+  );
+}
 
 function SidebarStatus() {
   const { progress, derived } = useAppState();
@@ -115,7 +126,7 @@ export function AppShell() {
             </ul>
           ))}
         </nav>
-        <div className={styles.sideFoot}><SidebarStatus /></div>
+        <div className={styles.sideFoot}><AccountChip /><SidebarStatus /></div>
       </aside>
 
       {/* Mobile top bar */}
