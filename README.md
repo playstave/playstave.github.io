@@ -34,6 +34,16 @@ npm run preview    # serve the production build
 npm test           # unit tests (progression, levels, lessons, rewards, music/transposition, catalogue, search)
 ```
 
+### Testing on a phone (same Wi-Fi)
+
+Phones only allow the microphone on https pages, so there is a phone mode:
+
+```bash
+PHONE=1 npm run dev
+```
+
+It serves https on port 5182 on your local network (self-signed certificate — the phone will show a warning you have to accept once). Open `https://<your-computer's-IP>:5182` on the phone.
+
 ## Project structure
 
 ```
