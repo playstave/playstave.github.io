@@ -30,7 +30,7 @@ export function Profile() {
         <div className={styles.avatar} aria-hidden="true">{initials}</div>
         <div>
           <p className={styles.name}>{shown}</p>
-          <p className="muted">Level {progress.currentLevel} · {progress.xp} XP · {derived.totalStars} stars</p>
+          <p className="muted">Level {Math.min(progress.currentLevel, 500)} · {progress.xp} XP · {derived.totalStars} stars</p>
         </div>
       </div>
 

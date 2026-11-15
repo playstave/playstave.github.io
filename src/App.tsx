@@ -6,6 +6,7 @@ import { Home } from './pages/Home';
 import { Learn } from './pages/Learn';
 import { WorldDetail } from './pages/WorldDetail';
 import { Roadmap } from './pages/Roadmap';
+import { LevelPage } from './pages/LevelPage';
 import { Library } from './pages/Library';
 import { Practice } from './pages/Practice';
 import { Progress } from './pages/Progress';
@@ -23,6 +24,7 @@ const router = createBrowserRouter([
       { path: '/learn', element: <Learn /> },
       { path: '/learn/world/:worldId', element: <WorldDetail /> },
       { path: '/roadmap', element: <Roadmap /> },
+      { path: '/level/:levelId', element: <LevelPage /> },
       { path: '/library', element: <Library /> },
       { path: '/practice', element: <Practice /> },
       { path: '/progress', element: <Progress /> },

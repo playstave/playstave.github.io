@@ -1,6 +1,7 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { clearAll, readJSON, writeJSON } from '../lib/storage';
 import { currentStreak, dayKey } from '../lib/dates';
+import { completeLevel as applyCompletion, type CompletionResult } from '../lib/progression';
 
 export type ThemePref = 'system' | 'light' | 'dark';
 export type MotionPref = 'system' | 'reduced' | 'full';
@@ -46,6 +47,10 @@ interface AppStateValue {
   setDisplayName: (name: string) => void;
   recordNoteAnswer: (correct: boolean) => void;
   markPracticedToday: () => void;
+  /** Record a passed level. Throws if the level is locked. XP is added in the gamification stage. */
+  completeLevel: (n: number, stars: number, score: number) => CompletionResult<StudentProgress>;
+  /** Clear level progress only (keeps name, practice history and settings). */
+  resetJourney: () => void;
   resetDevice: () => void;
   derived: {
     totalStars: number;
@@ -100,6 +105,21 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     setProgress((p) => (p.practiceDays.includes(today) ? p : { ...p, practiceDays: [...p.practiceDays, today] }));
   }, []);
 
+  // Computed from a ref so the result is returned synchronously and StrictMode
+  // double-invocation of state updaters can never apply a completion twice.
+  const progressRef = useRef(progress);
+  progressRef.current = progress;
+  const completeLevel = useCallback((n: number, stars: number, score: number) => {
+    const result = applyCompletion(progressRef.current, n, stars, score);
+    progressRef.current = result.state;
+    setProgress(result.state);
+    return result;
+  }, []);
+
+  const resetJourney = useCallback(() => {
+    setProgress((p) => ({ ...p, currentLevel: 1, completedLevels: {} }));
+  }, []);
+
   const resetDevice = useCallback(() => {
     clearAll();
     setPrefsState(DEFAULT_PREFS);
@@ -118,8 +138,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   }, [progress]);
 
   const value = useMemo<AppStateValue>(
-    () => ({ prefs, setPrefs, progress, setDisplayName, recordNoteAnswer, markPracticedToday, resetDevice, derived }),
-    [prefs, setPrefs, progress, setDisplayName, recordNoteAnswer, markPracticedToday, resetDevice, derived],
+    () => ({ prefs, setPrefs, progress, setDisplayName, recordNoteAnswer, markPracticedToday, completeLevel, resetJourney, resetDevice, derived }),
+    [prefs, setPrefs, progress, setDisplayName, recordNoteAnswer, markPracticedToday, completeLevel, resetJourney, resetDevice, derived],
   );
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;

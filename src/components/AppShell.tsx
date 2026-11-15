@@ -11,8 +11,8 @@ const isActivePath = (to: string, pathname: string) => (to === '/' ? pathname ==
 function SidebarStatus() {
   const { progress, derived } = useAppState();
   return (
-    <Link to="/progress" className={styles.sideStatus} aria-label={`Level ${progress.currentLevel}, ${progress.xp} XP, ${derived.streak}-day streak. View progress.`}>
-      <span className={styles.sideStatusItem}><span className="eyebrow">Level</span><span className="num">{progress.currentLevel}</span></span>
+    <Link to="/progress" className={styles.sideStatus} aria-label={`Level ${Math.min(progress.currentLevel, 500)}, ${progress.xp} XP, ${derived.streak}-day streak. View progress.`}>
+      <span className={styles.sideStatusItem}><span className="eyebrow">Level</span><span className="num">{Math.min(progress.currentLevel, 500)}</span></span>
       <span className={styles.sideStatusItem}><span className="eyebrow">XP</span><span className="num">{progress.xp}</span></span>
       <span className={styles.sideStatusItem}><span className="eyebrow">Streak</span><span className="num">{derived.streak}</span></span>
     </Link>
@@ -67,8 +67,8 @@ export function AppShell() {
   // screen-reader and keyboard users know the page changed.
   useEffect(() => {
     if (firstRender.current) { firstRender.current = false; return; }
-    if (hash) return; // the page scrolls to its own anchor
-    window.scrollTo(0, 0);
+    // Pages with anchors, or that position themselves (the roadmap), handle their own scroll.
+    if (!hash && !document.querySelector('[data-manages-scroll]')) window.scrollTo(0, 0);
     const h = document.querySelector<HTMLElement>('[data-page-title]');
     h?.focus({ preventScroll: true });
   }, [pathname, hash]);
@@ -76,8 +76,11 @@ export function AppShell() {
   useEffect(() => {
     // Child effects run first, so the 404 page is already in the DOM here.
     if (document.querySelector('[data-not-found]')) { document.title = 'Page not found · Stave'; return; }
+    if (pathname === '/') { document.title = 'Stave — Learn to read music'; return; }
+    // Title follows the page's own heading, e.g. "Level 7 · Stave", "Beginner Musician · Stave".
+    const h1 = document.querySelector<HTMLElement>('[data-page-title]')?.innerText.trim();
     const page = NAV.find((n) => isActivePath(n.to, pathname));
-    document.title = page && page.to !== '/' ? `${page.label} · Stave` : 'Stave — Learn to read music';
+    document.title = `${h1 || page?.label || 'Stave'} · Stave`;
   }, [pathname]);
 
   const moreActive = NAV.some((n) => !MOBILE_TABS.includes(n.to) && isActivePath(n.to, pathname));

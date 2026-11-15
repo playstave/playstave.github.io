@@ -41,10 +41,10 @@ export function Home() {
           </h2>
           <p className={styles.heroOutcome}>{unit.outcome}</p>
           <div className={styles.heroActions}>
-            <ButtonLink to={`/learn/world/${world.id}`} size="lg" iconAfter="arrow-right">
+            <ButtonLink to={`/level/${level}`} size="lg" iconAfter="arrow-right">
               {isNew ? 'Start learning' : 'Continue learning'}
             </ButtonLink>
-            <ButtonLink to="/roadmap" variant="secondary" size="lg">View roadmap</ButtonLink>
+            <ButtonLink to={`/roadmap#level-${level}`} variant="secondary" size="lg">View roadmap</ButtonLink>
           </div>
         </div>
         <div className={styles.heroArt}>

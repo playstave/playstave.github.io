@@ -1,0 +1,6 @@
+.back { display: inline-flex; align-items: center; gap: 4px; margin-bottom: var(--space-4); color: var(--ink-2); font-size: var(--text-sm); font-weight: 500; text-decoration: none; }
+.back:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.facts { display: flex; flex-wrap: wrap; gap: var(--space-4) var(--space-10); margin: 0 0 var(--space-8); }
+.facts dd { margin: var(--space-1) 0 0; font-weight: 500; }
+.best { display: flex; align-items: center; gap: var(--space-2); }
+.actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-6); }
