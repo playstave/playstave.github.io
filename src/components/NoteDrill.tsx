@@ -56,7 +56,7 @@ export function NoteDrill() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
-      const t = e.target as HTMLElement;
+      const t = e.target instanceof HTMLElement ? e.target : document.body;
       if (t.closest('input, textarea, select, [contenteditable]')) return;
       const k = e.key.toUpperCase();
       if ((LETTERS as readonly string[]).includes(k)) { e.preventDefault(); choose(k); }

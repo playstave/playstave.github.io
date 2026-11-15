@@ -22,7 +22,9 @@ export function whichLine(id: string, p: Pos, prompt = 'Which line is highlighte
         : `Count again, starting with the bottom line as 1 and going up.`,
     })),
     answer: `line${n}`,
-    explanation: `Counting up from the bottom line: ${Array.from({ length: n }, (_, i) => i + 1).join(', ')}. The highlighted line is line ${n}.`,
+    explanation: n === 1
+      ? 'The highlighted line is the bottom line, and the bottom line is always line 1.'
+      : `Counting up from the bottom line: ${Array.from({ length: n }, (_, i) => i + 1).join(', ')}. The highlighted line is line ${n}.`,
   };
 }
 
@@ -96,7 +98,9 @@ export function locate(id: string, p: Pos, prompt?: string, numbers?: LocateQues
     kind: 'locate', id, answer: p, numbers,
     prompt: prompt ?? `Tap ${posName(p)}.`,
     explanation: isLine(p)
-      ? `${cap(posName(p))}: count the lines up from the bottom — ${Array.from({ length: lineNumber(p) }, (_, i) => i + 1).join(', ')}.`
+      ? lineNumber(p) === 1
+        ? 'Line 1 is the bottom line of the staff.'
+        : `${cap(posName(p))}: count the lines up from the bottom — ${Array.from({ length: lineNumber(p) }, (_, i) => i + 1).join(', ')}.`
       : `${cap(posName(p))} is the gap between line ${spaceNumber(p)} and line ${spaceNumber(p) + 1}.`,
   };
 }

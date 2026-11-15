@@ -51,10 +51,30 @@ Bugs found and fixed during Stage 2 testing:
 - Phone toolbar wrapped to two rows → single row, scrollable world chips, shorter button label
 - CSS order bug: phone padding for world chips overridden by base rule → moved after
 
-## Next: Stage 3 — Lesson engine + Levels 1–10 (NOT STARTED, awaiting user go-ahead)
+## Stage 3 — Lesson engine + Levels 1–10: COMPLETE (2026-11-14)
+- [x] Lesson schema (`src/lessons/types.ts`); staff positions shared by figures and answers (`staff.ts`)
+- [x] Engine state machine + scoring (`src/lib/lessonEngine.ts`), 6 unit tests
+- [x] `StaffDiagram`: precise staff, highlights, numbered notes, step/skip arcs, accessible tap-to-locate
+- [x] Question builders with mistake-specific feedback (`helpers.ts`)
+- [x] Levels 1–10 authored (Unit 1: The Staff), 11 content-validation tests
+- [x] `LessonPlayer` + `QuestionView`, mounted at `/level/:n` (lock guard kept); leave confirmation via `useBlocker`
+- [x] Browser walkthrough script `scripts/lesson-walk.js` (dev only); full runs of all 10 lessons pass
+- [x] 30/30 unit tests, build passes, console clean; Stage 1–2 regression sweep passed
+
+Bugs found and fixed during Stage 3 testing:
+- Practice tap questions showed the correct position after a wrong try (made retry trivial) → hidden in practice, shown in the challenge
+- Locate feedback said "2 positions lower" for line-to-line → "one line lower"
+- Tap rows were ~12 px on phones → narrower interactive staff, rows now 27 px at 375 px
+- Lesson figures too small in their box → larger max size
+- Five stacked options pushed feedback below the fold on desktop → two columns ≥ 560 px
+- Awkward line-1 explanations ("count … — 1.") → reworded
+- Keyboard handlers assumed an element target → guarded (also in the note drill)
+- Inline focus refs would re-focus headings on every re-render → single focus effect per screen
+
+## Next: Stage 4 — Gamification (NOT STARTED, awaiting user go-ahead)
 Plan:
-- Lesson content schema (`src/lessons/level-001.ts` …): intro, lesson steps with notation, guided practice items with per-option explanations, challenge items
-- Lesson player at `/level/:n`: Intro → Lesson → Guided practice (immediate feedback, explain wrong answers) → Challenge → result
-- Star thresholds defined and shown up front (e.g. pass ≥ 60%, ★★ ≥ 80%, ★★★ = 100% with no hints) — final rules in Stage 4
-- On pass: call `completeLevel` (unlocks next); replay via Practice again
-- Author Levels 1–10 (Unit 1: The Staff) with distinct objectives; test every question's correct and incorrect paths
+- XP rules (lesson completion, stars, first-time vs replay, daily practice, milestones) as pure, tested functions; no duplicate awards on replay
+- Award XP on lesson pass and practice sets; show it on the result screen, Home, sidebar, Progress
+- Achievement unlock engine evaluated against progress (First Lesson, First Perfect Score, Ten Levels, Clef Expert…), saved with unlock dates, toast + Achievements page
+- Completion celebration: dimmed overlay, stars one by one, XP count-up, next-level unlock, subtle confetti/notation motif; honours reduced motion
+- Milestone celebrations every 50 levels; daily challenge rotation; streak rules (gentle — no harsh resets)

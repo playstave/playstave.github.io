@@ -2,6 +2,8 @@ import { Link, Navigate, useParams } from 'react-router-dom';
 import { Icon } from '../components/Icon';
 import { ButtonLink, Notice, PageHeader, Stars } from '../components/ui';
 import { getLevel } from '../data/levels';
+import { getLesson } from '../lessons';
+import { LessonPlayer } from '../components/lesson/LessonPlayer';
 import { canOpen, levelStatus, nextLevel } from '../lib/progression';
 import { useAppState } from '../state/AppState';
 import styles from './LevelPage.module.css';
@@ -31,6 +33,9 @@ export function LevelPage() {
       </div>
     );
   }
+
+  const lesson = getLesson(n);
+  if (lesson) return <LessonPlayer key={n} lesson={lesson} level={level} />;
 
   const status = levelStatus(n, progress);
   const record = progress.completedLevels[n];

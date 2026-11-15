@@ -6,8 +6,8 @@ import styles from './StaffDiagram.module.css';
 interface Interactive {
   picked: Pos | null;
   onPick: (p: Pos) => void;
-  /** After answering: the correct position, and whether input is closed. */
-  reveal?: { answer: Pos; chosen: Pos } | null;
+  /** After answering: what was chosen, and the correct position when it may be shown. */
+  reveal?: { answer?: Pos; chosen: Pos } | null;
   disabled?: boolean;
 }
 
@@ -28,11 +28,13 @@ export function StaffDiagram({ figure, half = 8, interactive }: Props) {
   const left = numbers === 'lines' || numbers === 'both' ? 34 : 14;
   const right = numbers === 'spaces' || numbers === 'both' ? 34 : 14;
   const noteSpacing = gap * 3.2;
-  const staffLen = Math.max(gap * 12, notes.length * noteSpacing + gap * 2);
+  // Tap-to-locate staves are narrower so each line/space row is a comfortable touch target.
+  const staffLen = interactive ? gap * 4 : Math.max(gap * 12, notes.length * noteSpacing + gap * 2);
   const W = left + staffLen + right;
-  const top = gap * 1.6 + (arcs.length ? gap : 0);
+  const pad = interactive ? gap * 0.7 : gap * 1.6;
+  const top = pad + (arcs.length ? gap : 0);
   const y = (p: Pos) => top + (8 - p) * half;
-  const H = y(0) + gap * (noteLabels ? 2.6 : 1.6);
+  const H = y(0) + (noteLabels ? gap * 2.6 : pad);
   const noteX = (i: number) => left + gap * 1.5 + (notes.length === 1 ? (staffLen - gap * 3) / 2 : (i * (staffLen - gap * 3)) / Math.max(1, notes.length - 1));
   const rx = half * 1.3;
   const ry = half * 0.92;
@@ -57,7 +59,7 @@ export function StaffDiagram({ figure, half = 8, interactive }: Props) {
 
   return (
     <figure className={styles.figure}>
-      <div className={styles.wrap} style={{ aspectRatio: `${W} / ${H}`, maxWidth: W * 1.6 }}>
+      <div className={styles.wrap} style={{ aspectRatio: `${W} / ${H}`, maxWidth: W * 2.2 }}>
         <svg viewBox={`0 0 ${W} ${H}`} className={styles.svg} role="img" aria-label={alt}>
           {highlight.map((p) => isLine(p)
             ? <rect key={`h${p}`} x={left - 4} y={y(p) - 3} width={staffLen + 8} height={6} rx={3} className={styles.hl} />
@@ -66,7 +68,7 @@ export function StaffDiagram({ figure, half = 8, interactive }: Props) {
           {interactive && reveal && (
             <>
               {reveal.chosen !== reveal.answer && <rect x={left} y={y(reveal.chosen) - half / 2} width={staffLen} height={half} className={styles.wrongBand} />}
-              <rect x={left} y={y(reveal.answer) - half / 2} width={staffLen} height={half} className={styles.rightBand} />
+              {reveal.answer != null && <rect x={left} y={y(reveal.answer) - half / 2} width={staffLen} height={half} className={styles.rightBand} />}
             </>
           )}
 
