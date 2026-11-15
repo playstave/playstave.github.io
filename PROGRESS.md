@@ -25,6 +25,15 @@ Bugs found and fixed during Stage 1 testing:
 - Home caption wrapped mid-sequence ("E G B D / F") → nowrap span
 - Regression introduced while adding `scale` (prop not destructured, page crashed) → fixed, re-tested
 
+### Stage 1 verification pass (2026-11-14, before Stage 2)
+- Clean `rm -rf dist && npm run build` → exit 0
+- Git: 3 Stage 1 commits present, working tree clean
+- README.md + PROGRESS.md tracked in git
+- Restart test: stopped all servers, followed "Resume in 3 steps" from an empty environment (`env -i`) → server up in ~100 ms, all routes 200
+- Browser: 18 route checks (incl. all 6 worlds, 404s, #privacy anchor) render correct page, no console errors; production build (`vite preview`) also checked
+- Fixed: 404 page inside /learn showed tab title "Learn · Stave" → now "Page not found · Stave"
+- Fixed: Library intro said "searchable" before search exists → reworded
+
 ## Next: Stage 2 — 500-level roadmap (NOT STARTED, awaiting user go-ahead)
 Plan:
 - Level model: `src/data/levels.ts` deriving 500 level stubs (number, world, unit, difficulty, checkpoint/milestone flags) from curriculum.ts

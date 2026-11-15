@@ -19,7 +19,7 @@ export function Library() {
       <PageHeader
         eyebrow="Sheet music"
         title="Library"
-        lede="A free, searchable library of sheet music you are allowed to read, print and share."
+        lede="A free library of sheet music you are allowed to read, print and share. Search and filters open with the first catalogue."
       />
 
       <div className={styles.layout}>

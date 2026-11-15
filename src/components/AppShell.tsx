@@ -74,6 +74,8 @@ export function AppShell() {
   }, [pathname, hash]);
 
   useEffect(() => {
+    // Child effects run first, so the 404 page is already in the DOM here.
+    if (document.querySelector('[data-not-found]')) { document.title = 'Page not found · Stave'; return; }
     const page = NAV.find((n) => isActivePath(n.to, pathname));
     document.title = page && page.to !== '/' ? `${page.label} · Stave` : 'Stave — Learn to read music';
   }, [pathname]);
