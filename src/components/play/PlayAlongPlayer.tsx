@@ -10,6 +10,7 @@ import { readJSON, writeJSON } from '../../lib/storage';
 import { useAppState } from '../../state/AppState';
 import { createDevPerformer, devPerformerSettings, devToneEnabled, type DevPerformance } from '../../audio/devTone';
 import { PlayScore } from './PlayScore';
+import { MicPermission } from '../MicPermission';
 import styles from './PlayAlongPlayer.module.css';
 
 const DEV_TONE = import.meta.env.DEV && devToneEnabled();
@@ -102,6 +103,8 @@ export function PlayAlongPlayer({ exercise, onFinish }: Props) {
         {ex.backing && <span>Backing track</span>}
       </div>
       {exercise.hint && <p className={styles.hint}>{exercise.hint}</p>}
+
+      <MicPermission />
 
       <div className={styles.controls}>
         {!running ? (

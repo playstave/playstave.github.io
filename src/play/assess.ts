@@ -84,9 +84,10 @@ export function assessNote(note: TimedNote, frames: Frame[], beatSec: number, o:
   const extMatch = frames.filter((f) => f.t > coreTo && f.t <= extTo && f.hz != null)
     .map((f) => toCents(f.hz!, midi)).filter((c) => Math.abs(c) <= SAME_NOTE);
   let matching: number[];
-  if (core.length === 0) {
+  if (coreMatch.length === 0 && (core.length === 0 || extMatch.length >= 2)) {
     if (extMatch.length < 2) return { index: note.index, verdict: 'missed' };
-    // Nothing during the note itself, only after it. If the next note is the
+    // The right pitch never sounded during the note itself, only after its
+    // written end — so it can never be "correct". If the next note is the
     // same pitch, that sound is the NEXT note — this one was skipped.
     const first = frames.find((f) => f.t > coreTo && f.t <= extTo && f.hz != null && Math.abs(toCents(f.hz, midi)) <= SAME_NOTE)!;
     if (next && !next.rest && next.midi === midi && first.t >= next.start - tTol) return { index: note.index, verdict: 'missed' };

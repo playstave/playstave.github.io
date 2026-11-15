@@ -7,6 +7,7 @@ import { centsFrom, getInstrument, midiToHz, readNote, type InstrumentId } from 
 import { DEFAULT_IN_TUNE_CENTS } from '../../audio/tolerance';
 import { describePlacement, placeNote, sharpName, sharpNameOct } from '../../course/fingering';
 import { createDevSource, devToneEnabled, updateDevTone } from '../../audio/devTone';
+import { MicPermission } from '../MicPermission';
 import styles from './Lesson.module.css';
 
 const DEV_TONE = import.meta.env.DEV && devToneEnabled();
@@ -57,6 +58,7 @@ export function TryNote({ instrument, midi, onDone, last }: { instrument: Instru
         <Button variant="ghost" icon="speaker" onClick={() => playTone(midiToHz(midi))} disabled={toneHz != null}>Hear it</Button>
       </div>
       <div className={styles.tryBoard}><Fingerboard instrument={instrument} notes={[midi]} highlight={[midi]} /></div>
+      {!done && state !== 'listening' && <div className={styles.tryFeedback}><MicPermission /></div>}
       <p className={styles.tryFeedback} aria-live="polite" data-try-feedback>{feedback || ' '}</p>
       <div className={styles.nav}>
         {done ? (

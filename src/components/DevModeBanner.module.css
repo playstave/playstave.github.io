@@ -1,0 +1,2 @@
+.banner { position: sticky; top: 0; z-index: 100; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 12px; padding: 10px 16px; background: #b3261e; color: #fff; font-size: 0.95rem; text-align: center; }
+.banner button { border: 2px solid #fff; border-radius: 8px; background: #fff; color: #b3261e; font-weight: 700; padding: 6px 12px; cursor: pointer; }

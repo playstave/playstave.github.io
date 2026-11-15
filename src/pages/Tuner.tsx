@@ -9,6 +9,7 @@ import { instrumentInfo } from '../data/students';
 import { DEFAULT_IN_TUNE_CENTS, TOLERANCE_CHOICES, verdict, type Tolerance } from '../audio/tolerance';
 import { readJSON, writeJSON } from '../lib/storage';
 import { createDevSource, devToneEnabled, devToneSettings, updateDevTone, type DevToneSettings } from '../audio/devTone';
+import { MicPermission } from '../components/MicPermission';
 import styles from './Tuner.module.css';
 
 type Target = 'auto' | 'chromatic' | number; // number = index of a string
@@ -87,6 +88,8 @@ export function Tuner() {
       />
 
       <p className={styles.instrumentLine}>Tuning your <strong>{instrumentInfo(inst.id).noun}</strong> · strings {inst.strings.map((x) => x.name).join(' ')}. <Link to="/settings#instrument-h">Change instrument</Link></p>
+
+      {!listening && <div className={styles.micGate}><MicPermission /></div>}
 
       <Panel className={styles.meterPanel} aria-labelledby="tuner-h" data-tuner-state={state}>
         <h2 id="tuner-h" className="visually-hidden">Tuner display</h2>

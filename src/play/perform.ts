@@ -93,7 +93,8 @@ export function framesFromAudio(samples: Float32Array, sampleRate: number, instr
 }
 
 /** Piano-like rendering of backing events (decaying harmonics), for bleed tests. */
-export function renderBacking(events: { start: number; dur: number; midis: number[] }[], length: number, lead: number, level = 0.15, sampleRate = 48000): Float32Array {
+/** `cutHz`: drop partials below this frequency, like small laptop/phone speakers that can't play deep notes. */
+export function renderBacking(events: { start: number; dur: number; midis: number[] }[], length: number, lead: number, level = 0.15, sampleRate = 48000, cutHz = 0): Float32Array {
   const out = new Float32Array(length);
   const h = [1, 0.5, 0.3, 0.2, 0.12, 0.08];
   for (const e of events) {
@@ -105,7 +106,7 @@ export function renderBacking(events: { start: number; dur: number; midis: numbe
         const t = (i - s0) / sampleRate;
         const env = Math.exp(-t * 2.5) * Math.min(1, t / 0.005) * Math.min(1, (s1 - i) / sampleRate / 0.02);
         let v = 0;
-        for (let k = 0; k < h.length; k++) v += h[k] * Math.sin(2 * Math.PI * hz * (k + 1) * t);
+        for (let k = 0; k < h.length; k++) if (hz * (k + 1) >= cutHz) v += h[k] * Math.sin(2 * Math.PI * hz * (k + 1) * t);
         out[i] += (level * env * v) / 2.2;
       }
     }

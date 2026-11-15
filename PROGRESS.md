@@ -221,6 +221,15 @@ Build order (revised): R1 listening + tuner → R2 play-along assessment engine 
 - Bugs found and fixed: repeated eighth notes on bass were marked early (onset taken from the previous identical note); lesson note names used flats (A♭ for G♯)
 - Known: first visit to a late level computes the earlier levels once (~0.5 s in development, cached afterwards)
 
+### "Notes turn green without playing" (owner report, 2026-11-15): investigated and fixed
+- Cause of the report: the owner was using the separate TEST server tab (localhost:5181) that Claude had left open with the DEV test mode on (`stave:dev-test-tone`), where a simulated player replaces the microphone. Not present in production builds. Test mode switched off in that tab; tab moved to the real app (5180)
+- [x] `DevModeBanner`: whenever DEV test mode is on, a red banner on every page says the microphone is not being used, with a "Turn off test mode" button (dev only)
+- [x] Real risk found while investigating: backing-track bleed. A full chord implies a phantom low root (D–F♯–A sounds like a low D), which cello and double bass listen for: with nobody playing, cello got up to 3% and bass up to 10% green notes (violin/viola 0%). Fixes: (1) when the student's note is the chord's root, the backing plays one other chord note instead of the full chord; (2) assessment: a note whose pitch never sounds during its own written time can never be "correct" (it is late or missed)
+- [x] New `bleed.test.ts`: 10 levels × 4 instruments × 3 speaker types (full range, cut below 180 Hz, cut below 300 Hz), nobody playing → zero green notes (675 tests total pass)
+- [x] `MicPermission`: a clear "Allow microphone" step on the play-along player, lesson "Try it" and the Tuner until the browser has permission; explains blocked/unsupported states
+- Finding: the desktop app's built-in browser pane reports microphone permission "denied" and offers no way to allow it — listening must be tested in Chrome/Safari/Edge/Firefox (http://localhost:5180)
+- Lesson for future sessions: never leave DEV test mode on in a tab the owner can reach; use the banner; stop test servers and close/redirect their tabs
+
 ## Next: R5 — World 2 (Levels 101–200): slurs, dynamics, flats, minor keys, sixteenths (needs slur/dynamic notation) — then Worlds 3–6 (positions/shifting, high positions, advanced, Vivaldi)
 
 ## Later: Stage 7 — Advertising integration (not started)

@@ -58,3 +58,4 @@
 .dev { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; font-size: var(--text-sm); border: 1px dashed var(--danger); }
 .dev .eyebrow { width: 100%; color: var(--danger); }
 .dev input[type='number'] { width: 90px; }
+.micGate { margin-bottom: var(--space-4); }

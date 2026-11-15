@@ -7,6 +7,7 @@ import { useAppState } from '../state/AppState';
 import { useAccount } from '../state/AccountState';
 import { CelebrationOverlay } from './CelebrationOverlay';
 import { Toasts } from './Toasts';
+import { DevModeBanner } from './DevModeBanner';
 import styles from './AppShell.module.css';
 
 const isActivePath = (to: string, pathname: string) => (to === '/' ? pathname === '/' : pathname === to || pathname.startsWith(to + '/'));
@@ -117,6 +118,7 @@ function Shell() {
   return (
     <div className={styles.shell}>
       <a href="#main" className="skip-link">Skip to content</a>
+      <DevModeBanner />
 
       {/* Desktop sidebar / tablet rail */}
       <aside className={styles.sidebar}>

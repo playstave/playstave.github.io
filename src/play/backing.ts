@@ -7,7 +7,9 @@
  * hears it too. A chord tone that matches the note the student should be
  * playing (same pitch, or an octave either side) could fool the assessment
  * into marking a note green that wasn't played, so such tones are left out
- * while that note sounds. Headphones are still recommended.
+ * while that note sounds, and a chord whose root is the student's note is
+ * thinned to a single note (a full chord implies a phantom low root).
+ * Headphones are still recommended.
  */
 import type { Backing, Timeline } from './exercise';
 
@@ -69,7 +71,15 @@ export function backingEvents(b: Backing, tl: Timeline): BackingEvent[] {
       for (let k = 0; k < slices; k++) {
         const s = cStart + k * sliceDur;
         const melody = melodyDuring(tl, s, s + sliceDur);
-        const midis = tones.filter((t) => !clashes(t, melody));
+        let midis = tones.filter((t) => !clashes(t, melody));
+        // A full chord sounds like a phantom low ROOT (D–F♯–A implies a D two octaves down),
+        // which the deep instruments listen for. If the student's note is the chord's root,
+        // play just one other chord note instead — a single note implies nothing else.
+        const rootPc = chordPitchClasses(sym)[0];
+        if (melody.some((m) => ((m % 12) + 12) % 12 === rootPc)) {
+          const single = midis.slice(1).find((t) => ((t % 12) + 12) % 12 !== rootPc && !melody.some((m) => (t - m) % 12 === 0));
+          midis = single != null ? [single] : [];
+        }
         if (midis.length) out.push({ start: s, dur: b.style === 'pulse' ? Math.min(sliceDur, tl.beat * 0.9) : sliceDur, midis });
       }
     });
