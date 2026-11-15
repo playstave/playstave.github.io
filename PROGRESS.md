@@ -138,7 +138,13 @@ Decisions: Supabase cloud project (user creates it); username + password sign-up
 - [x] `lib/sync/` backend interface, Supabase backend, merge (never loses progress; XP recomputed from award keys), debounced sync engine with offline retry; 14 unit tests (126 total pass)
 - [x] Account UI on Profile (sign in / create / sync status / sign out clears device / delete account), sidebar chip, Settings reset signs out first, updated privacy text
 - [x] Browser-tested end to end with a DEV-ONLY in-browser mock backend (excluded from prod build): validation, sign-up, sync, sign-out, wrong password, isolation between accounts, device-merge choice, offline + recovery, reload, reset, delete
-- [ ] NOT YET TESTED against real Supabase — needs the user's project
+- [x] Cloud project connected (2026-11-15): project ref `phfbbjmxlqsskfamtgzp` (us-west-2, free). URL + anon key in `.env.local` (git-ignored; service_role never used)
+- [x] schema.sql applied; rls_check.sql → "ALL CHECKS PASSED" (after fix below)
+- [x] Verified with curl using the anon key: reading `progress` / `profiles` → 401 permission denied; `delete_own_account` → 401 permission denied; `username_available` → works
+- [x] App on :5180 uses the real backend (called `username_available` on the project)
+- Bug found by rls_check on real Supabase and fixed: students could change their own username. Supabase grants table-wide UPDATE to `authenticated` by default, so the column-level revoke did nothing → now `revoke update` on the table, `grant update (display_name)` only. Also Supabase grants EXECUTE on new functions to `anon` → revoked on `delete_own_account`.
+- [ ] Auth → "Confirm email" is still ON (Supabase default) — must be turned OFF, with the user's OK, before sign-up works
+- [ ] Real sign-up / sign-in / cross-device sync test — done by the user (Claude does not create accounts on external services)
 
 User setup steps (to finish Stage 6):
 1. Create a free Supabase project. Auth → Providers → Email: turn OFF "Confirm email" (required: sign-up uses non-deliverable addresses).

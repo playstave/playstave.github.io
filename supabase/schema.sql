@@ -77,7 +77,11 @@ create policy "own profile: read"   on public.profiles for select to authenticat
 create policy "own profile: update" on public.profiles for update to authenticated using (id = auth.uid()) with check (id = auth.uid());
 -- no insert policy: profiles are created only by the signup trigger
 -- usernames cannot be changed by clients:
-revoke update (username, id, created_at) on public.profiles from authenticated;
+-- (Supabase grants table-wide UPDATE to authenticated by default, so a
+-- column-level revoke alone does nothing: revoke all updates, then allow
+-- only the nickname.)
+revoke update on public.profiles from authenticated;
+grant update (display_name) on public.profiles to authenticated;
 
 drop policy if exists "own progress: read"   on public.progress;
 drop policy if exists "own progress: insert" on public.progress;
@@ -108,5 +112,6 @@ begin
   end if;
   delete from auth.users where id = auth.uid();   -- cascades to profiles and progress
 end $$;
-revoke all on function public.delete_own_account() from public;
+-- (Supabase grants EXECUTE on new functions to anon by default; remove it.)
+revoke all on function public.delete_own_account() from public, anon;
 grant execute on function public.delete_own_account() to authenticated;
