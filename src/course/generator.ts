@@ -9,7 +9,7 @@
  * home note (tonic). Each instrument gets its own register and fingering.
  */
 import { getInstrument, type InstrumentId } from '../audio/notes';
-import { buildTimeline, soundingShift, type Backing, type PlayExercise } from '../play/exercise';
+import { soundingShift, type Backing, type PlayExercise } from '../play/exercise';
 import { describePlacement, placeNote, sharpName } from './fingering';
 import type { PlayLevel, TutorialCard } from './playLevels';
 
@@ -150,13 +150,8 @@ export function difficultyFor(level: number, indexInUnit: number): Difficulty {
  * × (1 + range/36). Transparent on purpose — the course rule is that every
  * level must score higher than the level before it.
  */
-export function pieceScore(ex: PlayExercise): number {
-  const tl = buildTimeline(ex);
-  const notes = tl.notes.filter((x) => x.midi != null);
-  const leaps = notes.slice(1).filter((x, i) => Math.abs(x.midi! - notes[i].midi!) > 2).length / Math.max(1, notes.length - 1);
-  const range = Math.max(...notes.map((x) => x.midi!)) - Math.min(...notes.map((x) => x.midi!));
-  return (notes.length / tl.duration) * Math.sqrt(tl.measures.length) * (1 + 0.5 * leaps) * (1 + range / 36);
-}
+export { pieceScore } from './build';
+import { pieceScore } from './build';
 
 /** Each level must score at least this much more than the one before: small steps at first, bigger later. */
 export const stepFor = (g: number) => 0.06 + 0.16 * g;
@@ -171,12 +166,12 @@ const maxBars = (g: number) => Math.round(8 + 16 * g);
 export function ensureHarder(ex: PlayExercise, beat: number, g: number): PlayExercise {
   const target = beat + stepFor(g);
   let out = ex;
-  for (let k = 0; k < 40 && pieceScore(out) < target; k++) {
+  for (let k = 0; k < 80 && pieceScore(out) < target; k++) {
     if (out.tempo < maxTempo(g) && k % 3 !== 2) out = { ...out, tempo: out.tempo + 4 };
     else {
       const bars = out.music.split('|').map((b) => b.trim());
       const body = bars.slice(0, -1);
-      if (bars.length >= 24) break;
+      if (bars.length >= 40) break;
       out = { ...out, music: [...body, ...ex.music.split('|').map((b) => b.trim()).slice(0, -1), bars[bars.length - 1]].join(' | ') };
     }
   }

@@ -106,15 +106,15 @@ const world5Units: UnitSeed[] = [
   { title: 'Chords and Multiple Stops', outcome: 'Play three- and four-note chords (taught; melody scored).', topics: ['Broken chords', 'Three-note chords', 'Four-note chords', 'Chord bowing'] },
   { title: 'Romantic Expression', outcome: 'Play with rubato, portamento and wide dynamics.', topics: ['Rubato', 'Portamento', 'Tone colour', 'Long lines'] },
   { title: 'Special Effects', outcome: 'Play left-hand pizzicato, ricochet and sul ponticello.', topics: ['Left-hand pizzicato', 'Ricochet', 'Sul ponticello', 'Col legno'] },
-  { title: 'Orchestral Excerpts', outcome: 'Play famous orchestral passages for your instrument (public domain).', topics: ['Audition excerpts', 'Style', 'Counting in context', 'Excerpt performance'] },
+  { title: 'Orchestral Themes', outcome: 'Play famous orchestral themes (Grieg, Mozart, Dvořák, Haydn, Beethoven, Pachelbel) arranged for your instrument.', topics: ['In the Hall of the Mountain King', 'Morning Mood', 'Eine kleine Nachtmusik', 'New World Largo'] },
 ];
 
 const world6Units: UnitSeed[] = [
   { title: 'Virtuoso Studies', outcome: 'Master demanding studies in the style of the great études.', topics: ['Velocity', 'Extreme shifts', 'Bow control', 'Endurance'] },
-  { title: 'Bach', outcome: 'Play movements from Bach’s solo works (public domain).', topics: ['Solo Suites and Partitas', 'Implied harmony', 'Baroque bowing', 'Bach performance'] },
-  { title: 'Concerto Movements', outcome: 'Play concerto movements from the public-domain repertoire.', topics: ['Solo style', 'Cadenzas', 'Projection', 'Concerto performance'] },
+  { title: 'Baroque Masters', outcome: 'Play baroque masterworks: Petzold’s Minuet (Anna Magdalena Bach notebook) and Pachelbel’s Canon, with ornaments and sixteenth-note variations.', topics: ['Minuet in G', 'Canon in D', 'Ornaments and trills', 'Terraced dynamics'] },
+  { title: 'Grand Themes', outcome: 'Play the great classical themes in concert style, at full speed.', topics: ['Beethoven', 'Mozart and Haydn', 'Grieg and Dvořák', 'Projection'] },
   { title: 'The Edge of the Instrument', outcome: 'Play at the extremes of range and speed.', topics: ['Highest positions', 'Fastest passages', 'Hardest bowings', 'Near-impossible studies'] },
-  { title: 'The Four Seasons', outcome: 'Perform Vivaldi’s The Four Seasons — the final level is a full movement (public domain).', topics: ['Vivaldi’s style', 'Fast concerto writing', 'Your part in the orchestra', 'Level 500: the final performance'] },
+  { title: 'The Four Seasons', outcome: 'Master the main theme of Vivaldi’s “Spring” from The Four Seasons (public domain), from slow to full concert speed.', topics: ['Vivaldi’s echo dynamics', 'Trills and bowings', 'Sixteenth-note variations', 'Level 500: the final performance'] },
 ];
 
 function buildWorld(

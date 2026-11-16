@@ -29,6 +29,11 @@ export interface PlayExercise {
   backing?: Backing;
   /** Short instruction shown before playing. */
   hint?: string;
+  /**
+   * Tempo multiplier per bar (1 = the marked tempo), for ritardando / accelerando.
+   * The metronome, backing and scoring all follow it.
+   */
+  barTempo?: number[];
 }
 
 /** Semitones from written to sounding pitch (double bass sounds an octave lower). */
@@ -56,8 +61,12 @@ export interface Timeline {
   notes: TimedNote[];
   /** Seconds per quarter-note beat. */
   beat: number;
-  /** Seconds per measure. */
+  /** Seconds per measure at the marked tempo. */
   measureSec: number;
+  /** Start time of each measure (differs from i × measureSec when the tempo changes). */
+  measureStarts: number[];
+  /** Seconds per beat in each measure. */
+  measureBeat: number[];
   duration: number;
 }
 
@@ -69,10 +78,15 @@ export function buildTimeline(ex: PlayExercise): Timeline {
   const notes: TimedNote[] = [];
   let t = 0;
   let index = 0;
+  const measureStarts: number[] = [];
+  const measureBeat: number[] = [];
   measures.forEach((m, mi) => {
+    const b = beat / (ex.barTempo?.[mi] ?? 1);
+    measureStarts.push(t);
+    measureBeat.push(b);
     if (Math.abs(sumBeats(m) - perMeasure) > 1e-6) throw new Error(`${ex.id}: measure ${mi + 1} has ${sumBeats(m)} beats, expected ${perMeasure}`);
     m.forEach((n, pos) => {
-      const dur = n.beats * beat;
+      const dur = n.beats * b;
       notes.push({
         index: index++, measure: mi, pos, rest: n.rest, key: n.key, beats: n.beats,
         midi: n.rest ? null : pitchMidi(parsePitch(n.key)) + shift,
@@ -81,5 +95,5 @@ export function buildTimeline(ex: PlayExercise): Timeline {
       t += dur;
     });
   });
-  return { measures, notes, beat, measureSec: perMeasure * beat, duration: t };
+  return { measures, notes, beat, measureSec: perMeasure * beat, measureStarts, measureBeat, duration: t };
 }

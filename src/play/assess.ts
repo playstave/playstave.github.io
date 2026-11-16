@@ -78,11 +78,15 @@ export function assessNote(note: TimedNote, frames: Frame[], beatSec: number, o:
   // A late start pushes the note past its written end; that extra stretch only
   // counts if it holds THIS note (otherwise it is simply the next note).
   const extTo = coreTo + Math.min(tTol, dur * 0.5);
-  const core = frames.filter((f) => f.t >= bodyFrom && f.t <= coreTo && f.hz != null);
+  const coreAll = frames.filter((f) => f.t >= bodyFrom && f.t <= coreTo);
+  const core = coreAll.filter((f) => f.hz != null);
   const coreCents = core.map((f) => toCents(f.hz!, midi));
   const coreMatch = coreCents.filter((c) => Math.abs(c) <= SAME_NOTE);
   const extMatch = frames.filter((f) => f.t > coreTo && f.t <= extTo && f.hz != null)
     .map((f) => toCents(f.hz!, midi)).filter((c) => Math.abs(c) <= SAME_NOTE);
+  // A late start sounds right up to the end of the note; a stray blip doesn't.
+  const lastCore = coreAll[coreAll.length - 1];
+  const endsMatching = !!lastCore && lastCore.hz != null && Math.abs(toCents(lastCore.hz, midi)) <= SAME_NOTE;
   let matching: number[];
   if (coreMatch.length === 0 && (core.length === 0 || extMatch.length >= 2)) {
     if (extMatch.length < 2) return { index: note.index, verdict: 'missed' };
@@ -94,6 +98,10 @@ export function assessNote(note: TimedNote, frames: Frame[], beatSec: number, o:
     // Otherwise it really is this note, started very late.
     const late = Math.round((first.t - note.start) * 1000);
     return { index: note.index, verdict: 'late', timingMs: late, cents: Math.round(trimmedMean(extMatch) * 10) / 10 };
+  } else if (coreMatch.length > 0 && coreMatch.length < coreAll.length * 0.3 && extMatch.length < 2 && !endsMatching) {
+    // The right pitch only flickered (a frame or two in a whole note) — that's
+    // stray sound (backing, room), not the student playing it.
+    return { index: note.index, verdict: 'missed' };
   } else if (coreMatch.length >= Math.max(1, core.length * 0.4)) {
     matching = [...coreMatch, ...extMatch];
   } else if (coreMatch.length + extMatch.length >= Math.max(2, core.length * 0.4)) {

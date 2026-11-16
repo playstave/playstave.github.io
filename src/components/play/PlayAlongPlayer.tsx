@@ -10,6 +10,8 @@ import { readJSON, writeJSON } from '../../lib/storage';
 import { useAppState } from '../../state/AppState';
 import { createDevPerformer, devPerformerSettings, devToneEnabled, type DevPerformance } from '../../audio/devTone';
 import { PlayScore } from './PlayScore';
+import { keyName } from '../../course/build';
+import type { SongKey } from '../../course/arrange';
 import { diagnose, rescoreWithDelay, supportReport, type Diagnosis } from '../../play/diagnose';
 import { midiName } from '../../audio/notes';
 import { MicPermission } from '../MicPermission';
@@ -37,7 +39,7 @@ export function PlayAlongPlayer({ exercise, onFinish }: Props) {
   useEffect(() => { writeJSON('playalong', prefs); }, [prefs]);
 
   // Practising slower is allowed: the whole take (and its timing) slows down.
-  const ex = useMemo(() => (prefs.speed === 'slow' ? { ...exercise, tempo: Math.round(exercise.tempo * 0.75) } : exercise), [exercise, prefs.speed]);
+  const ex = useMemo(() => (prefs.speed === 'slow' ? { ...exercise, tempo: exercise.tempo * 0.75 } : exercise), [exercise, prefs.speed]);
   const timeline = useMemo(() => buildTimeline(ex), [ex]);
 
   const [phase, setPhase] = useState<Phase>('idle');
@@ -137,7 +139,7 @@ export function PlayAlongPlayer({ exercise, onFinish }: Props) {
   return (
     <div className={styles.player} data-phase={phase}>
       <div className={styles.meta}>
-        <span>{inst.name}</span><span>{ex.key} major</span><span>{ex.time}</span><span>♩ = {ex.tempo}</span>
+        <span>{inst.name}</span><span>{keyName(ex.key as SongKey)}</span><span>{ex.time}</span><span>♩ = {Math.round(ex.tempo)}</span>
         {ex.backing && <span>Backing track</span>}
       </div>
       {exercise.hint && <p className={styles.hint}>{exercise.hint}</p>}

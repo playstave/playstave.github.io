@@ -60,13 +60,15 @@ export function backingEvents(b: Backing, tl: Timeline): BackingEvent[] {
   }
   bars.forEach((chords, bi) => {
     if (!chords.length) return;
-    const barStart = bi * tl.measureSec;
-    if (barStart >= tl.duration - 1e-6) return;
-    const each = tl.measureSec / chords.length;
+    if (bi >= tl.measureStarts.length) return;
+    const barStart = tl.measureStarts[bi];
+    const barLen = (tl.measureStarts[bi + 1] ?? tl.duration) - barStart;
+    const beatHere = tl.measureBeat[bi];
+    const each = barLen / chords.length;
     chords.forEach((sym, ci) => {
       const cStart = barStart + ci * each;
       const tones = voice(chordPitchClasses(sym));
-      const slices = b.style === 'pulse' ? Math.max(1, Math.round(each / tl.beat)) : 1;
+      const slices = b.style === 'pulse' ? Math.max(1, Math.round(each / beatHere)) : 1;
       const sliceDur = each / slices;
       for (let k = 0; k < slices; k++) {
         const s = cStart + k * sliceDur;
@@ -80,7 +82,7 @@ export function backingEvents(b: Backing, tl: Timeline): BackingEvent[] {
           const single = midis.slice(1).find((t) => ((t % 12) + 12) % 12 !== rootPc && !melody.some((m) => (t - m) % 12 === 0));
           midis = single != null ? [single] : [];
         }
-        if (midis.length) out.push({ start: s, dur: b.style === 'pulse' ? Math.min(sliceDur, tl.beat * 0.9) : sliceDur, midis });
+        if (midis.length) out.push({ start: s, dur: b.style === 'pulse' ? Math.min(sliceDur, beatHere * 0.9) : sliceDur, midis });
       }
     });
   });

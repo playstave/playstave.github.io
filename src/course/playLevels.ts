@@ -10,8 +10,11 @@
 import { getInstrument, type InstrumentId } from '../audio/notes';
 import { soundingShift, type Backing, type PlayExercise } from '../play/exercise';
 import { describePlacement, placeNote } from './fingering';
-import { ensureHarder, generateLevel, pieceScore, setFirstIdeaPosition } from './generator';
-import { WORLD1 } from './world1';
+import { ensureHarder } from './generator';
+import { buildLevel, harmonise, pieceScore } from './build';
+import { PLAN } from './plan';
+import { arrange } from './arrange';
+import { getSong } from './songs';
 import { levelKind, playLevel } from './map';
 import { unitForLevel, WORLDS } from '../data/curriculum';
 
@@ -279,6 +282,11 @@ const DEFS: Def[] = [
 
 
 
+const cache = new Map<string, PlayLevel | null>();
+
+/** Real songs used by hand-written levels (playing index → song). */
+const HAND_SONGS: Record<number, string> = { 7: 'hot-cross-buns', 9: 'lightly-row' };
+
 /** Playing levels written by hand (indexes 1–10); the rest come from unit specs. */
 export const HAND_WRITTEN = DEFS.length;
 
@@ -311,6 +319,11 @@ function handWritten(inst: InstrumentId, index: number, def: Def): PlayLevel {
     key: d.key ?? 'D', time: d.time ?? '4/4', tempo: inst === 'bass' ? Math.round(d.tempo * 0.9) : d.tempo,
     music: music(inst, d.bars), backing: d.backing, hint: d.hint,
   };
+  // Some early levels use a real song for the play test.
+  const songId = HAND_SONGS[index];
+  const song = songId ? getSong(songId) : undefined;
+  const arranged = song ? arrange(song, 'D', inst, { maxPos: inst === 'bass' ? 1 : 0 }) : null;
+  if (song && arranged) exercise = { ...exercise, title: song.title, music: arranged.music, backing: { chords: harmonise(arranged), style: 'block' } };
   // Every level must be harder than the one before.
   const prev = index > 1 ? getPlayLevel(inst, index - 1) : undefined;
   if (prev) {
@@ -318,38 +331,39 @@ function handWritten(inst: InstrumentId, index: number, def: Def): PlayLevel {
     exercise = ensureHarder(exercise, pieceScore(prev.exercise), (playLevel(index) - 1) / 99);
     if (exercise.music !== before) exercise = { ...exercise, hint: `${d.hint} Play it through twice.`, backing: exercise.backing && exercise.backing.style !== 'drone' ? { ...exercise.backing, chords: repeatChords(exercise.backing.chords, exercise.music) } : exercise.backing };
   }
-  return { index, title: d.title, objective: d.objective, newIdeas: d.newIdeas, cards: d.cards, tryNotes: d.tryNotes, exercise };
+  const cards = song && arranged ? [...d.cards, { title: `Song: ${song.title}`, body: [`Your play test is a real song: ${song.title}. ${song.by}. ${song.source}`] }] : d.cards;
+  const newIdeas = song && arranged ? [...d.newIdeas, song.title] : d.newIdeas;
+  return { index, title: d.title, objective: d.objective, newIdeas, cards, tryNotes: d.tryNotes, exercise };
 }
 
-const SPECS = new Map(WORLD1.map((s) => [s.unit, s]));
-// The first generated position in each unit gets the unit introduction card.
-for (const spec of WORLD1) {
-  const u = WORLDS.flatMap((w) => w.units).find((x) => x.id === spec.unit)!;
+const PLANS = new Map(PLAN.map((p) => [p.unit, p]));
+/** First generated position in each unit (it gets the unit introduction card). */
+const firstGenerated = new Map<number, number>();
+for (const plan of PLAN) {
+  const u = WORLDS.flatMap((w) => w.units).find((x) => x.id === plan.unit)!;
   for (let n = u.firstLevel; n <= u.lastLevel; n++) {
     const k = levelKind(n);
-    if (k.kind === 'play' && k.index > HAND_WRITTEN) { setFirstIdeaPosition(spec, n - u.firstLevel + 1); break; }
+    if (k.kind === 'play' && k.index > HAND_WRITTEN) { firstGenerated.set(plan.unit, n - u.firstLevel + 1); break; }
   }
 }
-
-const cache = new Map<string, PlayLevel | null>();
 
 function generatedLevel(inst: InstrumentId, index: number): PlayLevel | undefined {
   const key = `${inst}:${index}`;
   if (cache.has(key)) return cache.get(key) ?? undefined;
   const n = playLevel(index);
   const unit = n <= 500 ? unitForLevel(n) : undefined;
-  const spec = unit && SPECS.get(unit.id);
+  const plan = unit && PLANS.get(unit.id);
   let lv: PlayLevel | undefined;
-  if (unit && spec) {
-    // Every level must be harder than the previous playing level.
-    const prev = getPlayLevel(inst, index - 1);
-    lv = generateLevel({ inst, spec, level: n, indexInUnit: n - unit.firstLevel + 1, playIndex: index, unitTitle: unit.title, unitOutcome: unit.outcome, unitTopics: unit.topics, beat: prev ? pieceScore(prev.exercise) : undefined });
+  if (unit && plan) {
+    const indexInUnit = n - unit.firstLevel + 1;
+    const base = pieceScore(getPlayLevel(inst, HAND_WRITTEN)!.exercise); // this instrument's Level 11
+    lv = buildLevel({ inst, plan, level: n, indexInUnit, playIndex: index, unitTitle: unit.title, unitOutcome: unit.outcome, unitTopics: unit.topics, base, unitIntro: firstGenerated.get(plan.unit) === indexInUnit });
   }
   cache.set(key, lv ?? null);
   return lv;
 }
 
 /** Highest level number with written content (for "lessons written up to Level N"). */
-export const LAST_WRITTEN_LEVEL = Math.max(...WORLD1.map((s) => WORLDS.flatMap((w) => w.units).find((x) => x.id === s.unit)!.lastLevel));
+export const LAST_WRITTEN_LEVEL = Math.max(...PLAN.map((p) => WORLDS.flatMap((w) => w.units).find((x) => x.id === p.unit)!.lastLevel));
 
 export const writtenKey = written;

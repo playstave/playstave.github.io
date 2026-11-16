@@ -48,7 +48,7 @@ function beamGroups(V: VF, time: string) {
 /** Render into `host` (its contents are replaced). Returns the SVG element. */
 export function drawScore(V: VF, host: HTMLElement, o: DrawOptions): SVGSVGElement {
   host.innerHTML = '';
-  const { Renderer, Stave, StaveNote, Voice, Formatter, Accidental, Beam, Dot, Barline } = V;
+  const { Renderer, Stave, StaveNote, Voice, Formatter, Accidental, Beam, Dot, Barline, Articulation, Annotation, Curve, Modifier } = V;
   const width = o.layout.pageWidth;
   const top = TOP_MARGIN + (o.header ? HEADER_HEIGHT : 0);
   const height = o.height ?? top + o.systems.length * SYSTEM_HEIGHT + TOP_MARGIN;
@@ -76,8 +76,17 @@ export function drawScore(V: VF, host: HTMLElement, o: DrawOptions): SVGSVGEleme
   }
 
   const lastMeasure = o.measures.length - 1;
+  const ART: Record<string, [string, 'above' | 'below' | 'auto']> = {
+    st: ['a.', 'auto'], ac: ['a>', 'auto'], ten: ['a-', 'auto'], fer: ['a@a', 'above'], harm: ['ah', 'above'], pz: ['a+', 'above'], v: ['a|', 'above'], n: ['am', 'above'],
+  };
+  const WORDS: Record<string, [string, 'above' | 'below', boolean]> = {
+    pp: ['pp', 'below', true], p: ['p', 'below', true], mp: ['mp', 'below', true], mf: ['mf', 'below', true], f: ['f', 'below', true], ff: ['ff', 'below', true],
+    cr: ['cresc.', 'below', false], dim: ['dim.', 'below', false], rit: ['rit.', 'above', false], accel: ['accel.', 'above', false], atempo: ['a tempo', 'above', false], tr: ['tr', 'above', true],
+  };
   o.systems.forEach((sysIndex, row) => {
     const sys = o.layout.systems[sysIndex];
+    let slurFrom: InstanceType<typeof StaveNote> | null = null;
+    const slurs: [InstanceType<typeof StaveNote>, InstanceType<typeof StaveNote>][] = [];
     const y = top + row * SYSTEM_HEIGHT + 14;
     let x = MARGIN_X;
     for (let mi = sys.first; mi <= sys.last; mi++) {
@@ -96,6 +105,23 @@ export function drawScore(V: VF, host: HTMLElement, o: DrawOptions): SVGSVGEleme
         const keys = [n.rest ? REST_KEY[o.clef] : n.notehead ? `${n.key}/${n.notehead}` : n.key];
         const sn = new StaveNote({ clef: o.clef === 'percussion' ? 'percussion' : o.clef, keys, duration: `${n.duration}${n.rest ? 'r' : ''}`, auto_stem: true });
         if (n.dotted) Dot.buildAndAttach([sn], { all: true });
+        for (const mk of n.marks ?? []) {
+          const art = ART[mk];
+          if (art) {
+            const a = new Articulation(art[0]);
+            if (art[1] !== 'auto') a.setPosition(art[1] === 'above' ? Modifier.Position.ABOVE : Modifier.Position.BELOW);
+            sn.addModifier(a, 0);
+          }
+          const w = WORDS[mk];
+          if (w) {
+            const an = new Annotation(w[0]);
+            an.setFont("'Source Serif 4 Variable', Georgia, serif", w[2] ? 13 : 11, w[2] ? 'bold italic' : 'italic');
+            an.setVerticalJustification(w[1] === 'above' ? Annotation.VerticalJustify.TOP : Annotation.VerticalJustify.BOTTOM);
+            sn.addModifier(an, 0);
+          }
+          if (mk === 'sl(') slurFrom = sn;
+          if (mk === 'sl)' && slurFrom) { slurs.push([slurFrom, sn]); slurFrom = null; }
+        }
         return sn;
       });
       const [num, den] = o.time.split('/').map(Number);
@@ -114,6 +140,10 @@ export function drawScore(V: VF, host: HTMLElement, o: DrawOptions): SVGSVGEleme
         });
       }
       x += w;
+    }
+    // Slurs are drawn once the whole line is laid out (they may cross bar lines).
+    for (const [a, b] of slurs) {
+      try { new Curve(a, b, { cps: [{ x: 0, y: 10 }, { x: 0, y: 10 }] }).setContext(ctx).draw(); } catch { /* a slur that can't be drawn is skipped, never fatal */ }
     }
   });
 

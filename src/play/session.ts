@@ -121,7 +121,11 @@ export class PlaySession {
     // Count-in: always clicks, one measure, first beat accented.
     for (let k = 0; k < num; k++) scheduleClick(ctx, dest, this.t0 - this.countIn + k * clickEvery, k === 0, 0.8);
     if (this.o.metronome) {
-      for (let t = 0, k = 0; t < tl.duration - 1e-6; t += clickEvery, k++) scheduleClick(ctx, dest, this.t0 + t, k % num === 0, 0.45);
+      // One click per beat, following any ritardando / accelerando bar by bar.
+      tl.measureStarts.forEach((ms, i) => {
+        const every = (4 / den) * tl.measureBeat[i];
+        for (let k = 0; k < num; k++) scheduleClick(ctx, dest, this.t0 + ms + k * every, k === 0, 0.45);
+      });
     }
     if (this.o.backing && this.ex.backing) {
       const bus = ctx.createGain();

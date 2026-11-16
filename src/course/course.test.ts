@@ -79,8 +79,8 @@ describe('playing levels', () => {
     const bars = (i: number) => buildTimeline(getPlayLevel('violin', i)!.exercise).measures.length;
     expect(bars(9)).toBeGreaterThan(bars(1));
   });
-  it('returns undefined for levels not written yet (beyond World 1)', () => {
-    expect(getPlayLevel('violin', levelKind(101).index)).toBeUndefined();
+  it('returns undefined beyond Level 500', () => {
+    expect(getPlayLevel('violin', 10000)).toBeUndefined();
   });
 });
 

@@ -49,19 +49,32 @@ export interface ScoreSource {
   concertInstruments?: Instrument[];
 }
 
-export interface Note { key: string; duration: string; rest: boolean; dotted: boolean; beats: number; notehead?: string }
+/**
+ * Performance markings, written after the duration with commas, e.g. "d/4:q,st,f" or "e/4:8,sl(":
+ *   st staccato · ac accent · ten tenuto · fer fermata · harm natural harmonic · pz left-hand pizzicato
+ *   sl( / sl) slur start / end · pp p mp mf f ff dynamics · cr / dim crescendo / diminuendo start
+ *   rit / accel / atempo tempo words · tr trill · v / n up-bow / down-bow
+ * Markings change how the music LOOKS and what the student is taught; the play-along
+ * still scores pitch and rhythm only.
+ */
+export const MARKS = ['st', 'ac', 'ten', 'fer', 'harm', 'pz', 'sl(', 'sl)', 'pp', 'p', 'mp', 'mf', 'f', 'ff', 'cr', 'dim', 'rit', 'accel', 'atempo', 'tr', 'v', 'n'] as const;
+export type Mark = (typeof MARKS)[number];
+
+export interface Note { key: string; duration: string; rest: boolean; dotted: boolean; beats: number; notehead?: string; marks?: Mark[] }
 export type Measure = Note[];
 
 const BEATS: Record<string, number> = { w: 4, h: 2, q: 1, '8': 0.5, '16': 0.25 };
 
 export function parseToken(tok: string): Note {
-  const m = /^(r|[a-g](?:##|#|bb|b|n)?\/-?\d(?:\/x2)?):(w|h|q|8|16)(d?)$/.exec(tok);
+  const m = /^(r|[a-g](?:##|#|bb|b|n)?\/-?\d(?:\/x2)?):(w|h|q|8|16)(d?)((?:,[a-z()]+)*)$/.exec(tok);
   if (!m) throw new Error(`Bad token "${tok}"`);
-  const [, p, d, dot] = m;
+  const [, p, d, dot, markText] = m;
+  const marks = markText ? markText.slice(1).split(',') as Mark[] : undefined;
+  if (marks?.some((x) => !(MARKS as readonly string[]).includes(x))) throw new Error(`Bad marking in "${tok}"`);
   const rest = p === 'r';
   const segs = p.split('/');
   const key = rest ? 'r' : segs.slice(0, 2).join('/');
-  return { key, duration: d, rest, dotted: dot === 'd', beats: BEATS[d] * (dot ? 1.5 : 1), notehead: segs[2] };
+  return { key, duration: d, rest, dotted: dot === 'd', beats: BEATS[d] * (dot ? 1.5 : 1), notehead: segs[2], ...(marks ? { marks } : {}) };
 }
 
 export function parseMusic(music: string): Measure[] {
