@@ -9,7 +9,7 @@
 .tool:disabled { opacity: 0.4; cursor: not-allowed; }
 .toolText { font-size: var(--text-sm); }
 .flip svg { transform: scaleX(-1); }
-.pageInfo, .zoom { min-width: 88px; text-align: center; font-family: var(--font-mono); font-size: var(--text-sm); color: var(--ink-2); }
+.pageInfo, .zoom { min-width: 88px; text-align: center; font-family: var(--font-label); font-size: var(--text-sm); color: var(--ink-2); }
 .zoom { min-width: 52px; }
 .frame { position: relative; min-height: 200px; }
 /* The page is always ink on paper, like a printed score, in both themes. */

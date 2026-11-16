@@ -15,7 +15,7 @@ master-level sight-reading, plus a legal sheet music library. Funded by advertis
 | Routing | React Router 6 (data router, v7 future flags on) |
 | Notation | VexFlow 4.2.5 (lazy-loaded chunk, SVG output, theme-aware) |
 | Styling | CSS Modules + design tokens in `src/styles/tokens.css` |
-| Fonts | Self-hosted via Fontsource: Source Serif 4 (display), IBM Plex Sans (UI), IBM Plex Mono (numbers/labels) |
+| Fonts | Self-hosted via Fontsource (SIL Open Font License): Alegreya (headings), Alegreya Sans (text), Alegreya Sans SC (small-caps labels), a humanist, calligraphic family by Huerta Tipográfica |
 | Persistence | `localStorage` on the device; signed-in students sync to Supabase (Postgres, row-level security) |
 | Unit tests | Vitest 2 (`npm test`) |
 

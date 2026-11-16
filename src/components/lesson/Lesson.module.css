@@ -8,7 +8,7 @@
 .segments { list-style: none; display: grid; grid-template-columns: 2fr 2fr 3fr; gap: var(--space-2); margin: var(--space-4) 0 var(--space-8); }
 .segBar { display: block; height: 6px; border-radius: 3px; background: var(--paper-sunk); overflow: hidden; }
 .segBar span { display: block; height: 100%; background: var(--wc); transition: width var(--dur-slow) var(--ease-out); }
-.segLabel { display: block; margin-top: 4px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+.segLabel { display: block; margin-top: 4px; font-family: var(--font-label); font-size: 11px; letter-spacing: 0.03em; color: var(--ink-3); }
 .segNow .segLabel { color: var(--ink); font-weight: 500; }
 .segDone .segLabel { color: var(--wc); }
 
@@ -21,12 +21,12 @@
 .para strong { color: var(--ink); }
 .plan { list-style: none; display: grid; gap: var(--space-2); margin: var(--space-2) 0; }
 .plan li { display: flex; align-items: center; gap: var(--space-3); color: var(--ink-2); }
-.plan span { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--paper-sunk); font-family: var(--font-mono); font-size: var(--text-xs); color: var(--ink); }
+.plan span { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--paper-sunk); font-family: var(--font-label); font-size: var(--text-xs); color: var(--ink); }
 .best { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); font-size: var(--text-sm); color: var(--ink-2); }
 .wide { width: 100%; }
 .figureBox { padding: var(--space-4); background: var(--paper-raised); border: 1px solid var(--rule); border-radius: var(--radius-lg); }
 .tip { font-size: var(--text-sm); color: var(--ink-2); padding: var(--space-3) var(--space-4); background: var(--star-wash); border-radius: var(--radius-md); }
-.tip strong { font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--star); margin-right: var(--space-2); }
+.tip strong { font-family: var(--font-label); font-size: var(--text-xs); letter-spacing: 0.03em; color: var(--star); margin-right: var(--space-2); }
 .nav { display: flex; justify-content: space-between; gap: var(--space-3); margin-top: var(--space-2); }
 .small { font-size: var(--text-sm); color: var(--ink-3); }
 
@@ -45,7 +45,7 @@
 }
 .option:hover:not(:disabled) { border-color: var(--ink-3); background: var(--paper-sunk); }
 .option:disabled { cursor: default; }
-.optKey { flex: none; display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: var(--radius-sm); border: 1px solid var(--rule-strong); font-family: var(--font-mono); font-size: var(--text-xs); color: var(--ink-3); }
+.optKey { flex: none; display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: var(--radius-sm); border: 1px solid var(--rule-strong); font-family: var(--font-label); font-size: var(--text-xs); color: var(--ink-3); }
 .optSel { border-color: var(--ink); background: var(--paper-sunk); box-shadow: inset 0 0 0 1px var(--ink); }
 .optSel .optKey { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .optRight { border-color: var(--success); background: var(--success-wash); color: var(--success); }
@@ -87,7 +87,7 @@
 .xpLine { font-weight: 600; color: var(--accent); }
 
 /* ---------- Playing lessons ---------- */
-.newLabel { font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); }
+.newLabel { font-family: var(--font-label); font-size: var(--text-xs); letter-spacing: 0.03em; color: var(--ink-3); }
 .chips { list-style: none; display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .chips li { font-size: var(--text-sm); padding: 2px 10px; border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--rule)); border-radius: var(--radius-pill); background: color-mix(in srgb, var(--accent) 7%, var(--paper-raised)); color: var(--ink); }
 .tryBox { display: grid; gap: var(--space-4); grid-template-columns: minmax(0, 1fr); }
@@ -98,4 +98,4 @@
 .tryBoard { justify-self: center; width: 100%; max-width: 240px; }
 .tryFeedback { min-height: 1.6em; font-weight: 600; font-size: var(--text-lg); }
 .redList { list-style: none; display: grid; gap: var(--space-1); text-align: left; font-size: var(--text-sm); }
-.redBar { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--ink-3); margin-right: var(--space-2); }
+.redBar { font-family: var(--font-label); font-size: var(--text-xs); color: var(--ink-3); margin-right: var(--space-2); }

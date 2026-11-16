@@ -1,11 +1,14 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import '@fontsource-variable/source-serif-4/index.css';
-import '@fontsource/ibm-plex-sans/400.css';
-import '@fontsource/ibm-plex-sans/500.css';
-import '@fontsource/ibm-plex-sans/600.css';
-import '@fontsource/ibm-plex-mono/400.css';
-import '@fontsource/ibm-plex-mono/500.css';
+// Alegreya (Juan Pablo del Peral, Huerta Tipográfica): a humanist, calligraphic family made for reading.
+import '@fontsource-variable/alegreya/index.css';
+import '@fontsource-variable/alegreya/wght-italic.css';
+import '@fontsource/alegreya-sans/400.css';
+import '@fontsource/alegreya-sans/400-italic.css';
+import '@fontsource/alegreya-sans/500.css';
+import '@fontsource/alegreya-sans/700.css';
+import '@fontsource/alegreya-sans-sc/500.css';
+import '@fontsource/alegreya-sans-sc/700.css';
 import './styles/tokens.css';
 import './styles/base.css';
 import { App } from './App';

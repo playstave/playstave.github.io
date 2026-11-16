@@ -6,9 +6,12 @@
   gap: var(--space-2);
   border: 1px solid transparent;
   border-radius: var(--radius-md);
-  font-weight: 550;
+  font-weight: 500;
   text-decoration: none;
-  white-space: nowrap;
+  /* Short labels stay on one line; long ones wrap instead of running off a phone screen. */
+  max-width: 100%;
+  text-align: center;
+  text-wrap: balance;
   transition: background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out),
     transform var(--dur-fast) var(--ease-out), color var(--dur-fast);
   -webkit-tap-highlight-color: transparent;
@@ -59,7 +62,7 @@
 
 /* ---------- Stat ---------- */
 .stat { margin: 0; }
-.statLabel { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+.statLabel { font-family: var(--font-label); font-size: var(--text-xs); letter-spacing: 0.03em; color: var(--ink-3); }
 .statValue { margin: var(--space-1) 0 0; font-family: var(--font-display); font-size: var(--text-3xl); font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
 .statSub { margin: var(--space-1) 0 0; font-size: var(--text-sm); color: var(--ink-3); }
 

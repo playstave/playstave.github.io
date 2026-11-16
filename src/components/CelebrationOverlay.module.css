@@ -7,7 +7,7 @@
 .close { position: absolute; top: var(--space-3); right: var(--space-3); display: grid; place-items: center; width: 36px; height: 36px; border: 0; border-radius: var(--radius-md); background: transparent; color: var(--ink-2); z-index: 1; }
 .close:hover { background: var(--paper-sunk); }
 .title { font-size: var(--text-3xl); }
-.milestoneTag { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.1em; text-transform: uppercase; color: var(--star); padding: 3px 10px; border: 1px solid var(--star); border-radius: var(--radius-pill); }
+.milestoneTag { font-family: var(--font-label); font-size: var(--text-xs); letter-spacing: 0.03em; color: var(--star); padding: 3px 10px; border: 1px solid var(--star); border-radius: var(--radius-pill); }
 .stars { display: flex; gap: var(--space-3); margin-top: var(--space-1); }
 .starOn { color: var(--star-fill); animation: starIn 520ms var(--ease-out) both; }
 .starOn svg { stroke: var(--star); }

@@ -286,4 +286,10 @@ Build order (revised): R1 listening + tuner → R2 play-along assessment engine 
 - Real ads (needs the owner's AdSense ID); real iOS/Android install (needs a phone; the guide and manifest are checked)
 - Screen-reader walkthrough with VoiceOver/NVDA (structure checked: headings, labels, alt text)
 
+## Typography remodel (2026-11-16, owner request: "looks like AI made it")
+- [x] Fonts: Source Serif 4 + IBM Plex Sans/Mono → **Alegreya** (headings), **Alegreya Sans** (text), **Alegreya Sans SC** (labels). The uppercase monospace "eyebrow" labels became humanist small capitals; real monospace kept only for the support report
+- [x] Type scale raised one step (Alegreya is smaller for its size); headings bold, no negative tracking; VexFlow score titles and dynamics use Alegreya too
+- [x] Layout: long button labels now wrap instead of running off narrow phones; Home/Profile grids use minmax(0, 1fr)
+- [x] Checked: 21 pages at 320/375/768/1280 px → no horizontal scroll (with phone-style scrollbars); 380 tests pass; build OK
+
 ## Next: owner checks (real mic, songs, AdSense) — then launch

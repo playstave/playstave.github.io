@@ -3,7 +3,7 @@
 .grid { stroke: #4a433a; stroke-width: 1; stroke-dasharray: 2 4; }
 .nut { fill: #e9e2d2; }
 .string { stroke: #d8cdb6; }
-.stringName { font-family: var(--font-mono); font-size: 12px; font-weight: 600; fill: var(--ink-2); }
+.stringName { font-family: var(--font-label); font-size: 12px; font-weight: 600; fill: var(--ink-2); }
 .dot { stroke-width: 2; }
 .open { fill: none; stroke-width: 2.5; }
 .finger { font-family: var(--font-body); font-size: 12px; font-weight: 700; }

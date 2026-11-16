@@ -8,7 +8,7 @@
 .current::before { background: var(--accent); border-color: var(--accent); }
 .done { border-left-color: var(--wc); }
 .done::before { background: var(--wc); border-color: var(--wc); }
-.unitHead { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); align-items: center; font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+.unitHead { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); align-items: center; font-family: var(--font-label); font-size: var(--text-xs); letter-spacing: 0.03em; color: var(--ink-3); }
 .unitNo { color: var(--wc); font-weight: 500; }
 .status { display: inline-flex; align-items: center; gap: 4px; }
 .current .status { color: var(--accent); font-weight: 500; }

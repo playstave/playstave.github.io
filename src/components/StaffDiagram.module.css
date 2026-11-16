@@ -6,9 +6,9 @@
 .hole { fill: var(--paper-raised); }
 .note .head { fill: var(--ink); }
 .hl { fill: var(--accent); opacity: 0.28; }
-.num { font-family: var(--font-mono); font-size: 11px; fill: var(--ink-3); }
+.num { font-family: var(--font-label); font-size: 11px; fill: var(--ink-3); }
 .spaceNum { fill: var(--world-1); font-style: italic; }
-.noteLabel { font-family: var(--font-mono); font-size: 11px; fill: var(--ink-3); }
+.noteLabel { font-family: var(--font-label); font-size: 11px; fill: var(--ink-3); }
 .arc path { fill: none; stroke: var(--accent); stroke-width: 1.4; }
 .arc text { font-family: var(--font-body); font-size: 10px; font-weight: 600; fill: var(--accent); }
 .ghost .head { fill: var(--ink-3); opacity: 0.85; }

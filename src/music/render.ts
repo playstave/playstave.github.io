@@ -61,15 +61,15 @@ export function drawScore(V: VF, host: HTMLElement, o: DrawOptions): SVGSVGEleme
 
   if (o.header) {
     ctx.save();
-    ctx.setFont("'Source Serif 4 Variable', Georgia, serif", 22, 'bold');
+    ctx.setFont("'Alegreya Variable', Alegreya, Georgia, serif", 22, 'bold');
     const tw = ctx.measureText(o.header.title).width;
     ctx.fillText(o.header.title, (width - tw) / 2, TOP_MARGIN + 30);
-    ctx.setFont('IBM Plex Sans, system-ui, sans-serif', 11, 'normal');
+    ctx.setFont("'Alegreya Sans', system-ui, sans-serif", 11, 'normal');
     const cw = ctx.measureText(o.header.composer).width;
     ctx.fillText(o.header.composer, width - MARGIN_X - cw, TOP_MARGIN + 58);
     if (o.header.tempo) ctx.fillText(o.header.tempo, MARGIN_X, TOP_MARGIN + 58);
     if (o.header.part) {
-      ctx.setFont('IBM Plex Sans, system-ui, sans-serif', 10, 'italic');
+      ctx.setFont("'Alegreya Sans', system-ui, sans-serif", 10, 'italic');
       ctx.fillText(o.header.part, MARGIN_X, TOP_MARGIN + 74);
     }
     ctx.restore();
@@ -115,7 +115,7 @@ export function drawScore(V: VF, host: HTMLElement, o: DrawOptions): SVGSVGEleme
           const w = WORDS[mk];
           if (w) {
             const an = new Annotation(w[0]);
-            an.setFont("'Source Serif 4 Variable', Georgia, serif", w[2] ? 13 : 11, w[2] ? 'bold italic' : 'italic');
+            an.setFont("'Alegreya Variable', Alegreya, Georgia, serif", w[2] ? 13 : 11, w[2] ? 'bold italic' : 'italic');
             an.setVerticalJustification(w[1] === 'above' ? Annotation.VerticalJustify.TOP : Annotation.VerticalJustify.BOTTOM);
             sn.addModifier(an, 0);
           }

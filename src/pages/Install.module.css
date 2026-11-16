@@ -4,7 +4,7 @@
 .section { margin: var(--space-10) 0; display: grid; gap: var(--space-4); }
 .h2 { font-size: var(--text-xl); }
 .pickers { display: grid; gap: var(--space-4); }
-.pickLabel { font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); margin-bottom: var(--space-2); }
+.pickLabel { font-family: var(--font-label); font-size: var(--text-xs); letter-spacing: 0.03em; color: var(--ink-3); margin-bottom: var(--space-2); }
 .chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .chip { min-height: 40px; padding: 0 var(--space-4); border: 1px solid var(--rule-strong); border-radius: var(--radius-pill); background: var(--paper-raised); color: var(--ink-2); font-size: var(--text-sm); font-weight: 500; }
 .chip:hover { color: var(--ink); background: var(--paper-sunk); }
@@ -13,7 +13,7 @@
 .steps { list-style: none; display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); }
 .step { display: grid; gap: var(--space-3); align-content: start; padding: var(--space-4); border: 1px solid var(--rule); border-radius: var(--radius-lg); background: var(--paper-raised); }
 .stepArt { display: grid; place-items: center; padding: var(--space-2); border-radius: var(--radius-md); background: var(--paper-sunk); }
-.stepNo { font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); font-weight: 600; }
+.stepNo { font-family: var(--font-label); font-size: var(--text-xs); letter-spacing: 0.03em; color: var(--accent); font-weight: 600; }
 .stepText p { margin-top: 2px; }
 @media (max-width: 520px) {
   .step { grid-template-columns: 124px 1fr; align-items: center; }

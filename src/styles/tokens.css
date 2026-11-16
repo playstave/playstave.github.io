@@ -12,18 +12,22 @@
 
 :root {
   /* Type */
-  --font-display: 'Source Serif 4 Variable', 'Source Serif 4', Georgia, 'Times New Roman', serif;
-  --font-body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-display: 'Alegreya Variable', 'Alegreya', Georgia, 'Times New Roman', serif;
+  --font-body: 'Alegreya Sans', 'Gill Sans', 'Segoe UI', system-ui, sans-serif;
+  /* Small labels: humanist small capitals (not typewriter type). */
+  --font-label: 'Alegreya Sans SC', 'Alegreya Sans', system-ui, sans-serif;
+  /* Real monospace only for technical text (support reports, error details). */
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
-  --text-xs: 0.75rem;   /* 12 */
-  --text-sm: 0.875rem;  /* 14 */
-  --text-md: 1rem;      /* 16 */
-  --text-lg: 1.125rem;  /* 18 */
-  --text-xl: 1.375rem;  /* 22 */
-  --text-2xl: 1.75rem;  /* 28 */
-  --text-3xl: 2.25rem;  /* 36 */
-  --text-4xl: 3rem;     /* 48 */
+  /* Alegreya's letters are smaller for their size than Plex's, so the scale is a step up. */
+  --text-xs: 0.8125rem;  /* 13 */
+  --text-sm: 0.9375rem;  /* 15 */
+  --text-md: 1.0625rem;  /* 17 */
+  --text-lg: 1.1875rem;  /* 19 */
+  --text-xl: 1.4375rem;  /* 23 */
+  --text-2xl: 1.8125rem; /* 29 */
+  --text-3xl: 2.375rem;  /* 38 */
+  --text-4xl: 3.125rem;  /* 50 */
 
   --leading-tight: 1.15;
   --leading-snug: 1.3;
