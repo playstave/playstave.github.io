@@ -1,0 +1,10 @@
+.slot { max-width: var(--content-max); width: 100%; margin: var(--space-8) auto 0; padding: 0 var(--space-4); }
+.label { display: block; font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: var(--space-2); }
+.ins { min-height: 90px; }
+.devBox { min-height: 90px; display: grid; place-items: center; text-align: center; padding: var(--space-4); border: 1px dashed var(--rule); border-radius: var(--radius-md); color: var(--ink-3); font-size: var(--text-sm); }
+.banner { position: fixed; z-index: 40; left: var(--space-4); right: var(--space-4); bottom: calc(var(--space-4) + var(--tabbar-h, 0px) + env(safe-area-inset-bottom)); max-width: 640px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-4); align-items: center; padding: var(--space-4); background: var(--paper-raised); border: 1px solid var(--rule); border-radius: var(--radius-lg); box-shadow: 0 8px 30px rgb(0 0 0 / 0.15); }
+.banner > div:first-child { flex: 1 1 320px; }
+.bannerTitle { font-weight: 600; }
+.bannerText { font-size: var(--text-sm); color: var(--ink-2); }
+.bannerActions { display: flex; gap: var(--space-2); }
+@media print { .slot, .banner { display: none; } }

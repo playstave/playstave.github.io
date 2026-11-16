@@ -257,6 +257,13 @@ Build order (revised): R1 listening + tuner → R2 play-along assessment engine 
 - [x] Answers for note names, intervals, key signatures, beats and counts are computed from the notes shown (`lessons/notation.ts`), so a figure can't disagree with its answer; tests check those helpers and that every rhythm bar adds up
 - [x] 373 tests pass; build OK; checked in browser (L155 note names, L285 flat key signatures)
 
-## Next: owner checks real-mic scoring and the songs (esp. Spring); then Stage 7 (ads) and Stage 8 (full testing)
+## Owner checks: real-mic scoring and the songs (esp. Spring)
 
-## Later: Stage 7 — Advertising integration (not started)
+## Stage 7 — Advertising (built 2026-11-16; live once the owner adds an AdSense ID)
+- [x] `lib/ads.ts`: config from `VITE_ADSENSE_CLIENT` / `VITE_ADSENSE_SLOT` (validated; otherwise ads are off), consent stored per device, script loaded once with `requestNonPersonalizedAds = 1` first, ad-free route list
+- [x] `components/ads`: `AdSlot` (one per page, bottom, labelled “Advertisement”, hidden in print; dev-only placeholder when no ID) and `AdConsentBanner` (plain-language yes/no, never on learning pages); Settings → Privacy & data has the switch and an honest explanation
+- [x] `ads.txt` emitted by a Vite plugin only when a real publisher ID is configured (checked: no ID → no ads.txt and no dev placeholder in the bundle; with ID → correct Google line)
+- [x] Tests (378 pass): config validation, ad-free routes, consent storage, script injected once with non-personalised flag; browser: banner → Show ads → slot on Home; none on /tuner and /level/155; Settings “No ads” removes it
+- Owner to do: AdSense account + approval, ad unit, env vars; decide child-directed treatment and an EEA/UK certified CMP before launching there
+
+## Next: Stage 8 — full application testing

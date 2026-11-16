@@ -106,7 +106,7 @@ src/
 | R4 | Remodel: 500-level map for playing (6 worlds, 50 units) + all of World 1 (Levels 1–100) for every instrument; every level harder than the last | **Complete** |
 | R5 | All 500 levels for all four instruments — mostly real public-domain songs, every level harder than the last, Vivaldi’s Spring at Level 500 | **Complete** (songs to be checked by a musician) |
 | R6 | All 36 theory lessons (clefs, note names, rhythm, keys, intervals, chords, expression, string terms, Vivaldi) with engraved notation | **Complete** |
-| 7 | Advertising integration | Not started (after the remodel) |
+| 7 | Advertising integration (Google AdSense, consent first, non-personalised, never during learning) | **Built** — goes live once the owner adds an AdSense publisher ID (see “Advertising”) |
 | 8 | Full application testing | Not started |
 
 **Direction (2026-11-15):** Stave is being remodelled into a string-orchestra tutor. Each playing level teaches something new, then listens to the student play and scores pitch and rhythm. A note within **±20 cents** counts as in tune by default (`src/audio/tolerance.ts`).
@@ -146,7 +146,19 @@ src/
 - **All 500 levels have content** (464 playing levels per instrument + 36 theory lessons). The songs were written from memory and should be checked by a musician, especially Vivaldi's Spring. Scoring with a real microphone still needs the owner's check on a real instrument.
 - The XP history keeps the latest 100 events and learning history the latest 200 attempts (XP totals and badges are unaffected).
 - Unit 1 draws its own staff (no clef yet, by design — clefs are taught in Unit 3). VexFlow is used for clef-based notation elsewhere.
-- **No advertising** is integrated, and nothing claims otherwise.
+- **Advertising is built but off** until a real AdSense publisher ID is configured. No ads (real or fake) show in the production build without it.
+
+## Advertising
+
+Stave shows at most **one** ad, at the bottom of browsing pages (Home, Learn, Roadmap, Library list, Practice, Progress, Achievements, Profile, Settings). There are **never** ads on lessons and play tests (`/level/…`), the tuner, the play-along, the daily quiz, a score being read, the welcome screen or the install guide.
+
+- **Consent first:** a banner asks “Show ads / No ads”. Nothing from Google loads before “Show ads”; “No ads” loads nothing. Students can change it in Settings → Privacy & data.
+- **Non-personalised only:** `requestNonPersonalizedAds = 1` is set before any ad request (per Google’s AdSense help, answer 9042142). Google may still use cookies for frequency capping and fraud prevention, and the banner says so.
+- **To go live (owner):**
+  1. Create an AdSense account and get the site approved (I can’t do this for you).
+  2. Create a display ad unit.
+  3. Set `VITE_ADSENSE_CLIENT=ca-pub-…` and `VITE_ADSENSE_SLOT=…` in the hosting environment (or `.env.local`), then build. `ads.txt` is generated automatically only when the ID is set.
+- **Children:** many students may be under 13. Google’s docs show age (child) treatment for Ad Manager tags (`tagForAgeTreatment`), but **not** for the AdSense async tag used here. Before going live, check in AdSense how to apply child-directed treatment to the site, and check the rules where you launch (e.g. COPPA in the US, the UK Children’s Code, GDPR in the EU). In the EEA/UK/Switzerland, Google requires a Google-certified consent platform (CMP); Stave’s own banner is not certified, so use AdSense’s Privacy & messaging tool there.
 - VexFlow adds a ~314 kB (gzipped) chunk, loaded only on pages that show notation.
 
 ## Testing

@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { AdSlot } from './ads/AdSlot';
+import { AdConsentBanner } from './ads/AdConsent';
 import { Link, Navigate, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Icon } from './Icon';
 import { Logo } from './Logo';
@@ -154,10 +156,12 @@ function Shell() {
         <div className={styles.content}>
           <Outlet />
         </div>
+        <AdSlot />
         <footer className={styles.footer}>
           <p>Stave is free for every student. <Link to="/settings#privacy">Privacy &amp; data</Link></p>
         </footer>
       </main>
+      <AdConsentBanner />
 
       {/* Mobile tab bar */}
       <nav aria-label="Main" className={styles.tabbar}>
