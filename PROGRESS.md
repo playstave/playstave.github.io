@@ -257,6 +257,6 @@ Build order (revised): R1 listening + tuner → R2 play-along assessment engine 
 - [x] Answers for note names, intervals, key signatures, beats and counts are computed from the notes shown (`lessons/notation.ts`), so a figure can't disagree with its answer; tests check those helpers and that every rhythm bar adds up
 - [x] 373 tests pass; build OK; checked in browser (L155 note names, L285 flat key signatures)
 
-## Next: owner checks songs (esp. Spring); then Stage 7 (ads) and Stage 8 (full testing) (Levels 101–200): slurs, dynamics, flats, minor keys, sixteenths (needs slur/dynamic notation) — then Worlds 3–6 (positions/shifting, high positions, advanced, Vivaldi)
+## Next: owner checks real-mic scoring and the songs (esp. Spring); then Stage 7 (ads) and Stage 8 (full testing)
 
 ## Later: Stage 7 — Advertising integration (not started)

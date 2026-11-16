@@ -143,12 +143,9 @@ src/
 
 - (Fixed) A stale dialog `close` event could dismiss a newly opened celebration; see PROGRESS.md for the investigation.
 
-- **Only Levels 1–10 have lessons.** Level 11 onward opens a page saying its lesson isn't available yet; the remaining 490 are planned in batches after Stage 8. Levels beyond 10 can only be completed with the dev-build tools on the Roadmap.
+- **All 500 levels have content** (464 playing levels per instrument + 36 theory lessons). The songs were written from memory and should be checked by a musician, especially Vivaldi's Spring. Scoring with a real microphone still needs the owner's check on a real instrument.
 - The XP history keeps the latest 100 events and learning history the latest 200 attempts (XP totals and badges are unaffected).
 - Unit 1 draws its own staff (no clef yet, by design — clefs are taught in Unit 3). VexFlow is used for clef-based notation elsewhere.
-- **Milestone celebrations** are marked on the roadmap; the celebration animations and major achievement awards come with gamification (Stage 4).
-- **Achievements** are defined but cannot be earned until Stage 4.
-- **Progress lives in this browser only.** Clearing site data erases it. No accounts yet.
 - **No advertising** is integrated, and nothing claims otherwise.
 - VexFlow adds a ~314 kB (gzipped) chunk, loaded only on pages that show notation.
 
