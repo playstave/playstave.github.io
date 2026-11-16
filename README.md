@@ -107,7 +107,7 @@ src/
 | R5 | All 500 levels for all four instruments — mostly real public-domain songs, every level harder than the last, Vivaldi’s Spring at Level 500 | **Complete** (songs to be checked by a musician) |
 | R6 | All 36 theory lessons (clefs, note names, rhythm, keys, intervals, chords, expression, string terms, Vivaldi) with engraved notation | **Complete** |
 | 7 | Advertising integration (Google AdSense, consent first, non-personalised, never during learning) | **Built** — goes live once the owner adds an AdSense publisher ID (see “Advertising”) |
-| 8 | Full application testing | Not started |
+| 8 | Full application testing | **Complete** — see PROGRESS.md (2 bugs fixed; real-mic, account and real-ad checks left to the owner) |
 
 **Direction (2026-11-15):** Stave is being remodelled into a string-orchestra tutor. Each playing level teaches something new, then listens to the student play and scores pitch and rhythm. A note within **±20 cents** counts as in tune by default (`src/audio/tolerance.ts`).
 

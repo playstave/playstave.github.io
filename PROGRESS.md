@@ -266,4 +266,24 @@ Build order (revised): R1 listening + tuner → R2 play-along assessment engine 
 - [x] Tests (378 pass): config validation, ad-free routes, consent storage, script injected once with non-personalised flag; browser: banner → Show ads → slot on Home; none on /tuner and /level/155; Settings “No ads” removes it
 - Owner to do: AdSense account + approval, ad unit, env vars; decide child-directed treatment and an EEA/UK certified CMP before launching there
 
-## Next: Stage 8 — full application testing
+## Stage 8 — Full application testing (2026-11-16)
+**Automated**
+- [x] TypeScript strict: clean. Unit/integration tests: **380 pass** (audio, assessment, backing bleed, all 500 levels × 4 instruments, lessons, ads, redirects…). Production build: OK
+- [x] Dependency audit: React Router open-redirect advisories and a Supabase auth-js advisory → upgraded to react-router-dom 6.30.6 and @supabase/supabase-js 2.119.0 (minor versions, all tests pass). Two moderate React Router advisories remain that only a v7 upgrade clears: one is SSR-only (Stave has no SSR), the other is an open redirect via untrusted paths — Stave's only untrusted path is now validated (below)
+- [x] Code scan: no `console.log`/`debugger`, no `dangerouslySetInnerHTML`, no `service_role` anywhere, `.env.local` not tracked
+**Bugs found and fixed**
+- [x] Open redirect: `/welcome?next=/\evil.com` passed the old check (starts with `/`, not `//`) and some browsers treat `/\` as another site. New `lib/safeNext.ts` allows only plain in-app paths; tests cover `//`, `/\`, `\\`, `https:`, `javascript:`, spaces and tabs
+**Browser checks**
+- [x] Every page (24 routes incl. a lesson, a theory lesson, Level 500, a score, a play-along, the 404) at 375, 768 and 1280 px — 72 loads: no horizontal scroll, every page has a heading, no images without alt text, no unnamed buttons or links, no console errors (fresh tab)
+- [x] Dark mode on phone width: Home, level intro, score viewer; measured contrast on the level intro: title 10.2:1, primary button 6.3:1
+- [x] Personalisation for violin, viola, cello and double bass: Home, tuner strings (G3 D4 A4 E5 / C3 G3 D4 A4 / C2 G2 D3 A3 / E1 A1 D2 G2), play-along list and lessons show only that instrument
+- [x] Full lesson flow (cello Level 3) with the dev-only simulated performer: tutorial → try it → play test → 9/9 green, 100%, +35 XP, result saved (dev test mode switched off afterwards)
+- [x] Production preview: service worker active and controlling, manifest valid, no dev code in the bundle (test tone, dev banner, ad placeholder all absent), no ad banner/slot without an AdSense ID, page load ~107 ms; **offline** (server stopped): Library and a score with notation still load
+- [x] Keyboard: global `:focus-visible` ring; elements that remove outlines are headings focused by code or have a `:focus-within` replacement
+**Not covered here (honest limits)**
+- Real microphone with a real instrument (the in-app browser blocks the mic) — owner to test on phone/Chrome
+- Supabase sign-up/sign-in in this pass (I don't create accounts or enter passwords; it was verified by the owner in Stage 6)
+- Real ads (needs the owner's AdSense ID); real iOS/Android install (needs a phone; the guide and manifest are checked)
+- Screen-reader walkthrough with VoiceOver/NVDA (structure checked: headings, labels, alt text)
+
+## Next: owner checks (real mic, songs, AdSense) — then launch

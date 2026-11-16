@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { safeNext } from '../lib/safeNext';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '../components/ui';
 import { Logo } from '../components/Logo';
@@ -18,7 +19,7 @@ export function Welcome() {
   const { progress, setStudent } = useAppState();
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const next = params.get('next') && params.get('next')!.startsWith('/') && !params.get('next')!.startsWith('//') ? params.get('next')! : '/';
+  const next = safeNext(params.get('next'));
   const [step, setStep] = useState(0);
   const [instrument, setInstrument] = useState<StudentInstrument | null>(progress.student?.instrument ?? null);
   const [experience, setExperience] = useState<Experience | null>(progress.student?.experience ?? null);
