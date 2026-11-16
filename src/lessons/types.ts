@@ -25,7 +25,21 @@ export interface StaffFigure {
   caption?: string;
 }
 
-export type Figure = StaffFigure;
+/** Engraved notation (VexFlow): clefs, rhythms, accidentals, key and time signatures. */
+export interface NotationFigure {
+  kind: 'notation';
+  clef?: 'treble' | 'alto' | 'bass' | 'none';
+  /** Space-separated "key:duration" tokens, e.g. "c/4:q f#/4:8 b/4:qr". Prefix a token with * to highlight it. */
+  music?: string;
+  time?: string;
+  /** VexFlow key signature, e.g. "D", "Bb", "Em". */
+  keySig?: string;
+  width?: number;
+  alt: string;
+  caption?: string;
+}
+
+export type Figure = StaffFigure | NotationFigure;
 
 export interface ChoiceOption {
   id: string;

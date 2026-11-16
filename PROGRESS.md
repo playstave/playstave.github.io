@@ -249,8 +249,14 @@ Build order (revised): R1 listening + tuner → R2 play-along assessment engine 
 - [x] Curriculum units renamed honestly: 45 Orchestral Themes, 47 Baroque Masters, 48 Grand Themes (real public-domain themes, not "Bach suites"/"excerpts" we don't have); 50 The Four Seasons (Spring)
 - [x] Tests (369 pass): all 500 levels exist for all 4 instruments; every note playable; every level strictly harder than the previous (all instruments); tempo/length limits; ≥75% songs; sampled clean takes 100%; ≥15 keys; Level 500 = Spring; song library bar lengths and spelling; backing bleed through speakers → zero false greens
 - Bugs found and fixed: eighth/sixteenth variations didn't split half notes; tempo rounding (0.1 bpm) broke the strict rule late in the course; a single stray frame could count a note as played (now ≥30% of the note); very late notes vs blips; 3-octave scales impossible on bass → fall back to 2 octaves; violin/viola needed positions above 7th
-- Known limits: theory levels 11–36 reuse the "not written yet" page (only 10 theory lessons exist); scoring stays pitch + rhythm (bowing, vibrato, double stops taught but not scored); melodies need a musician's check
+- Known limits: scoring stays pitch + rhythm (bowing, vibrato, double stops taught but not scored); melodies need a musician's check
 
-## Next: theory lessons 11–36; owner checks songs (esp. Spring); then Stage 7 (ads) and Stage 8 (full testing) (Levels 101–200): slurs, dynamics, flats, minor keys, sixteenths (needs slur/dynamic notation) — then Worlds 3–6 (positions/shifting, high positions, advanced, Vivaldi)
+### R6 — ALL 36 THEORY LESSONS (2026-11-16)
+- [x] Lessons 11–36 written (`lessons/theoryA|B|C.ts`), placed at their fixed theory levels: clefs of the string family, note names (treble/alto/bass), note values, rests, time signatures, accidentals, ledger lines, dots and ties, major-scale pattern, 6/8, sharp keys, counting eighths & syncopation, flat keys, checkpoint, intervals, relative minor, triads & I–IV–V, tempo words, dynamics & articulation, sixteenth rhythms, chromatics & enharmonics, ornaments, form & repeats, string terms, Vivaldi & the concerto, final checkpoint
+- [x] Lessons can now show engraved notation (VexFlow: clefs, rhythms, accidentals, key/time signatures) via a new `notation` figure kind
+- [x] Answers for note names, intervals, key signatures, beats and counts are computed from the notes shown (`lessons/notation.ts`), so a figure can't disagree with its answer; tests check those helpers and that every rhythm bar adds up
+- [x] 373 tests pass; build OK; checked in browser (L155 note names, L285 flat key signatures)
+
+## Next: owner checks songs (esp. Spring); then Stage 7 (ads) and Stage 8 (full testing) (Levels 101–200): slurs, dynamics, flats, minor keys, sixteenths (needs slur/dynamic notation) — then Worlds 3–6 (positions/shifting, high positions, advanced, Vivaldi)
 
 ## Later: Stage 7 — Advertising integration (not started)

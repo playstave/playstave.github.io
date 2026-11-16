@@ -3,6 +3,7 @@ import type { Answer, Question } from '../../lessons/types';
 import { posName, cap } from '../../lessons/staff';
 import type { Feedback } from '../../lib/lessonEngine';
 import { StaffDiagram } from '../StaffDiagram';
+import { LessonFigure } from './LessonFigure';
 import { Button } from '../ui';
 import { Icon } from '../Icon';
 import styles from './Lesson.module.css';
@@ -76,7 +77,7 @@ export function QuestionView({ question: q, feedback, mode, onAnswer, onRetry, o
       <h2 ref={promptRef} tabIndex={-1} className={styles.prompt}>{q.prompt}</h2>
 
       {q.kind === 'choice' && q.figure && (
-        <div className={styles.figureBox}><StaffDiagram figure={q.figure} /></div>
+        <div className={styles.figureBox}><LessonFigure figure={q.figure} /></div>
       )}
 
       {q.kind === 'locate' && (

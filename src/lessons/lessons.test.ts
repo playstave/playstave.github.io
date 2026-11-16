@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { LESSONS, getLesson } from './index';
-import { theoryLevel } from '../course/map';
+import { theoryLevel, THEORY_COUNT } from '../course/map';
+import { parseFigureMusic, nameNote, intervalQ, keySigQ, beatsOf, countLabels, placeOn } from './notation';
 import { classifyMove, namePosition, whichLine, whichSpace } from './helpers';
 import { motion, posName } from './staff';
 import type { Figure, Question } from './types';
@@ -10,8 +11,8 @@ const lessons = Object.values(LESSONS);
 const figuresOf = (q: Question): Figure[] => (q.kind === 'choice' && q.figure ? [q.figure] : []);
 
 describe('lesson catalogue', () => {
-  it('has theory lessons 1–10, each at its fixed theory level in the course', () => {
-    expect(lessons.map((l) => l.level).sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  it('has theory lessons 1–36 (one for every theory level), each at its fixed theory level in the course', () => {
+    expect(lessons.map((l) => l.level).sort((a, b) => a - b)).toEqual(Array.from({ length: THEORY_COUNT }, (_, i) => i + 1));
     for (const l of lessons) {
       const n = theoryLevel(l.level);
       expect(getLevel(n)).toBeDefined();
@@ -75,6 +76,7 @@ describe('every question', () => {
   it('draws only positions on or just around the staff, with consistent arcs', () => {
     const figs = [...all.flatMap(({ q }) => figuresOf(q)), ...lessons.flatMap((l) => l.steps.flatMap((s) => (s.figure ? [s.figure] : [])))];
     for (const f of figs) {
+      if (f.kind === 'notation') { expect(() => parseFigureMusic(f.music ?? '')).not.toThrow(); expect(f.alt.length).toBeGreaterThan(5); continue; }
       for (const p of [...(f.notes ?? []), ...(f.highlight ?? [])]) { expect(p).toBeGreaterThanOrEqual(-1); expect(p).toBeLessThanOrEqual(9); }
       for (const a of f.arcs ?? []) {
         const notes = f.notes!;
@@ -107,5 +109,49 @@ describe('question builders', () => {
     expect(classifyMove('x', 0, 6, ['step', 'skip', 'leap']).answer).toBe('leap');
     expect(classifyMove('x', 6, 5, ['step'], true).answer).toBe('step-down');
     expect(classifyMove('x', 3, 5, ['skip'], true).answer).toBe('skip-up');
+  });
+});
+
+describe('theory helpers compute the right answers', () => {
+  const right = (q: ReturnType<typeof nameNote>) => q.options.find((o) => o.id === q.answer)!.text;
+  it('names notes in every clef', () => {
+    expect(right(nameNote('a', 'treble', 'g/4'))).toBe('G');
+    expect(right(nameNote('a', 'treble', 'c/4'))).toBe('C');
+    expect(right(nameNote('a', 'alto', 'c/4'))).toBe('C');
+    expect(right(nameNote('a', 'bass', 'f/3'))).toBe('F');
+    expect(right(nameNote('a', 'bass', 'a/2'))).toBe('A');
+    for (const clef of ['treble', 'alto', 'bass'] as const) for (const k of ['c/4', 'e/4', 'a/3', 'g/2', 'b/5']) {
+      const q = nameNote('a', clef, k);
+      expect(new Set(q.options.map((o) => o.text)).size).toBe(q.options.length);
+      expect(q.options.length).toBeGreaterThanOrEqual(3);
+    }
+  });
+  it('places notes on the right line or space', () => {
+    expect(placeOn('treble', 'e/4')).toBe('line 1');
+    expect(placeOn('treble', 'f/5')).toBe('line 5');
+    expect(placeOn('alto', 'c/4')).toBe('line 3');
+    expect(placeOn('bass', 'f/3')).toBe('line 4');
+    expect(placeOn('treble', 'c/4')).toBe('the 1st ledger line below');
+    expect(placeOn('treble', 'a/3')).toBe('the 2nd ledger line below');
+    expect(placeOn('treble', 'g/3')).toBe('just under 2 ledger lines below the staff');
+    expect(placeOn('treble', 'a/5')).toBe('the 1st ledger line above');
+  });
+  it('counts intervals, key signatures, beats and counts', () => {
+    const r = (q: ReturnType<typeof intervalQ>) => q.options.find((o) => o.id === q.answer)!.text;
+    expect(r(intervalQ('a', 'd/4', 'a/4'))).toBe('5th');
+    expect(r(intervalQ('a', 'a/4', 'a/5'))).toBe('octave');
+    expect(r(intervalQ('a', 'f/4', 'g/4'))).toBe('2nd');
+    expect(r(keySigQ('a', 'Eb'))).toBe('E♭ major');
+    expect(r(keySigQ('a', 'B'))).toBe('B major');
+    expect(beatsOf('g/4:qd a/4:8 b/4:h')).toBe(4);
+    expect(countLabels('g/4:8 a/4:q g/4:8 b/4:h')).toEqual(['1', '1&', '2&', '3']);
+    expect(countLabels('e/5:8d d/5:16 c/5:q')).toEqual(['1', '1a', '2']);
+  });
+  it('every rhythm figure in a lesson that asks about a bar adds up to a whole bar', () => {
+    for (const l of lessons) for (const q of [...l.practice, ...l.challenge]) {
+      if (q.kind !== 'choice' || q.figure?.kind !== 'notation' || !q.figure.time || !q.figure.music || q.id === 't15c5' /* deliberately one beat short: "which note completes it?" */) continue;
+      const [top, bottom] = q.figure.time === 'C' ? [4, 4] : q.figure.time.split('/').map(Number);
+      expect(beatsOf(q.figure.music), q.id).toBeCloseTo((top * 4) / bottom);
+    }
   });
 });

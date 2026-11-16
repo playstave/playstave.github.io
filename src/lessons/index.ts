@@ -10,16 +10,19 @@ import { level07 } from './level07';
 import { level08 } from './level08';
 import { level09 } from './level09';
 import { level10 } from './level10';
+import * as A from './theoryA';
+import * as B from './theoryB';
+import * as C from './theoryC';
 
 /** Authored theory lessons, keyed by theory-lesson number (1 = first theory level). */
 export const LESSONS: Record<number, Lesson> = Object.fromEntries(
-  [level01, level02, level03, level04, level05, level06, level07, level08, level09, level10].map((l) => [l.level, l]),
+  [level01, level02, level03, level04, level05, level06, level07, level08, level09, level10, ...Object.values(A), ...Object.values(B), ...Object.values(C)].map((l) => [l.level, l]),
 );
 
 /**
  * The theory lesson at course Level `level`, if any. Theory lessons sit at
  * fixed random positions in the course (see course/map.ts); lesson N (its own
- * `level` field, 1–10) is the Nth theory level.
+ * `level` field, 1–36) is the Nth theory level.
  */
 export function getLesson(level: number): Lesson | undefined {
   const k = levelKind(level);

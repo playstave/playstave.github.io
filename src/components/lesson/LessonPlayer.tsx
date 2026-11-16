@@ -6,7 +6,7 @@ import { TOTAL_LEVELS } from '../../data/curriculum';
 import { currentQuestion, initialState, reducer, score, thresholds, type Phase } from '../../lib/lessonEngine';
 import type { Outcome } from '../../lib/rewards';
 import { useAppState } from '../../state/AppState';
-import { StaffDiagram } from '../StaffDiagram';
+import { LessonFigure } from './LessonFigure';
 import { QuestionView } from './QuestionView';
 import { Button, ButtonLink, Stars } from '../ui';
 import { Icon } from '../Icon';
@@ -98,7 +98,7 @@ export function LessonPlayer({ lesson, level }: { lesson: Lesson; level: Level }
         <p className="eyebrow">Lesson · page {s.step + 1} of {lesson.steps.length}</p>
         <h2 className={styles.stepTitle} tabIndex={-1} ref={headRef}>{step.title}</h2>
         {step.body.map((p, i) => <p key={i} className={styles.para}><Rich text={p} /></p>)}
-        {step.figure && <div className={styles.figureBox}><StaffDiagram figure={step.figure} /></div>}
+        {step.figure && <div className={styles.figureBox}><LessonFigure figure={step.figure} /></div>}
         {step.tip && <p className={styles.tip}><strong>Tip</strong> {step.tip}</p>}
         <div className={styles.nav}>
           <Button variant="secondary" icon="chevron-left" onClick={() => dispatch({ type: 'back' })}>Back</Button>

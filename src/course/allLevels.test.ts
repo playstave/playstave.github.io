@@ -28,8 +28,8 @@ describe('all 500 levels are written', () => {
     }
     expect(missing).toEqual([]);
   });
-  it('theory levels with lessons are the first ten theory positions (the rest reuse the theory pages until written)', () => {
-    expect(THEORY_LEVELS.slice(0, 10).every((n) => !!getLesson(n))).toBe(true);
+  it('every one of the 36 theory levels has a written lesson', () => {
+    expect(THEORY_LEVELS.filter((n) => !getLesson(n))).toEqual([]);
   });
 });
 

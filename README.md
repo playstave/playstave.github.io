@@ -105,6 +105,7 @@ src/
 | R3 | Remodel: instruments (violin, viola, cello, bass), fingering, tutorial → try it → play test lesson flow; first 10 playing levels per instrument; theory at fixed random positions | **Complete** (synthetic testing; real-instrument check by the owner) |
 | R4 | Remodel: 500-level map for playing (6 worlds, 50 units) + all of World 1 (Levels 1–100) for every instrument; every level harder than the last | **Complete** |
 | R5 | All 500 levels for all four instruments — mostly real public-domain songs, every level harder than the last, Vivaldi’s Spring at Level 500 | **Complete** (songs to be checked by a musician) |
+| R6 | All 36 theory lessons (clefs, note names, rhythm, keys, intervals, chords, expression, string terms, Vivaldi) with engraved notation | **Complete** |
 | 7 | Advertising integration | Not started (after the remodel) |
 | 8 | Full application testing | Not started |
 
