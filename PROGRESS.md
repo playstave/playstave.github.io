@@ -292,4 +292,10 @@ Build order (revised): R1 listening + tuner → R2 play-along assessment engine 
 - [x] Layout: long button labels now wrap instead of running off narrow phones; Home/Profile grids use minmax(0, 1fr)
 - [x] Checked: 21 pages at 320/375/768/1280 px → no horizontal scroll (with phone-style scrollbars); 380 tests pass; build OK
 
-## Next: owner checks (real mic, songs, AdSense) — then launch
+## Published (2026-11-16)
+- [x] Live at **https://playstave.github.io/** — repository `playstave/playstave.github.io` (organization `playstave`, so the address has no personal username); GitHub Actions runs the tests, builds and deploys on every push to main
+- [x] App works from a root or a sub-folder (router basename, relative manifest, scope-aware service worker, 404.html fallback); commit author email replaced with the GitHub noreply address before publishing
+- [x] Checked live: https, service worker active, welcome flow, deep link `/level/12` opens the app, no username in the page
+- Owner to do: Supabase → Authentication → URL Configuration → add `https://playstave.github.io/` (Google sign-in)
+
+## Next: owner checks (real mic on the live site, songs, AdSense) — then launch
