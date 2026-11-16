@@ -86,13 +86,13 @@ src/
 
 ## Live site (GitHub Pages)
 
-Stave is published free at **https://sshreyanksutar-droid.github.io/stave/**.
+Stave is published free at **https://playstave.github.io/** (repository `playstave/playstave.github.io`).
 
-- Every push to `main` runs `.github/workflows/deploy.yml`: install → tests → build with `BASE_PATH=/stave/` → publish.
+- Every push to `main` runs `.github/workflows/deploy.yml`: install → tests → build (an `<owner>.github.io` repository is served from the root, `BASE_PATH=/`; any other repository name from `/<repo>/`) → publish.
 - Repository secrets `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (public values) are used at build time. **Never add the service_role key.**
 - Optional repository variables `VITE_ADSENSE_CLIENT` / `VITE_ADSENSE_SLOT` turn ads on once AdSense approves a site (note: AdSense generally needs a domain you own, so a `github.io` address may not be accepted).
-- The app works from a sub-folder: the router uses Vite's `BASE_URL`, the manifest uses relative URLs, the service worker works from its own scope, and `404.html` (a copy of `index.html`) lets deep links like `/stave/level/12` open on refresh.
-- Accounts: in Supabase → Authentication → URL Configuration, add `https://sshreyanksutar-droid.github.io/stave/` to the redirect URLs (needed for Google sign-in).
+- The app works from a sub-folder: the router uses Vite's `BASE_URL`, the manifest uses relative URLs, the service worker works from its own scope, and `404.html` (a copy of `index.html`) lets deep links like `/level/12` open on refresh.
+- Accounts: in Supabase → Authentication → URL Configuration, add `https://playstave.github.io/` to the redirect URLs (needed for Google sign-in).
 - To preview the Pages build locally: `BASE_PATH=/stave/ npx vite build --outDir dist-pages`, then `npx vite preview --outDir dist-pages --base /stave/`.
 
 ## Environment variables
