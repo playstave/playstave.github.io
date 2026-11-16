@@ -1,3 +1,5 @@
+import { copyFileSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import basicSsl from '@vitejs/plugin-basic-ssl';
@@ -23,8 +25,27 @@ function adsTxt(): Plugin {
 // (browsers only allow the mic on secure pages). Uses a self-signed certificate.
 const phone = process.env.PHONE === '1';
 
+/**
+ * GitHub Pages serves the site from /<repo>/ and shows 404.html for unknown
+ * paths, so a copy of index.html there lets /stave/level/12 open on refresh.
+ */
+function spaFallback(): Plugin {
+  return {
+    name: 'stave-404-fallback',
+    apply: 'build',
+    writeBundle(o) {
+      const dir = o.dir ?? 'dist';
+      if (existsSync(join(dir, 'index.html'))) copyFileSync(join(dir, 'index.html'), join(dir, '404.html'));
+    },
+  };
+}
+
+// BASE_PATH=/stave/ when building for GitHub Pages; '/' everywhere else.
+const base = process.env.BASE_PATH || '/';
+
 export default defineConfig({
-  plugins: [react(), adsTxt(), ...(phone ? [basicSsl()] : [])],
+  base,
+  plugins: [react(), adsTxt(), spaFallback(), ...(phone ? [basicSsl()] : [])],
   server: phone ? { port: 5182, strictPort: true, host: true } : { port: 5180, strictPort: true },
   build: {
     rollupOptions: {

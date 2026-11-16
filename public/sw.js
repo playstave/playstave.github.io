@@ -6,16 +6,18 @@
  *    sync) lives on another origin and is never touched or cached.
  *  - Pages (navigations): NETWORK FIRST. A new version of Stave is always used
  *    when online; the saved copy is only a fallback when offline.
- *  - /assets/* files have content hashes in their names (a new release gets new
+ *  - assets/* files have content hashes in their names (a new release gets new
  *    names), so they are safe to keep and serve from the cache.
  *  - Other small files (icons, manifest): use the cache, refresh in the background.
  */
-const VERSION = 'stave-v1';
-const SHELL = '/';
+const VERSION = 'stave-v2';
+// The folder Stave is served from: '/' locally, '/stave/' on GitHub Pages.
+const BASE = new URL(self.registration.scope).pathname;
+const SHELL = BASE;
 const MAX_ASSETS = 80;
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(VERSION).then((c) => c.addAll([SHELL, '/manifest.webmanifest', '/favicon.svg', '/icons/icon-192.png'])).catch(() => {}));
+  event.waitUntil(caches.open(VERSION).then((c) => c.addAll([SHELL, BASE + 'manifest.webmanifest', BASE + 'favicon.svg', BASE + 'icons/icon-192.png'])).catch(() => {}));
   self.skipWaiting();
 });
 
@@ -28,7 +30,7 @@ self.addEventListener('activate', (event) => {
 });
 
 async function trimAssets(cache) {
-  const keys = (await cache.keys()).filter((r) => new URL(r.url).pathname.startsWith('/assets/'));
+  const keys = (await cache.keys()).filter((r) => new URL(r.url).pathname.startsWith(BASE + 'assets/'));
   for (let i = 0; i < keys.length - MAX_ASSETS; i++) await cache.delete(keys[i]);
 }
 
@@ -55,7 +57,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  if (url.pathname.startsWith('/assets/')) {
+  if (url.pathname.startsWith(BASE + 'assets/')) {
     event.respondWith((async () => {
       const cache = await caches.open(VERSION);
       const hit = await cache.match(req);
@@ -67,7 +69,8 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  if (/^\/(icons\/|favicon\.svg$|manifest\.webmanifest$)/.test(url.pathname)) {
+  const rel = url.pathname.startsWith(BASE) ? url.pathname.slice(BASE.length) : '';
+  if (/^(icons\/|favicon\.svg$|manifest\.webmanifest$)/.test(rel)) {
     event.respondWith((async () => {
       const cache = await caches.open(VERSION);
       const hit = await cache.match(req);

@@ -84,6 +84,17 @@ src/
   pages/                one file (+ .module.css) per route
 ```
 
+## Live site (GitHub Pages)
+
+Stave is published free at **https://sshreyanksutar-droid.github.io/stave/**.
+
+- Every push to `main` runs `.github/workflows/deploy.yml`: install → tests → build with `BASE_PATH=/stave/` → publish.
+- Repository secrets `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (public values) are used at build time. **Never add the service_role key.**
+- Optional repository variables `VITE_ADSENSE_CLIENT` / `VITE_ADSENSE_SLOT` turn ads on once AdSense approves a site (note: AdSense generally needs a domain you own, so a `github.io` address may not be accepted).
+- The app works from a sub-folder: the router uses Vite's `BASE_URL`, the manifest uses relative URLs, the service worker works from its own scope, and `404.html` (a copy of `index.html`) lets deep links like `/stave/level/12` open on refresh.
+- Accounts: in Supabase → Authentication → URL Configuration, add `https://sshreyanksutar-droid.github.io/stave/` to the redirect URLs (needed for Google sign-in).
+- To preview the Pages build locally: `BASE_PATH=/stave/ npx vite build --outDir dist-pages`, then `npx vite preview --outDir dist-pages --base /stave/`.
+
 ## Environment variables
 
 `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` in `.env.local` (see `.env.example`). Without them the app runs in device-only mode. Never put the service_role key in the frontend. Dev-only mock backend: `localStorage.setItem('stave:dev-mock-backend','1')`.

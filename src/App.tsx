@@ -49,6 +49,8 @@ const router = createBrowserRouter([
     ],
   },
 ], {
+  // '/' locally; '/stave/' on GitHub Pages (set by Vite's `base`).
+  basename: import.meta.env.BASE_URL.replace(/\/$/, '') || '/',
   future: {
     v7_relativeSplatPath: true,
     v7_fetcherPersist: true,

@@ -11,7 +11,7 @@ export function RouteError() {
       <h1 style={{ fontSize: '2.25rem', margin: '8px 0 12px' }}>Stave hit a wrong note</h1>
       <p className="prose">The page could not be shown. Your progress is safe. Try reloading, or go back to the home page.</p>
       <p className="muted" style={{ fontFamily: 'var(--font-mono)', fontSize: 12, marginTop: 12 }}>{detail}</p>
-      <p style={{ marginTop: 24, display: 'flex', gap: 16 }}><a href="/">Home</a><a href="" onClick={() => window.location.reload()}>Reload</a></p>
+      <p style={{ marginTop: 24, display: 'flex', gap: 16 }}><a href={import.meta.env.BASE_URL}>Home</a><a href="" onClick={() => window.location.reload()}>Reload</a></p>
     </main>
   );
 }

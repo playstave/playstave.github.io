@@ -92,6 +92,6 @@ export async function promptInstall(): Promise<'accepted' | 'dismissed' | 'unava
 export function registerServiceWorker() {
   if (!import.meta.env.PROD || typeof navigator === 'undefined' || !('serviceWorker' in navigator) || !window.isSecureContext) return;
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => { /* the app works without it */ });
+    navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`, { scope: import.meta.env.BASE_URL }).catch(() => { /* the app works without it */ });
   });
 }
