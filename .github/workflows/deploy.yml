@@ -1,5 +1,6 @@
 # Builds Stave and publishes it to GitHub Pages on every push to main.
-# Site: https://<user>.github.io/<repo>/
+# Site: https://playstave.github.io/ (a <owner>.github.io repo is served from the root;
+# any other repo name is served from /<repo>/).
 name: Deploy to GitHub Pages
 
 on:
@@ -27,10 +28,16 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
-      - name: Build for /<repo>/
+      - name: Work out the site folder
+        run: |
+          if [ "${{ github.event.repository.name }}" = "${{ github.repository_owner }}.github.io" ]; then
+            echo "BASE_PATH=/" >> "$GITHUB_ENV"
+          else
+            echo "BASE_PATH=/${{ github.event.repository.name }}/" >> "$GITHUB_ENV"
+          fi
+      - name: Build
         run: npm run build
         env:
-          BASE_PATH: /${{ github.event.repository.name }}/
           # Public values only (the anon key is designed to be public; row-level security protects data).
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
