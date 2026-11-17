@@ -42,7 +42,10 @@ function spaFallback(): Plugin {
     apply: 'build',
     writeBundle(o) {
       const dir = o.dir ?? 'dist';
-      if (existsSync(join(dir, 'index.html'))) copyFileSync(join(dir, 'index.html'), join(dir, '404.html'));
+      if (!existsSync(join(dir, 'index.html'))) return;
+      copyFileSync(join(dir, 'index.html'), join(dir, '404.html'));
+      // Public pages crawlers check (e.g. AdSense) get a real file, so they return 200, not 404.
+      for (const page of ['privacy']) copyFileSync(join(dir, 'index.html'), join(dir, `${page}.html`));
     },
   };
 }
