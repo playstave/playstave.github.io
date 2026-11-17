@@ -16,6 +16,7 @@ import { Progress } from './pages/Progress';
 import { Achievements } from './pages/Achievements';
 import { Profile } from './pages/Profile';
 import { Settings } from './pages/Settings';
+import { Privacy } from './pages/Privacy';
 import { NotFound } from './pages/NotFound';
 import { Tuner } from './pages/Tuner';
 import { PlayAlong, PlayAlongExercise } from './pages/PlayAlong';
@@ -44,6 +45,7 @@ const router = createBrowserRouter([
       { path: '/achievements', element: <Achievements /> },
       { path: '/profile', element: <Profile /> },
       { path: '/settings', element: <Settings /> },
+      { path: '/privacy', element: <Privacy /> },
       { path: '/install', element: <Install /> },
       { path: '*', element: <NotFound /> },
     ],

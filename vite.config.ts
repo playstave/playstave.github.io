@@ -6,14 +6,21 @@ import basicSsl from '@vitejs/plugin-basic-ssl';
 import { loadEnv, type Plugin } from 'vite';
 
 /**
- * ads.txt (required by AdSense): written into the build ONLY when a real
- * publisher ID is configured, so no placeholder ever ships.
+ * AdSense ownership proof, added ONLY when a real publisher ID is configured:
+ *  - ads.txt at the site root;
+ *  - <meta name="google-adsense-account"> in index.html.
+ * Neither loads anything from Google: the ad script itself still loads only
+ * after a visitor chooses "Show ads".
  */
 function adsTxt(): Plugin {
   let client = '';
   return {
     name: 'stave-ads-txt',
     configResolved(c) { client = loadEnv(c.mode, process.cwd(), 'VITE_').VITE_ADSENSE_CLIENT?.trim() ?? ''; },
+    transformIndexHtml(html) {
+      if (!/^ca-pub-\d{10,20}$/.test(client)) return html;
+      return html.replace('</head>', `    <meta name="google-adsense-account" content="${client}" />\n  </head>`);
+    },
     generateBundle() {
       if (!/^ca-pub-\d{10,20}$/.test(client)) return;
       this.emitFile({ type: 'asset', fileName: 'ads.txt', source: `google.com, ${client.replace('ca-', '')}, DIRECT, f08c47fec0942fa0\n` });

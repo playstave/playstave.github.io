@@ -12,7 +12,7 @@ describe('ads configuration', () => {
 
 describe('ad-free routes', () => {
   it('never shows ads during learning', () => {
-    for (const p of ['/level/1', '/level/500', '/tuner', '/play', '/play/scale-d', '/welcome', '/library/ode-to-joy', '/practice/daily', '/install']) expect(isAdFreeRoute(p), p).toBe(true);
+    for (const p of ['/level/1', '/level/500', '/tuner', '/play', '/play/scale-d', '/welcome', '/library/ode-to-joy', '/practice/daily', '/install', '/privacy']) expect(isAdFreeRoute(p), p).toBe(true);
   });
   it('allows ads on browsing pages', () => {
     for (const p of ['/', '/learn', '/learn/world/2', '/roadmap', '/library', '/practice', '/progress', '/achievements', '/profile', '/settings']) expect(isAdFreeRoute(p), p).toBe(false);

@@ -158,7 +158,7 @@ function Shell() {
         </div>
         <AdSlot />
         <footer className={styles.footer}>
-          <p>Stave is free for every student. <Link to="/settings#privacy">Privacy &amp; data</Link></p>
+          <p>Stave is free for every student. <Link to="/privacy">Privacy policy</Link> · <Link to="/settings#privacy">Privacy settings</Link></p>
         </footer>
       </main>
       <AdConsentBanner />

@@ -25,7 +25,7 @@ export function readAdConfig(env: Record<string, string | undefined> = import.me
 }
 
 /** Routes where an ad would interrupt learning. */
-const AD_FREE = [/^\/level\//, /^\/tuner/, /^\/play(\/|$)/, /^\/welcome/, /^\/library\/[^/]+/, /^\/practice\/daily/, /^\/install/];
+const AD_FREE = [/^\/level\//, /^\/tuner/, /^\/play(\/|$)/, /^\/welcome/, /^\/library\/[^/]+/, /^\/practice\/daily/, /^\/install/, /^\/privacy/];
 export const isAdFreeRoute = (path: string) => AD_FREE.some((r) => r.test(path));
 
 export type AdConsent = 'yes' | 'no' | null;

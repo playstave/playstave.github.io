@@ -103,7 +103,7 @@ export function Settings() {
         <div className={styles.prose}>
           <p>Stave is free and designed to be safe for young learners. Without an account, your nickname, progress and preferences are stored only in this browser.</p>
           <p>If you create an account, we store only your username, a securely hashed password, and your learning progress (levels, stars, XP, badges, practice days, favourite scores and collections). We never ask for your email, age or real name. Only you can read your data; you can delete your account and everything in it from your Profile at any time.</p>
-          <p><strong>Ads.</strong> Stave is free because of advertising. Nothing from an ad company loads unless you choose “Show ads”. Then one small ad from Google appears at the bottom of some pages, never during a lesson, play test, the tuner, the play-along, a quiz or while you read a score. We only ask for non-personalised ads (not based on what you do elsewhere), though Google may use cookies to limit how often you see an ad and to stop fraud. Stave itself has no tracking.</p>
+          <p><strong>Ads.</strong> Stave is free because of advertising. Nothing from an ad company loads unless you choose “Show ads”. Then one small ad from Google appears at the bottom of some pages, never during a lesson, play test, the tuner, the play-along, a quiz or while you read a score. We only ask for non-personalised ads (not based on what you do elsewhere), though Google may use cookies to limit how often you see an ad and to stop fraud. Stave itself has no tracking. Full details: <Link to="/privacy">Privacy policy</Link>.</p>
         </div>
         {adsAvailable && (
           <div className={styles.row}>
