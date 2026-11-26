@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getAdConsent, isAdFreeRoute, levelFromPath, loadAdScript, makeLessonSwitchDetector, onAdConsentChange, readAdConfig, requestAd, showAdBreak, type AdConsent } from '../../lib/ads';
+import { getAdConsent, isAdFreeRoute, levelFromPath, loadAdScript, makeLessonSwitchDetector, onAdConsentChange, readAdConfig, requestAd, setAdConsent, showAdBreak, type AdConsent } from '../../lib/ads';
 import styles from './Ads.module.css';
 
 const config = readAdConfig();
@@ -59,16 +59,34 @@ export function AdSlot() {
     if (!import.meta.env.DEV) return null;
     return (
       <aside className={styles.slot} aria-label="Advertisement">
-        <span className={styles.label}>Advertisement</span>
+        <AdHead />
         <div className={styles.devBox}>Ad space (development preview). Real ads appear here once an AdSense publisher ID and ad unit are set up.</div>
       </aside>
     );
   }
   return (
     <aside className={styles.slot} aria-label="Advertisement" key={pathname}>
-      <span className={styles.label}>Advertisement</span>
+      <AdHead />
       <ins ref={ins} className={`adsbygoogle ${styles.ins}`} style={{ display: 'block' }}
         data-ad-client={config.client} data-ad-slot={config.slot} data-ad-format="auto" data-full-width-responsive="true" />
     </aside>
+  );
+}
+
+/** Turns ads off on this device (same as Settings → Ads → No ads). Free, no account needed. */
+export function RemoveAdsButton({ className }: { className?: string }) {
+  return (
+    <button type="button" className={`${styles.remove} ${className ?? ''}`} onClick={() => setAdConsent('no')}>
+      Remove ads
+    </button>
+  );
+}
+
+function AdHead() {
+  return (
+    <div className={styles.head}>
+      <span className={styles.label}>Advertisement</span>
+      <RemoveAdsButton />
+    </div>
   );
 }

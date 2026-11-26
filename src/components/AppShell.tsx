@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { AdSlot, LessonAdBreaks } from './ads/AdSlot';
+import { AdSlot, LessonAdBreaks, RemoveAdsButton, adsAvailable, useAdConsent } from './ads/AdSlot';
 import { AdConsentBanner } from './ads/AdConsent';
 import { Link, Navigate, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Icon } from './Icon';
@@ -91,6 +91,7 @@ function Shell() {
   const { pathname, hash } = useLocation();
   const [moreOpen, setMoreOpen] = useState(false);
   const { dismissCelebration } = useAppState();
+  const adConsent = useAdConsent();
   // A celebration belongs to the page it happened on.
   useEffect(() => { dismissCelebration(); }, [pathname, dismissCelebration]);
   const firstRender = useRef(true);
@@ -158,7 +159,7 @@ function Shell() {
         </div>
         <AdSlot />
         <footer className={styles.footer}>
-          <p>Stave is free for every student. <Link to="/privacy">Privacy policy</Link> · <Link to="/settings#privacy">Privacy settings</Link></p>
+          <p>Stave is free for every student. <Link to="/privacy">Privacy policy</Link> · <Link to="/settings#privacy">Privacy settings</Link>{adsAvailable && adConsent === 'yes' && <> · <RemoveAdsButton /></>}</p>
         </footer>
       </main>
       <AdConsentBanner />
