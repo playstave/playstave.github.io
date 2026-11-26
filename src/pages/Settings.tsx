@@ -103,13 +103,13 @@ export function Settings() {
         <div className={styles.prose}>
           <p>Stave is free and designed to be safe for young learners. Without an account, your nickname, progress and preferences are stored only in this browser.</p>
           <p>If you create an account, we store only your username, a securely hashed password, and your learning progress (levels, stars, XP, badges, practice days, favourite scores and collections). We never ask for your email, age or real name. Only you can read your data; you can delete your account and everything in it from your Profile at any time.</p>
-          <p><strong>Ads.</strong> Stave is free because of advertising. Nothing from an ad company loads unless you choose “Show ads”. Then one small ad from Google appears at the bottom of some pages, never during a lesson, play test, the tuner, the play-along, a quiz or while you read a score. We only ask for non-personalised ads (not based on what you do elsewhere), though Google may use cookies to limit how often you see an ad and to stop fraud. Stave itself has no tracking. Full details: <Link to="/privacy">Privacy policy</Link>.</p>
+          <p><strong>Ads.</strong> Stave is free because of advertising. Nothing from an ad company loads unless you choose “Show ads”. Then Google may show a full-screen ad (which can be a video) when you move on to a new lesson, and one small ad at the bottom of some pages. Never in the middle of a lesson, play test, the tuner, the play-along, a quiz or while you read a score. We only ask for non-personalised ads (not based on what you do elsewhere), though Google may use cookies to limit how often you see an ad and to stop fraud. Stave itself has no tracking. Full details: <Link to="/privacy">Privacy policy</Link>.</p>
         </div>
         {adsAvailable && (
           <div className={styles.row}>
             <div>
               <p className={styles.rowTitle}>Ads</p>
-              <p className={styles.rowHelp}>{adConsent === 'yes' ? 'Showing non-personalised ads at the bottom of some pages.' : adConsent === 'no' ? 'No ads: nothing from an ad company is loaded.' : 'You haven’t chosen yet.'}</p>
+              <p className={styles.rowHelp}>{adConsent === 'yes' ? 'Showing non-personalised ads between lessons and at the bottom of some pages.' : adConsent === 'no' ? 'No ads: nothing from an ad company is loaded.' : 'You haven’t chosen yet.'}</p>
             </div>
             <Segmented<'yes' | 'no'> name="ad-consent" label="Ads" value={adConsent ?? ('' as 'yes')} onChange={(v) => setAdConsent(v)}
               options={[{ value: 'yes', label: 'Show ads' }, { value: 'no', label: 'No ads' }]} />

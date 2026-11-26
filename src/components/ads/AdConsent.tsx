@@ -4,7 +4,7 @@ import { adsAvailable, useAdConsent } from './AdSlot';
 import { Button } from '../ui';
 import styles from './Ads.module.css';
 
-/** Asked once, in plain words, never during a lesson. Nothing loads before a yes. */
+/** Asked once, in plain words, never on a lesson page. Nothing loads before a yes. */
 export function AdConsentBanner() {
   const consent = useAdConsent();
   const { pathname } = useLocation();
@@ -14,7 +14,7 @@ export function AdConsentBanner() {
       <div>
         <p id="ad-consent-t" className={styles.bannerTitle}>Stave is free because of ads</p>
         <p className={styles.bannerText}>
-          If you say yes, a small ad from Google appears at the bottom of some pages, never during a lesson, play test or the tuner.
+          If you say yes, Google may show a full-screen ad when you move on to a new lesson, and a small ad at the bottom of some pages. Never in the middle of a lesson, play test or the tuner.
           Ads are not personalised, but Google may use cookies to limit repeats and stop fraud. You can change this in Settings.
         </p>
       </div>

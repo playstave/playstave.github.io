@@ -161,14 +161,23 @@ Stave is published free at **https://playstave.github.io/** (repository `playsta
 
 ## Advertising
 
-Stave shows at most **one** ad, at the bottom of browsing pages (Home, Learn, Roadmap, Library list, Practice, Progress, Achievements, Profile, Settings). There are **never** ads on lessons and play tests (`/level/…`), the tuner, the play-along, the daily quiz, a score being read, the welcome screen or the install guide.
+Stave shows two kinds of ad, both only after the student chooses “Show ads”:
+
+- **Between lessons (full-screen):** when a student moves on to a different level than the last one they opened this visit (via “Continue to Level N” or the roadmap), Stave calls Google’s H5 Games Ad Placement API (`adBreak`, type `next`) as the new lesson opens, before it starts. Google decides whether an ad (image or video) is ready and spaces them out (`data-ad-frequency-hint`, `AD_BREAK_GAP` in `src/lib/ads.ts`, default 60s). Needs only `VITE_ADSENSE_CLIENT`, plus Google’s approval for H5 Games Ads.
+- **Banner:** at most one, at the bottom of browsing pages (Home, Learn, Roadmap, Library list, Practice, Progress, Achievements, Profile, Settings). Needs `VITE_ADSENSE_SLOT` too.
+
+There are **never** ads in the middle of lessons and play tests (`/level/…`), the tuner, the play-along, the daily quiz, a score being read, the welcome screen or the install guide.
+
+- **Testing:** open the site once with `?adtest=on` to see Google’s test ads (fake, no earnings) on that device; `?adtest=off` turns it off. Then open a level, go back, and open a different level.
+- **Turn Auto ads off** for the site in AdSense: once the script is loaded it stays loaded across pages (single-page app), so Auto ads could place ads inside lessons.
 
 - **Consent first:** a banner asks “Show ads / No ads”. Nothing from Google loads before “Show ads”; “No ads” loads nothing. Students can change it in Settings → Privacy & data.
 - **Non-personalised only:** `requestNonPersonalizedAds = 1` is set before any ad request (per Google’s AdSense help, answer 9042142). Google may still use cookies for frequency capping and fraud prevention, and the banner says so.
 - **To go live (owner):**
   1. Create an AdSense account and get the site approved (I can’t do this for you).
   2. Create a display ad unit.
-  3. Set `VITE_ADSENSE_CLIENT=ca-pub-…` and `VITE_ADSENSE_SLOT=…` in the hosting environment (or `.env.local`), then build. `ads.txt` is generated automatically only when the ID is set.
+  3. Set `VITE_ADSENSE_CLIENT=ca-pub-…` (and `VITE_ADSENSE_SLOT=…` for the banner) in the hosting environment (or `.env.local`), then build. `ads.txt` is generated automatically only when the ID is set.
+  4. For between-lesson ads, sign up for AdSense H5 Games Ads (beta) and wait for approval. Optional: `VITE_ADSENSE_CHILD_DIRECTED=1` tags ad requests for child-directed treatment.
 - **Children:** many students may be under 13. Google’s docs show age (child) treatment for Ad Manager tags (`tagForAgeTreatment`), but **not** for the AdSense async tag used here. Before going live, check in AdSense how to apply child-directed treatment to the site, and check the rules where you launch (e.g. COPPA in the US, the UK Children’s Code, GDPR in the EU). In the EEA/UK/Switzerland, Google requires a Google-certified consent platform (CMP); Stave’s own banner is not certified, so use AdSense’s Privacy & messaging tool there.
 - VexFlow adds a ~314 kB (gzipped) chunk, loaded only on pages that show notation.
 

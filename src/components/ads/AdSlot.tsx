@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getAdConsent, isAdFreeRoute, loadAdScript, onAdConsentChange, readAdConfig, requestAd, type AdConsent } from '../../lib/ads';
+import { getAdConsent, isAdFreeRoute, levelFromPath, loadAdScript, makeLessonSwitchDetector, onAdConsentChange, readAdConfig, requestAd, showAdBreak, type AdConsent } from '../../lib/ads';
 import styles from './Ads.module.css';
 
 const config = readAdConfig();
+const scriptOpts = { childDirected: config?.childDirected };
 
 export function useAdConsent(): AdConsent {
   const [c, setC] = useState<AdConsent>(getAdConsent);
@@ -15,8 +16,31 @@ export function useAdConsent(): AdConsent {
 export const adsAvailable = !!config || import.meta.env.DEV;
 
 /**
+ * Full-screen ad between lessons. Renders nothing; once the student has said
+ * yes to ads it loads Google's script (so an ad is preloaded), then asks for an
+ * ad break each time they move on to a different lesson. The break happens as
+ * the next lesson opens, before it starts, so nothing is interrupted mid-play.
+ */
+export function LessonAdBreaks() {
+  const { pathname } = useLocation();
+  const consent = useAdConsent();
+  const [isSwitch] = useState(makeLessonSwitchDetector);
+
+  useEffect(() => {
+    if (consent === 'yes' && config) loadAdScript(config.client, document, scriptOpts);
+  }, [consent]);
+
+  useEffect(() => {
+    // Only route changes count; consent changing mid-lesson is not a lesson switch.
+    if (isSwitch(pathname) && consent === 'yes' && config) showAdBreak(`level-${levelFromPath(pathname)}`);
+  }, [pathname]);
+
+  return null;
+}
+
+/**
  * One ad space at the bottom of a page, below the content. Renders nothing on
- * learning routes, when ads aren't set up, or until the student says yes.
+ * learning routes, when no ad unit is set up, or until the student says yes.
  */
 export function AdSlot() {
   const { pathname } = useLocation();
@@ -25,18 +49,18 @@ export function AdSlot() {
   const show = consent === 'yes' && !isAdFreeRoute(pathname);
 
   useEffect(() => {
-    if (!show || !config || !ins.current) return;
-    loadAdScript(config.client);
+    if (!show || !config?.slot || !ins.current) return;
+    loadAdScript(config.client, document, scriptOpts);
     try { requestAd(); } catch { /* blocked by an ad blocker: leave the space empty */ }
   }, [show, pathname]);
 
   if (!show) return null;
-  if (!config) {
+  if (!config?.slot) {
     if (!import.meta.env.DEV) return null;
     return (
       <aside className={styles.slot} aria-label="Advertisement">
         <span className={styles.label}>Advertisement</span>
-        <div className={styles.devBox}>Ad space (development preview). Real ads appear here once an AdSense publisher ID is set up.</div>
+        <div className={styles.devBox}>Ad space (development preview). Real ads appear here once an AdSense publisher ID and ad unit are set up.</div>
       </aside>
     );
   }

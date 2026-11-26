@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { AdSlot } from './ads/AdSlot';
+import { AdSlot, LessonAdBreaks } from './ads/AdSlot';
 import { AdConsentBanner } from './ads/AdConsent';
 import { Link, Navigate, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Icon } from './Icon';
@@ -162,6 +162,7 @@ function Shell() {
         </footer>
       </main>
       <AdConsentBanner />
+      <LessonAdBreaks />
 
       {/* Mobile tab bar */}
       <nav aria-label="Main" className={styles.tabbar}>

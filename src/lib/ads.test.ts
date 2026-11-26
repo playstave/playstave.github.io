@@ -1,12 +1,36 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { _resetAdsForTest, getAdConsent, isAdFreeRoute, loadAdScript, readAdConfig, setAdConsent } from './ads';
+import { _resetAdsForTest, AD_BREAK_GAP, getAdConsent, isAdFreeRoute, levelFromPath, loadAdScript, makeLessonSwitchDetector, readAdConfig, setAdConsent, showAdBreak } from './ads';
 
 describe('ads configuration', () => {
-  it('is off unless a real publisher ID and slot are set', () => {
+  it('is off unless a real publisher ID is set', () => {
     expect(readAdConfig({})).toBeNull();
     expect(readAdConfig({ VITE_ADSENSE_CLIENT: 'ca-pub-XXXXXXXX', VITE_ADSENSE_SLOT: '123' })).toBeNull();
-    expect(readAdConfig({ VITE_ADSENSE_CLIENT: 'ca-pub-1234567890123456' })).toBeNull();
-    expect(readAdConfig({ VITE_ADSENSE_CLIENT: 'ca-pub-1234567890123456', VITE_ADSENSE_SLOT: '9876543210' })).toEqual({ client: 'ca-pub-1234567890123456', slot: '9876543210' });
+    expect(readAdConfig({ VITE_ADSENSE_SLOT: '9876543210' })).toBeNull();
+  });
+  it('runs between-lesson ads with just the publisher ID; the banner also needs a valid ad unit', () => {
+    expect(readAdConfig({ VITE_ADSENSE_CLIENT: 'ca-pub-1234567890123456' })).toEqual({ client: 'ca-pub-1234567890123456', slot: null, childDirected: false });
+    expect(readAdConfig({ VITE_ADSENSE_CLIENT: 'ca-pub-1234567890123456', VITE_ADSENSE_SLOT: '123' })?.slot).toBeNull();
+    expect(readAdConfig({ VITE_ADSENSE_CLIENT: 'ca-pub-1234567890123456', VITE_ADSENSE_SLOT: '9876543210', VITE_ADSENSE_CHILD_DIRECTED: '1' }))
+      .toEqual({ client: 'ca-pub-1234567890123456', slot: '9876543210', childDirected: true });
+  });
+});
+
+describe('between lessons', () => {
+  it('reads the level from a lesson route only', () => {
+    expect(levelFromPath('/level/12')).toBe('12');
+    expect(levelFromPath('/level/12/extra')).toBe('12');
+    expect(levelFromPath('/roadmap')).toBeNull();
+    expect(levelFromPath('/library/level/3')).toBeNull();
+  });
+  it('counts moving on to a different lesson, not the first one or the same one again', () => {
+    const isSwitch = makeLessonSwitchDetector();
+    expect(isSwitch('/')).toBe(false);
+    expect(isSwitch('/level/5')).toBe(false); // first lesson this visit
+    expect(isSwitch('/level/5')).toBe(false); // same lesson
+    expect(isSwitch('/level/6')).toBe(true); // "Continue to Level 6"
+    expect(isSwitch('/roadmap')).toBe(false);
+    expect(isSwitch('/level/6')).toBe(false); // back to the same lesson via the roadmap
+    expect(isSwitch('/level/9')).toBe(true); // a different one via the roadmap
   });
 });
 
@@ -46,5 +70,30 @@ describe('consent', () => {
     expect(head[0].src).toBe('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1234567890123456');
     expect(head[0].async).toBe(true);
     expect(window.adsbygoogle?.requestNonPersonalizedAds).toBe(1);
+  });
+  it('sets up Google’s ad break API, preloads an ad and hints at the gap between ads', () => {
+    loadAdScript('ca-pub-1234567890123456', doc);
+    const ds = head[0].dataset as Record<string, string>;
+    expect(ds.adFrequencyHint).toBe(AD_BREAK_GAP);
+    expect(ds.adbreakTest).toBeUndefined();
+    expect(ds.tagForChildDirectedTreatment).toBeUndefined();
+    expect(typeof window.adBreak).toBe('function');
+    expect(typeof window.adConfig).toBe('function');
+    expect([...(window.adsbygoogle ?? [])]).toEqual([{ preloadAdBreaks: 'on', sound: 'on' }]);
+  });
+  it('can switch on test ads and child-directed treatment', () => {
+    loadAdScript('ca-pub-1234567890123456', doc, { test: true, childDirected: true });
+    const ds = head[0].dataset as Record<string, string>;
+    expect(ds.adbreakTest).toBe('on');
+    expect(ds.tagForChildDirectedTreatment).toBe('1');
+  });
+  it('asks for a "next" ad break only once the script is loaded', () => {
+    delete (g as { adBreak?: unknown }).adBreak;
+    showAdBreak('level-6');
+    expect(window.adsbygoogle).toBeUndefined();
+    loadAdScript('ca-pub-1234567890123456', doc);
+    showAdBreak('level-6');
+    const q = [...(window.adsbygoogle ?? [])];
+    expect(q[q.length - 1]).toEqual({ type: 'next', name: 'level-6' });
   });
 });
